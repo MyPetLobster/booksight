@@ -1,4 +1,4 @@
-from django.test import TestCase\
+from django.test import TestCase
 from vision.vision import main
 
 # Create your tests here.
