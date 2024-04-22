@@ -23,8 +23,8 @@ def main():
     text = detect_text("vision/test_images/two_books_red.jpeg")
     print(text)
 
-    # book_info = identify_book_info(text)
-    # print(book_info)
+    book_info = identify_book_info(text)
+    print(book_info)
 
     print(f"Time taken: {time.time() - now:.2f} seconds")
     
@@ -32,7 +32,7 @@ def main():
 
 
 def detect_text(jpeg_file):
-    new_img, resized_original = preprocess_image(jpeg_file)
+    new_img = preprocess_image(jpeg_file)
     text_as_string = ""
 
     reader = easyocr.Reader(['en'], gpu=True)
@@ -52,15 +52,14 @@ def detect_text(jpeg_file):
     for orientation, result in results.items():
         if len(result) > 1:
             for i in range (len(result)):
-                bg_color = extract_detection_bg_color(result[i], resized_original, orientation, i)
-                text_as_string += f"#{i}: \n " + "ocr_text: " + result[i][1].replace(" ", "") + " " + "\n" + "bg_color: " + bg_color + "\n\n"
+                text_as_string += result[i][1].replace(" ", "") + " " + "\n"
         
     return text_as_string
 
 
 def preprocess_image(jpeg_file):
     img = cv.imread(jpeg_file)
-    resize_img = cv.resize(img, (0, 0), fx=0.5, fy=0.5)
+    resize_img = cv.resize(img, (0, 0), fx=0.7, fy=0.7)
     gray_img = cv.cvtColor(resize_img, cv.COLOR_BGR2GRAY)
 
     # (Contrast Limited Adaptive Histogram Equalization) 
@@ -69,53 +68,11 @@ def preprocess_image(jpeg_file):
 
     # Increase the contrast of the image and decrease the brightness.
     new_img = np.zeros(clahe_img.shape, clahe_img.dtype)
-    alpha, beta = 1.5, -50
+    alpha, beta = 1.8, -50
     new_img = cv.convertScaleAbs(clahe_img, alpha=alpha, beta=beta)
 
-    return new_img, resize_img
+    return new_img
 
-
-def extract_detection_bg_color(detection, parent_img, orientation="original", iteration=0):
-
-    bounding_box = detection[0]
-
-    np_array = np.array(bounding_box).astype(int)
-
-    top_left = np_array[0]
-    top_right = np_array[1]
-    bottom_right = np_array[2]
-    bottom_left = np_array[3]
-
-    if orientation == "original":
-        color_1 = parent_img[top_left[1], top_left[0]]
-        color_2 = parent_img[top_right[1], top_right[0]]
-        color_3 = parent_img[bottom_right[1], bottom_right[0]]
-        color_4 = parent_img[bottom_left[1], bottom_left[0]]
-
-    elif orientation == "180":
-        color_1 = parent_img[top_left[1], top_left[0]]
-        color_2 = parent_img[top_right[1], top_right[0]]
-        color_3 = parent_img[bottom_right[1], bottom_right[0]]
-        color_4 = parent_img[bottom_left[1], bottom_left[0]]
-
-    elif orientation == "90":
-        color_1 = parent_img[top_left[0], top_left[1]]
-        color_2 = parent_img[top_right[0], top_right[1]]
-        color_3 = parent_img[bottom_right[0], bottom_right[1]]
-        color_4 = parent_img[bottom_left[0], bottom_left[1]]
-
-    elif orientation == "270":
-        color_1 = parent_img[top_left[0], top_left[1]]
-        color_2 = parent_img[top_right[0], top_right[1]]
-        color_3 = parent_img[bottom_right[0], bottom_right[1]]
-        color_4 = parent_img[bottom_left[0], bottom_left[1]]
-
-    # Average the colors
-    color = ((color_1 + color_2 + color_3 + color_4) / 4).astype(int)
-
-    # Convert to tuple
-    color = tuple(color)
-    return f"RGB({color})"
 
 
 
@@ -129,12 +86,25 @@ def identify_book_info(text):
     # Use OpenAI to identify the book information.
     messages = [
         {"role": "system", "content": """You know everything there is to know about every book in existence. 
-            You have a very important task. You will be provided with a string of text. Some of this text will be gibberish,
-            but some of it will contain the title and author of a book. Your task is to identify the book information from 
-            the text. There may also be other information in the text, such as publisher or award stickers. You may ignore this
-            information. You may also ignore any text that is not relevant to the book information. But be careful not to ignore 
-            any relevant information. You must identify the book information from the text. In most cases, the book's author 
-            and title will be in the text. But sometimes some information may be missing. Do your best in these cases.
+            You have a very important task. You will be provided with a string of text formatted as a list of all OCR detection
+            text. Some of this text will be gibberish, but some of it will contain the title and author of a book. Information
+            about the books may be split across multiple list items or lines. The detection text may be separated by author's first
+            name and last name, or they may be included in the same line. You must read through all the data before you can begin 
+            identifying the books.
+            
+            Your task is to identify the book information from the text. There may also be other information in the text, 
+            such as publisher or award stickers. You may ignore this information. You may also ignore any text that is not 
+            relevant to the book information. But be careful not to ignore any relevant information. You must identify the 
+            book information from the text. In most cases, the book's author and title will be in the text. 
+            But sometimes some information may be missing. Do your best in these cases.
+
+            Use information throughout the string and connect the dots to try and determine the exact edition of a book. For example,
+            if you see text that might be referencing the book "Pachinko by Min Jin Lee" and also see text that reads "10 Best Books, NY Times
+            Book Review 2017", you can infer that this info is located on the cover of one of the books. Then you can deduce that 
+            the book is the 2017 edition of "Pachinko" by Min Jin Lee. If there is only one version/ISBN of tha book that includes the 
+            additional information, then you may include the ISBN and all other possible information in your response. There is an example 
+            of the format of the response at the end of this prompt. But if you can figure out more info about a book, please add 
+            as many additional fields to the JSON response as you need. The more info, the better. 
          
             Once you have identified all the books in the text, please format your response as a JSON object with the following
             structure:
@@ -143,11 +113,22 @@ def identify_book_info(text):
                 "books": [
                     {
                         "title": "The Hidden Palace",
-                        "author": "Helene Wecker"
+                        "author": "Helene Wecker",
+                        "other_info": "Publisher might be HarperCollins"
                     },
                     {
                         "title": "The Night Circus",
-                        "author": "Erin Morgenstern"
+                        "author": "Erin Morgenstern",
+                        "other_info": "None"
+                    },
+                    {
+                        "title": "Pachinko",
+                        "author": "Min Jin Lee",
+                        "published": "February 7, 2017",
+                        "publisher": "Grand Central Publishing",
+                        "isbn": "9781455563937",
+                        "page_count": "496",
+                        "other_info": "10 Best Books, NY Times Book Review 2017, National Book Award Finalist, 2017"
                     }
                 ]
             }
@@ -157,7 +138,10 @@ def identify_book_info(text):
             {
                 "books": []
             }
-
+            
+            Important: MAKE SURE YOU DON'T MISS ANY BOOKS. Once you think you're done, go back through all text detections and 
+            make sure you haven't missed anything. There may be books that are not as obvious as others.
+         
             Here is the text for you to analyze: """ + text
         }
     ]
