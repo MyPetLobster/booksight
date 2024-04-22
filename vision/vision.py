@@ -17,43 +17,23 @@ GPT_TEMP = 0.5
 
 
 
+
 def main():
-    text = detect_text("vision/test_images/two_books.jpeg")
-    book_info = identify_book_info(text)
-    print(book_info)
+    now = time.time()
+    text = detect_text("vision/test_images/two_books_red.jpeg")
+    print(text)
+
+    # book_info = identify_book_info(text)
+    # print(book_info)
+
+    print(f"Time taken: {time.time() - now:.2f} seconds")
+    
+
 
 
 def detect_text(jpeg_file):
-    now = time.time()
-
-    # Load the image from the jpeg file.
-    img = cv.imread(jpeg_file)
-    
-    # Resize the image to a smaller size.
-    img = cv.resize(img, (0, 0), fx=0.5, fy=0.5)
-
-    # Convert the image to grayscale.
-    gray_img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-
-    # Increase the contrast of the image.
-    clahe = cv.createCLAHE(clipLimit=4, tileGridSize=(8, 8))
-
-    # Apply the contrast limited adaptive histogram equalization (CLAHE) to the image.
-    clahe_img = clahe.apply(gray_img)
-
-    # Apply a Gaussian blur to the image.
-    blur_img = cv.GaussianBlur(clahe_img, (5, 5), 0)
-
-    new_img = np.zeros(blur_img.shape, blur_img.dtype)
-
-    alpha = 1.3
-    beta = -50
-
-    new_img = cv.convertScaleAbs(blur_img, alpha=alpha, beta=beta)
-
-    # cv.imshow("FINAL", new_img)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
+    new_img, resized_original = preprocess_image(jpeg_file)
+    text_as_string = ""
 
     reader = easyocr.Reader(['en'], gpu=True)
 
@@ -62,29 +42,87 @@ def detect_text(jpeg_file):
     img_180 = cv.rotate(new_img, cv.ROTATE_180)
     img_270 = cv.rotate(new_img, cv.ROTATE_90_COUNTERCLOCKWISE)
 
-    result = reader.readtext(new_img)
-    result_90 = reader.readtext(img_90)
-    result_180 = reader.readtext(img_180)
-    result_270 = reader.readtext(img_270)
+    results = {}
 
-    # Combine the results from the four rotations.
-    result.extend(result_90)
-    result.extend(result_180)
-    result.extend(result_270)
+    results["original"] = reader.readtext(new_img)
+    results["180"] = reader.readtext(img_180)
+    results["90"] = reader.readtext(img_90)
+    results["270"] = reader.readtext(img_270)
 
-    text_as_string = ""
-
-    # detections stored as 3-tuples: (bbox, text, prob)
-    print("DETECTIONS:")
-    for detection in result:
-        if len(detection[1]) > 2:
-            # remove spaces 
-            print(detection[1].replace(" ", ""))
-            text_as_string += detection[1].replace(" ", "") + " "
-    
-    print("Time taken: ", time.time() - now)
-
+    for orientation, result in results.items():
+        if len(result) > 1:
+            for i in range (len(result)):
+                bg_color = extract_detection_bg_color(result[i], resized_original, orientation, i)
+                text_as_string += f"#{i}: \n " + "ocr_text: " + result[i][1].replace(" ", "") + " " + "\n" + "bg_color: " + bg_color + "\n\n"
+        
     return text_as_string
+
+
+def preprocess_image(jpeg_file):
+    img = cv.imread(jpeg_file)
+    resize_img = cv.resize(img, (0, 0), fx=0.5, fy=0.5)
+    gray_img = cv.cvtColor(resize_img, cv.COLOR_BGR2GRAY)
+
+    # (Contrast Limited Adaptive Histogram Equalization) 
+    clahe = cv.createCLAHE(clipLimit=4, tileGridSize=(8, 8))
+    clahe_img = clahe.apply(gray_img)
+
+    # Increase the contrast of the image and decrease the brightness.
+    new_img = np.zeros(clahe_img.shape, clahe_img.dtype)
+    alpha, beta = 1.5, -50
+    new_img = cv.convertScaleAbs(clahe_img, alpha=alpha, beta=beta)
+
+    return new_img, resize_img
+
+
+def extract_detection_bg_color(detection, parent_img, orientation="original", iteration=0):
+
+    bounding_box = detection[0]
+
+    np_array = np.array(bounding_box).astype(int)
+
+    top_left = np_array[0]
+    top_right = np_array[1]
+    bottom_right = np_array[2]
+    bottom_left = np_array[3]
+
+    if orientation == "original":
+        color_1 = parent_img[top_left[1], top_left[0]]
+        color_2 = parent_img[top_right[1], top_right[0]]
+        color_3 = parent_img[bottom_right[1], bottom_right[0]]
+        color_4 = parent_img[bottom_left[1], bottom_left[0]]
+
+    elif orientation == "180":
+        color_1 = parent_img[top_left[1], top_left[0]]
+        color_2 = parent_img[top_right[1], top_right[0]]
+        color_3 = parent_img[bottom_right[1], bottom_right[0]]
+        color_4 = parent_img[bottom_left[1], bottom_left[0]]
+
+    elif orientation == "90":
+        color_1 = parent_img[top_left[0], top_left[1]]
+        color_2 = parent_img[top_right[0], top_right[1]]
+        color_3 = parent_img[bottom_right[0], bottom_right[1]]
+        color_4 = parent_img[bottom_left[0], bottom_left[1]]
+
+    elif orientation == "270":
+        color_1 = parent_img[top_left[0], top_left[1]]
+        color_2 = parent_img[top_right[0], top_right[1]]
+        color_3 = parent_img[bottom_right[0], bottom_right[1]]
+        color_4 = parent_img[bottom_left[0], bottom_left[1]]
+
+    # Average the colors
+    color = ((color_1 + color_2 + color_3 + color_4) / 4).astype(int)
+
+    # Convert to tuple
+    color = tuple(color)
+    return f"RGB({color})"
+
+
+
+
+
+
+
 
 
 def identify_book_info(text):
@@ -134,8 +172,11 @@ def identify_book_info(text):
     return response.choices[0].message.content
     
 
-    
-
+## Dev functions
+def show_image(img):
+    cv.imshow('image', img)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
 
 
