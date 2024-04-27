@@ -1,11 +1,8 @@
 import time
-
-import cv2 as cv 
-import easyocr
+import cv2 as cv
 import numpy as np
-
+import easyocr
 from dotenv import load_dotenv
-
 
 
 load_dotenv()
@@ -13,21 +10,23 @@ load_dotenv()
 
 def main():
     start = time.time()
-    text = detect_text("vision/test_images/five_books.jpeg")
+    jpeg_file = "vision/test_images/test_full.jpeg"
+    new_image, new_height, new_width = preprocess_image(jpeg_file)
+    original_img = cv.imread(jpeg_file)
+    original_img = cv.resize(original_img, (new_width, new_height))
 
-    print(f"TEXT: \n {text}")
+    identify_spines(new_image, original_img)
+
     print(f"Total Time Taken: {time.time() - start:.2f} seconds")
-    
 
 
 def preprocess_image(jpeg_file):
     img = cv.imread(jpeg_file)
-
     height, width = img.shape[:2]
 
-    if height > 750:
-        scale = 750 / height
-        new_height = 750
+    if height > 1000:
+        scale = 1000 / height
+        new_height = 1000
         new_width = int(width * scale)
     else:
         new_height = height
@@ -36,73 +35,41 @@ def preprocess_image(jpeg_file):
     resize_img = cv.resize(img, (new_width, new_height))
     gray_img = cv.cvtColor(resize_img, cv.COLOR_BGR2GRAY)
 
-    # (Contrast Limited Adaptive Histogram Equalization) 
-    clahe = cv.createCLAHE(clipLimit=4, tileGridSize=(8, 8))
-    clahe_img = clahe.apply(gray_img)
+    # Apply Gaussian blur
+    blurred_img = cv.GaussianBlur(gray_img, (5, 5), 0)
 
-    # Increase the contrast of the image and decrease the brightness.
-    new_img = np.zeros(clahe_img.shape, clahe_img.dtype)
-    alpha, beta = 1.8, -50
-    new_img = cv.convertScaleAbs(clahe_img, alpha=alpha, beta=beta)
+    # Apply Canny edge detection with adaptive thresholding
+    edges = cv.adaptiveThreshold(
+        blurred_img, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 21, 10
+    )
 
-    cv.imwrite("vision/test_images/preprocessed_image.jpeg", new_img)
-    return new_img
+    return edges, new_height, new_width
 
 
-def detect_text(jpeg_file):
-    new_img = preprocess_image(jpeg_file)
-    text_as_string = ""
+def identify_spines(edges, original_img):
+    contours, _ = cv.findContours(
+        edges, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE
+    )
 
-    reader = easyocr.Reader(['en'], gpu=True)
-
-    # Rotate the image by 90, 180, and 270 degrees, and read the text in each rotated image.
-    img_90 = cv.rotate(new_img, cv.ROTATE_90_CLOCKWISE)
-    img_180 = cv.rotate(new_img, cv.ROTATE_180)
-    img_270 = cv.rotate(new_img, cv.ROTATE_90_COUNTERCLOCKWISE)
-
-    results = {}
-
-    results["original"] = reader.readtext(new_img)
-    results["180"] = reader.readtext(img_180)
-    results["90"] = reader.readtext(img_90)
-    results["270"] = reader.readtext(img_270)
-
-    for orientation, result in results.items():
-        if len(result) > 1:
-            for i in range (len(result)):
-                text_as_string += result[i][1].replace(" ", "") + " "
-        
-    return text_as_string
+    for contour in contours:
+        x, y, w, h = cv.boundingRect(contour)
+        aspect_ratio = h / w
+        if aspect_ratio > 3:
+            cv.rectangle(original_img, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
 
-
-
-
-
-
-
-
-
-
+    show_image(edges)
+    show_image(original_img)
+    cv.imwrite("vision/test_output/edges.jpeg", edges)
+    cv.imwrite("vision/test_output/original_img.jpeg", original_img)
     
 
-## Dev functions
+
 def show_image(img):
-    cv.imshow('image', img)
+    cv.imshow("Book Spine Detection", img)
     cv.waitKey(0)
     cv.destroyAllWindows()
 
 
-
-
-
-
-
-
-
-
-
-
 if __name__ == "__main__":
     main()
-
