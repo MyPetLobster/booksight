@@ -35,12 +35,16 @@ def preprocess_image(jpeg_file):
     resize_img = cv.resize(img, (new_width, new_height))
     gray_img = cv.cvtColor(resize_img, cv.COLOR_BGR2GRAY)
 
+    # Increase contrast
+    clahe = cv.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    gray_img = clahe.apply(gray_img)
+
     # Apply Gaussian blur
     blurred_img = cv.GaussianBlur(gray_img, (5, 5), 0)
-
-    # Apply Canny edge detection with adaptive thresholding
+    
+    # Apply edge detection with adaptive thresholding
     edges = cv.adaptiveThreshold(
-        blurred_img, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 21, 10
+        blurred_img, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 21, 3
     )
 
     return edges, new_height, new_width
@@ -48,20 +52,20 @@ def preprocess_image(jpeg_file):
 
 def identify_spines(edges, original_img):
     contours, _ = cv.findContours(
-        edges, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE
+        edges, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE
     )
 
     for contour in contours:
         x, y, w, h = cv.boundingRect(contour)
         aspect_ratio = h / w
-        if aspect_ratio > 3:
-            cv.rectangle(original_img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        if 2 <= aspect_ratio <= 10:
+            if h > original_img.shape[0] * 0.1:
+                cv.rectangle(original_img, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-
-    show_image(edges)
-    show_image(original_img)
-    cv.imwrite("vision/test_output/edges.jpeg", edges)
-    cv.imwrite("vision/test_output/original_img.jpeg", original_img)
+    # show_image(edges)
+    # show_image(original_img)
+    cv.imwrite("vision/progress_images/edges-240427-03.jpeg", edges)
+    cv.imwrite("vision/progress_images/boxes-240427-03.jpeg", original_img)
     
 
 
