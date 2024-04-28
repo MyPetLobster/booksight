@@ -19,14 +19,35 @@ transform = transforms.Compose([
 
 
 def calculate_brightness(image):
-    # Convert the image to greyscale
-    greyscale_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    # Convert the image to grayscale
+    grayscale_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     
     # Calculate the average brightness of the image
-    brightness = cv.mean(greyscale_image)
+    brightness = cv.mean(grayscale_image)
 
     # Return average brightness, range 0-255
     return brightness[0]
+
+
+def adjust_brightness(image, brightness):
+    # Adjust the brightness of the image
+    if 80 < brightness < 100:
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(1.2)
+    elif 50 < brightness < 80:
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(1.4)
+    elif brightness < 50:
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(1.6)
+    elif 140 < brightness < 160:
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(0.8)
+    elif brightness > 160:
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(0.6)
+    
+    return image
 
 
 def load_image(input_path):
@@ -35,31 +56,15 @@ def load_image(input_path):
     # Enhance the image
     img = ImageOps.autocontrast(img)
 
-    # Determine the brightness of the image
     brightness = calculate_brightness(cv.imread(input_path))
-    print(f"Image brightness: {brightness}")
-
-    if 80 < brightness < 100:
-        enhancer = ImageEnhance.Brightness(img)
-        img = enhancer.enhance(1.2)
-    elif 50 < brightness < 80:
-        enhancer = ImageEnhance.Brightness(img)
-        img = enhancer.enhance(1.4)
-    elif brightness < 50:
-        enhancer = ImageEnhance.Brightness(img)
-        img = enhancer.enhance(1.6)
-    elif 140 < brightness < 160:
-        enhancer = ImageEnhance.Brightness(img)
-        img = enhancer.enhance(0.8)
-    elif brightness > 160:
-        enhancer = ImageEnhance.Brightness(img)
-        img = enhancer.enhance(0.6)
+    img = adjust_brightness(img, brightness)
     
-    # Enhance edges
     img = img.filter(ImageFilter.EDGE_ENHANCE)
+
     img.show()
 
     img_tensor = transform(img)
+
     return img_tensor
 
 
