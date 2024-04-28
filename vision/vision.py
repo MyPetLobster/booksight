@@ -187,38 +187,35 @@ def main():
     jpeg_file = "vision/test_images/short-shelf.jpeg"
     spine_images = crop_spines(jpeg_file)
 
+    print("\nBook spines detected and saved in 'vision/spines' directory.\n")
+    print(f"Number of book spines detected: {len(spine_images)}\n")
+
     spine_detection_end = time.time()
     print(f"Spine detection complete. Time taken: {round(spine_detection_end - start, 2)} seconds\n")
 
+    print("\nCreating Spine objects...\n")
+    # Create a list of Spine objects, and assign the spine image path to each object (Spine.image_path)
+    spines = []
 
-    # Spine Color and Dimension Detection
-    print("\nDetecting spine color and dimensions...\n")
-    print("\nSpine color and dimensions detected:\n")
 
-    i = 0
     for spine_image in spine_images:
         avg_color, dominant_color = asp.analyze_color(spine_image)
         height, width = asp.find_spine_dimensions(spine_image)
-        print(f"Book_{i} - Average color: {avg_color}, Dominant color: {dominant_color}, Width: {width}, Height: {height}\n")
-        i += 1
-
-    spine_color_end = time.time()
-    print(f"\nSpine color and dimension detection complete. Time taken: {round(spine_color_end - spine_detection_end, 2)} seconds\n")
-
-
-    # Text Detection
-    print("\nBeginning text detection with EasyOCR...\n")
-    print("\nText detected on book spines:\n")
-    i = 0
-    for spine_image in spine_images:
         text = dt.detect_text(spine_image)
-        print(f"Book_{i} - {text} \n")
+        spine = Spine(spine_image, avg_color, dominant_color, height, width, text)
+        spines.append(spine)
+
+    spine_object_end = time.time()
+    print(f"Spine objects created. Time taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
+
+
+    # Print the Spine objects
+    print("\nPrinting Spine objects...\n")
+    i = 0
+    for spine in spines:
+        print(f"Book_{i}:\n {spine}")
         i += 1
-    
-    text_detection_end = time.time()
-    print(f"\nText detection complete. Time taken: {round(text_detection_end - spine_detection_end, 2)} seconds\n")
-
-
+    print("\nSpine objects printed.\n")
 
 
 
