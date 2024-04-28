@@ -2,16 +2,22 @@ from PIL import Image
 import numpy as np
 import cv2 as cv
 
-def analyze_color(image_path):
+def analyze_spine(image_path):
     # Load the image
     image = Image.open(image_path)
     image_array = np.array(image, dtype=np.uint8)  # Ensure the array is uint8
+
+    # Get the dimensions of the image and x y coordinates
+    x, y, height, width = find_spine_dimensions(image_path)
+
+    # Crop the image to the spine
+    image_array = image_array[y:y + height, x:x + width]
 
     # Process colors
     average_color = find_average_color(image_array)
     dominant_color = find_dominant_color(image_array)
 
-    return average_color, dominant_color
+    return average_color, dominant_color, height, width
 
 def find_average_color(image_array):
     # Calculate the average color of the image
@@ -48,6 +54,6 @@ def find_spine_dimensions(image_path):
     if contours:
         largest_contour = max(contours, key=cv.contourArea)
         x, y, w, h = cv.boundingRect(largest_contour)
-        return h, w
+        return x, y, h, w
     else:
         return 0, 0  # Return 0,0 if no contours found
