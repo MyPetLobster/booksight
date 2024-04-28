@@ -1,5 +1,6 @@
 import os
 import shutil
+import time
 
 import cv2 as cv
 import easyocr as ocr
@@ -54,8 +55,10 @@ def adjust_brightness(image, brightness):
 
 
 def load_image(input_path):
+    print("\nLoading image...\n")
     img = Image.open(input_path).convert("RGB")
     
+    print("\nEnhancing image...\n")
     # Enhance the image
     img = ImageOps.autocontrast(img)
 
@@ -64,7 +67,8 @@ def load_image(input_path):
     
     img = img.filter(ImageFilter.EDGE_ENHANCE)
 
-    img.show()
+    img.show("Enhanced Image")
+    print("\nApplying tensor transformation...\n")
 
     img_tensor = transform(img)
 
@@ -72,16 +76,19 @@ def load_image(input_path):
 
 
 def predict(model, img_tensor):
+    print("\nPerforming prediction...\n")
     with torch.no_grad():
         prediction = model([img_tensor])
     return prediction
 
 
 def draw_boxes(img, prediction):
+    print("\nDrawing bounding boxes...\n")
     plt.figure(figsize=(12, 8))
     plt.imshow(img)
     ax = plt.gca()
 
+    print("\nProcessing detected objects...\n")
     book_count = 0
     total_book_height = 0
     total_book_thickness = 0
@@ -96,8 +103,9 @@ def draw_boxes(img, prediction):
     average_book_height = total_book_height / book_count
     average_book_thickness = total_book_thickness / book_count
 
-    print(f"Average book height: {average_book_height}")
-    print(f"Average book thickness: {average_book_thickness}")
+    print(f"\nPreliminary statistics:\n")
+    print(f"\nAverage book height: {round(float(average_book_height), 2)} pixels")
+    print(f"\nAverage book thickness: {round(float(average_book_thickness), 2)} pixels\n")
 
     book_count = 0
     valid_books = []
@@ -118,7 +126,7 @@ def draw_boxes(img, prediction):
                                      linewidth=1, edgecolor='r', facecolor='none')
                 ax.add_patch(rect)
 
-    print(f"Number of books detected: {book_count}")
+    print(f"\nNumber of books detected: {book_count}\n\n")
     plt.show()
     return valid_books
 
@@ -142,6 +150,7 @@ def detect_spines(jpeg_file):
 
 
 def crop_spines(jpeg_file):
+    print("\nCropping book spines (see /spines/ dir)...\n")
     # Empty the 'vision/spines' directory
     empty_directory("vision/spines")
 
@@ -159,20 +168,32 @@ def crop_spines(jpeg_file):
         book_img_path = f"vision/spines/book_{i}.jpeg"
         list_of_spine_images.append(book_img_path)
 
-    print(list_of_spine_images)
     return list_of_spine_images
 
 
 def main():
+    start = time.time()
+
+    print("\nDetecting book spines in the image...\n")
+
     jpeg_file = "vision/test_images/short-shelf.jpeg"
     spine_images = crop_spines(jpeg_file)
 
+    spine_detection_end = time.time()
+    print(f"Spine detection complete. Time taken: {round(spine_detection_end - start, 2)} seconds\n")
+
+    print("\nBeginning text detection with EasyOCR...\n")
     print("\nText detected on book spines:\n")
     i = 0
     for spine_image in spine_images:
         text = dt.detect_text(spine_image)
         print(f"Book_{i} - {text} \n")
         i += 1
+    
+    end = time.time()
+    
+    print(f"\nText detection complete. Time taken: {round(end - spine_detection_end, 2)} seconds\n")
+    print(f"\nTotal time taken: {round(end - start, 2)} seconds\n")
 
 
 # delete all files in a directory, but keep the directory
