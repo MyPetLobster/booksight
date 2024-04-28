@@ -30,9 +30,8 @@ def load_image(input_path):
     img = Image.open(input_path).convert("RGB")
     
     # Enhance the image
-    enhancer = ImageEnhance.Contrast(img)
-    img = enhancer.enhance(1.3)
-
+    img = ImageOps.autocontrast(img)
+    
     # Determine the brightness of the image
     brightness = calculate_brightness(cv.imread(input_path))
     print(f"Image brightness: {brightness}")
@@ -44,7 +43,6 @@ def load_image(input_path):
         enhancer = ImageEnhance.Brightness(img)
         img = enhancer.enhance(0.8)
     
-    img = ImageOps.autocontrast(img)
 
 
     # Enhance edges
