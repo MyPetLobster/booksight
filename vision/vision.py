@@ -2,6 +2,7 @@ import os
 import shutil
 
 import cv2 as cv
+import easyocr as ocr
 import torch
 from torchvision import models, transforms
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
@@ -55,8 +56,6 @@ def load_image(input_path):
         enhancer = ImageEnhance.Brightness(img)
         img = enhancer.enhance(0.6)
     
-
-
     # Enhance edges
     img = img.filter(ImageFilter.EDGE_ENHANCE)
     img.show()
@@ -135,9 +134,10 @@ def detect_spines(jpeg_file):
     return valid_books
 
 
-def main():
-    book_boxes = detect_spines("vision/test_images/test_full.jpeg")
-    
+def crop_spines(jpeg_file):
+    book_boxes = detect_spines(jpeg_file)
+    list_of_spine_images = []
+
     # Create a new image for each book spine and save in 'vision/spines' directory
     original_img = Image.open("vision/test_images/test_full.jpeg")
     for i, box in enumerate(book_boxes):
@@ -145,6 +145,23 @@ def main():
         x1, y1, x2, y2 = map(int, box.tolist())
         book_img = original_img.crop((x1, y1, x2, y2))
         book_img.save(f"vision/spines/book_{i}.jpeg")
+        book_img_path = f"vision/spines/book_{i}.jpeg"
+        list_of_spine_images.append(book_img_path)
+
+    print(list_of_spine_images)
+    return list_of_spine_images
+
+
+def extract_text(spine_images):
+    print("Extracting text from spine images...")
+    print (spine_images)
+
+
+def main():
+    jpeg_file = "vision/test_images/test_full.jpeg"
+    spine_images = crop_spines(jpeg_file)
+    spine_texts = extract_text(spine_images)
+
 
 
 
