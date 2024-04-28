@@ -16,25 +16,15 @@ transform = transforms.Compose([
 def load_image(input_path):
     img = Image.open(input_path).convert("RGB")
 
+
     # Enhance the image
     enhancer = ImageEnhance.Contrast(img)
-    img = enhancer.enhance(1.2)  
-
-    enhancer = ImageEnhance.Sharpness(img)
-    img = enhancer.enhance(2.0)  
-
+    img = enhancer.enhance(1.1)
     enhancer = ImageEnhance.Brightness(img)
-    img = enhancer.enhance(1.2)  
-
-    enhancer = ImageEnhance.Color(img)
-    img = enhancer.enhance(0.8)  
-
-    img = img.filter(ImageFilter.MedianFilter(size=3))  
-    img = ImageOps.equalize(img, mask=None)
-    img = ImageOps.autocontrast(img, cutoff=0, ignore=None)
+    img = enhancer.enhance(1.1)
 
     # Enhance edges
-    img = img.filter(ImageFilter.EDGE_ENHANCE)
+    img = img.filter(ImageFilter.EDGE_ENHANCE_MORE)
     img.show()
 
     img_tensor = transform(img)
@@ -50,17 +40,20 @@ def draw_boxes(img, prediction):
     plt.imshow(img)
     ax = plt.gca()
 
+    book_count = 0
     # Check for each detected object
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
-        if score > 0.8 and label == 84:  # Label 84 is 'book' in COCO
+        if score > 0.9 and label == 84:  # Label 84 is 'book' in COCO
+            book_count += 1
             box = element.detach().cpu().numpy()
             rect = patches.Rectangle((box[0], box[1]), box[2] - box[0], box[3] - box[1],
                                      linewidth=1, edgecolor='r', facecolor='none')
             ax.add_patch(rect)
+    print(f"Number of books detected: {book_count}")
     plt.show()
 
-def main():
-    input_img = "vision/test_images/test_full.jpeg"
+def detect_spines(jpeg_file):
+    input_img = jpeg_file
     
     # Load and transform the image
     img_tensor = load_image(input_img)
@@ -76,6 +69,12 @@ def main():
 
     # Return the coordinates of the bounding boxes
     print(prediction[0]['boxes'])
+
+
+def main():
+    detect_spines("vision/test_images/test_full.jpeg")
+
+
 
 
 if __name__ == "__main__":
