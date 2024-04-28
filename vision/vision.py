@@ -15,11 +15,11 @@ transform = transforms.Compose([
 
 def load_image(input_path):
     img = Image.open(input_path).convert("RGB")
-
+    
 
     # Enhance the image
     enhancer = ImageEnhance.Contrast(img)
-    img = enhancer.enhance(1.1)
+    img = enhancer.enhance(1.3)
     enhancer = ImageEnhance.Brightness(img)
     img = enhancer.enhance(1.1)
 
@@ -41,14 +41,36 @@ def draw_boxes(img, prediction):
     ax = plt.gca()
 
     book_count = 0
-    # Check for each detected object
+    total_book_height = 0
+    total_book_thickness = 0
+
+
+    # Check for each detected object, determine average book height
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
-        if score > 0.9 and label == 84:  # Label 84 is 'book' in COCO
+        if score > 0.7 and label == 84:  # Label 84 is 'book' in COCO
+            total_book_height += element[3] - element[1]
+            total_book_thickness += element[2] - element[0]
             book_count += 1
+
+    average_book_height = total_book_height / book_count
+    average_book_thickness = total_book_thickness / book_count
+
+    book_count = 0
+
+    # Remove outliers, draw bounding boxes
+    for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
+        if score > 0.7 and label == 84:  # Label 84 is 'book' in COCO
             box = element.detach().cpu().numpy()
-            rect = patches.Rectangle((box[0], box[1]), box[2] - box[0], box[3] - box[1],
+            if box[3] - box[1] > average_book_height * 1.4 or box[3] - box[1] < average_book_height * 0.7:
+                continue
+            elif box[2] - box[0] > average_book_thickness * 2.5 or box[2] - box[0] < average_book_thickness * 0.3:
+                continue
+            else: 
+                book_count += 1
+                rect = patches.Rectangle((box[0], box[1]), box[2] - box[0], box[3] - box[1],
                                      linewidth=1, edgecolor='r', facecolor='none')
-            ax.add_patch(rect)
+                ax.add_patch(rect)
+
     print(f"Number of books detected: {book_count}")
     plt.show()
 
@@ -63,6 +85,7 @@ def detect_spines(jpeg_file):
     
     # Load the original image to draw on
     img = Image.open(input_img)
+
     
     # Draw bounding boxes on the image and display it
     draw_boxes(img, prediction)
