@@ -1,3 +1,6 @@
+import os
+import shutil
+
 import cv2 as cv
 import torch
 from torchvision import models, transforms
@@ -31,17 +34,26 @@ def load_image(input_path):
     
     # Enhance the image
     img = ImageOps.autocontrast(img)
-    
+
     # Determine the brightness of the image
     brightness = calculate_brightness(cv.imread(input_path))
     print(f"Image brightness: {brightness}")
 
-    if brightness < 100:
+    if 80 < brightness < 100:
         enhancer = ImageEnhance.Brightness(img)
         img = enhancer.enhance(1.2)
-    elif brightness > 200:
+    elif 50 < brightness < 80:
+        enhancer = ImageEnhance.Brightness(img)
+        img = enhancer.enhance(1.4)
+    elif brightness < 50:
+        enhancer = ImageEnhance.Brightness(img)
+        img = enhancer.enhance(1.6)
+    elif 140 < brightness < 160:
         enhancer = ImageEnhance.Brightness(img)
         img = enhancer.enhance(0.8)
+    elif brightness > 160:
+        enhancer = ImageEnhance.Brightness(img)
+        img = enhancer.enhance(0.6)
     
 
 
@@ -70,7 +82,7 @@ def draw_boxes(img, prediction):
 
     # Check for each detected object, determine average book height
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
-        if score > 0.7 and label == 84:  # Label 84 is 'book' in COCO
+        if score > 0.8 and label == 84:  # Label 84 is 'book' in COCO
             total_book_height += element[3] - element[1]
             total_book_thickness += element[2] - element[0]
             book_count += 1
@@ -78,7 +90,11 @@ def draw_boxes(img, prediction):
     average_book_height = total_book_height / book_count
     average_book_thickness = total_book_thickness / book_count
 
+    print(f"Average book height: {average_book_height}")
+    print(f"Average book thickness: {average_book_thickness}")
+
     book_count = 0
+    valid_books = []
 
     # Remove outliers, draw bounding boxes
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
@@ -90,12 +106,15 @@ def draw_boxes(img, prediction):
                 continue
             else: 
                 book_count += 1
+                valid_books.append(box)
+                
                 rect = patches.Rectangle((box[0], box[1]), box[2] - box[0], box[3] - box[1],
                                      linewidth=1, edgecolor='r', facecolor='none')
                 ax.add_patch(rect)
 
     print(f"Number of books detected: {book_count}")
     plt.show()
+    return valid_books
 
 
 def detect_spines(jpeg_file):
@@ -111,14 +130,21 @@ def detect_spines(jpeg_file):
     img = Image.open(input_img)
 
     # Draw bounding boxes on the image and display it
-    draw_boxes(img, prediction)
+    valid_books = draw_boxes(img, prediction)
 
-    # Return the coordinates of the bounding boxes
-    print(prediction[0]['boxes'])
+    return valid_books
 
 
 def main():
-    detect_spines("vision/test_images/test_full.jpeg")
+    book_boxes = detect_spines("vision/test_images/test_full.jpeg")
+    
+    # Create a new image for each book spine and save in 'vision/spines' directory
+    original_img = Image.open("vision/test_images/test_full.jpeg")
+    for i, box in enumerate(book_boxes):
+        # Convert tensor to list of integers
+        x1, y1, x2, y2 = map(int, box.tolist())
+        book_img = original_img.crop((x1, y1, x2, y2))
+        book_img.save(f"vision/spines/book_{i}.jpeg")
 
 
 
