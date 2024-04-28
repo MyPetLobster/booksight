@@ -10,7 +10,9 @@ from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+from classes import Spine
 import detect_text as dt
+import analyze_spine as asp
 
 # Load a pre-trained Faster R-CNN model
 model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
@@ -171,9 +173,15 @@ def crop_spines(jpeg_file):
     return list_of_spine_images
 
 
+
+
+
+
+
 def main():
     start = time.time()
 
+    # Spine Detection
     print("\nDetecting book spines in the image...\n")
 
     jpeg_file = "vision/test_images/short-shelf.jpeg"
@@ -182,6 +190,23 @@ def main():
     spine_detection_end = time.time()
     print(f"Spine detection complete. Time taken: {round(spine_detection_end - start, 2)} seconds\n")
 
+
+    # Spine Color and Dimension Detection
+    print("\nDetecting spine color and dimensions...\n")
+    print("\nSpine color and dimensions detected:\n")
+
+    i = 0
+    for spine_image in spine_images:
+        avg_color, dominant_color = asp.analyze_color(spine_image)
+        height, width = asp.find_spine_dimensions(spine_image)
+        print(f"Book_{i} - Average color: {avg_color}, Dominant color: {dominant_color}, Width: {width}, Height: {height}\n")
+        i += 1
+
+    spine_color_end = time.time()
+    print(f"\nSpine color and dimension detection complete. Time taken: {round(spine_color_end - spine_detection_end, 2)} seconds\n")
+
+
+    # Text Detection
     print("\nBeginning text detection with EasyOCR...\n")
     print("\nText detected on book spines:\n")
     i = 0
@@ -190,9 +215,15 @@ def main():
         print(f"Book_{i} - {text} \n")
         i += 1
     
+    text_detection_end = time.time()
+    print(f"\nText detection complete. Time taken: {round(text_detection_end - spine_detection_end, 2)} seconds\n")
+
+
+
+
+
+    print("\nAll processes complete.\n")
     end = time.time()
-    
-    print(f"\nText detection complete. Time taken: {round(end - spine_detection_end, 2)} seconds\n")
     print(f"\nTotal time taken: {round(end - start, 2)} seconds\n")
 
 
