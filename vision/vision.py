@@ -1,3 +1,4 @@
+import cv2 as cv
 import torch
 from torchvision import models, transforms
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
@@ -13,27 +14,52 @@ transform = transforms.Compose([
     transforms.ToTensor(),
 ])
 
+
+def calculate_brightness(image):
+    # Convert the image to greyscale
+    greyscale_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    
+    # Calculate the average brightness of the image
+    brightness = cv.mean(greyscale_image)
+
+    # Return average brightness, range 0-255
+    return brightness[0]
+
+
 def load_image(input_path):
     img = Image.open(input_path).convert("RGB")
     
-
     # Enhance the image
     enhancer = ImageEnhance.Contrast(img)
     img = enhancer.enhance(1.3)
-    enhancer = ImageEnhance.Brightness(img)
-    img = enhancer.enhance(1.1)
+
+    # Determine the brightness of the image
+    brightness = calculate_brightness(cv.imread(input_path))
+    print(f"Image brightness: {brightness}")
+
+    if brightness < 100:
+        enhancer = ImageEnhance.Brightness(img)
+        img = enhancer.enhance(1.2)
+    elif brightness > 200:
+        enhancer = ImageEnhance.Brightness(img)
+        img = enhancer.enhance(0.8)
+    
+    img = ImageOps.autocontrast(img)
+
 
     # Enhance edges
-    img = img.filter(ImageFilter.EDGE_ENHANCE_MORE)
+    img = img.filter(ImageFilter.EDGE_ENHANCE)
     img.show()
 
     img_tensor = transform(img)
     return img_tensor
 
+
 def predict(model, img_tensor):
     with torch.no_grad():
         prediction = model([img_tensor])
     return prediction
+
 
 def draw_boxes(img, prediction):
     plt.figure(figsize=(12, 8))
@@ -43,7 +69,6 @@ def draw_boxes(img, prediction):
     book_count = 0
     total_book_height = 0
     total_book_thickness = 0
-
 
     # Check for each detected object, determine average book height
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
@@ -74,6 +99,7 @@ def draw_boxes(img, prediction):
     print(f"Number of books detected: {book_count}")
     plt.show()
 
+
 def detect_spines(jpeg_file):
     input_img = jpeg_file
     
@@ -86,7 +112,6 @@ def detect_spines(jpeg_file):
     # Load the original image to draw on
     img = Image.open(input_img)
 
-    
     # Draw bounding boxes on the image and display it
     draw_boxes(img, prediction)
 
