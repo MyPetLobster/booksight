@@ -1,6 +1,3 @@
-import os
-import shutil
-
 import cv2 as cv
 import easyocr as ocr
 import torch
@@ -8,6 +5,8 @@ from torchvision import models, transforms
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+
+import detect_text as dt
 
 # Load a pre-trained Faster R-CNN model
 model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
@@ -139,7 +138,7 @@ def crop_spines(jpeg_file):
     list_of_spine_images = []
 
     # Create a new image for each book spine and save in 'vision/spines' directory
-    original_img = Image.open("vision/test_images/test_full.jpeg")
+    original_img = Image.open(jpeg_file)
     for i, box in enumerate(book_boxes):
         # Convert tensor to list of integers
         x1, y1, x2, y2 = map(int, box.tolist())
@@ -152,18 +151,16 @@ def crop_spines(jpeg_file):
     return list_of_spine_images
 
 
-def extract_text(spine_images):
-    print("Extracting text from spine images...")
-    print (spine_images)
-
-
 def main():
-    jpeg_file = "vision/test_images/test_full.jpeg"
+    jpeg_file = "vision/test_images/short-shelf.jpeg"
     spine_images = crop_spines(jpeg_file)
-    spine_texts = extract_text(spine_images)
 
-
-
+    print("\nText detected on book spines:\n")
+    i = 0
+    for spine_image in spine_images:
+        text = dt.detect_text(spine_image)
+        print(f"Book_{i} - {text} \n")
+        i += 1
 
 
 if __name__ == "__main__":
