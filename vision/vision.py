@@ -197,7 +197,8 @@ def main():
     # Spine Detection
     print("\nDetecting book spines in the image...\n")
 
-    jpeg_file = "vision/test_images/short-shelf.jpeg"
+    jpeg_file = "vision/test_images/full-shelves.jpeg"
+
     spine_images, spine_count = crop_spines(jpeg_file)
 
     print("\nBook spines detected and saved in 'vision/spines' directory.\n")
