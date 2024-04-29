@@ -167,8 +167,6 @@ def detect_spines(jpeg_file):
 
 def crop_spines(jpeg_file):
     print("\nCropping book spines (see /spines/ dir)...\n")
-    # Empty the 'vision/spines' directory
-    util.empty_directory("vision/spines")
 
     # Detect book spines in the image
     book_boxes = detect_spines(jpeg_file)

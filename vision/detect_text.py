@@ -1,6 +1,27 @@
+import time
+
 import cv2 as cv
 import numpy as np
 import easyocr as ocr
+
+
+
+
+def draw_bounding_boxes(image, detections):
+    # Make sure to create a copy of the image to not overwrite the original one
+    image_with_boxes = image.copy()
+    
+    for detection in detections:
+        # EasyOCR returns the bounding box as a list of vertices starting top left clockwise
+        bbox, text, _ = detection
+        top_left = tuple(map(int, bbox[0]))  # Top left corner
+        bottom_right = tuple(map(int, bbox[2]))  # Bottom right corner
+        
+        cv.rectangle(image_with_boxes, top_left, bottom_right, (0, 255, 0), 5)
+        cv.putText(image_with_boxes, text, top_left, cv.FONT_HERSHEY_COMPLEX_SMALL, 0.65, (255, 0, 0), 2)
+    
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+    cv.imwrite(f"vision/debug_images/text_detection_{timestamp}.jpeg", image_with_boxes)
 
 
 
@@ -58,23 +79,31 @@ def detect_text(image_path):
     
     original_image = cv.imread(image_path)
     preprocessed_image = preprocess(original_image, True)
-    result_00 = reader.readtext(preprocessed_image, detail=0)
+    result_00 = reader.readtext(preprocessed_image, detail=1)
+    draw_bounding_boxes(preprocessed_image, result_00)
 
     # Rotate original image once and then preprocess
     rotated_image = cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE)
     preprocessed_image_90 = preprocess(rotated_image, True)
-    result_90 = reader.readtext(preprocessed_image_90, detail=0)
+    result_90 = reader.readtext(preprocessed_image_90, detail=1)
+    draw_bounding_boxes(preprocessed_image_90, result_90)
 
     # If processing without threshold, do it from the original image
     image_00_no_thresh = preprocess(original_image, False)
-    result_00_no_thresh = reader.readtext(image_00_no_thresh, detail=0)
+    result_00_no_thresh = reader.readtext(image_00_no_thresh, detail=1)
+    draw_bounding_boxes(image_00_no_thresh, result_00_no_thresh)
 
     image_90_no_thresh = preprocess(rotated_image, False)
-    result_90_no_thresh = reader.readtext(image_90_no_thresh, detail=0)
+    result_90_no_thresh = reader.readtext(image_90_no_thresh, detail=1)
+    draw_bounding_boxes(image_90_no_thresh, result_90_no_thresh)
 
-    book_text_list = result_00 + result_90 + result_00_no_thresh + result_90_no_thresh
+    book_text_list = [text for bbox, text, _ in result_00]
+    book_text_list += [text for bbox, text, _ in result_90]
+    book_text_list += [text for bbox, text, _ in result_00_no_thresh]
+    book_text_list += [text for bbox, text, _ in result_90_no_thresh]
+
     book_text_list = [text for text in book_text_list if len(text) > 2]
-    book_text_list = list(set(book_text_list))
+    book_text_list = list(set(book_text_list)) # Remove dupes
 
     book_text_string = ", ".join(book_text_list)
 

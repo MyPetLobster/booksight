@@ -2,14 +2,22 @@ import time
 
 from classes import Spine
 
+import analyze_spine as asp
 import detect_spines as ds
 import detect_text as dt
-import analyze_spine as asp
+import utility as util
+
 
 
 
 def vision():
+    util.empty_directory("vision/debug_images")
+    util.empty_directory("vision/spines")
+
     jpeg_file = input("\nEnter the path to the image file: ")
+    if jpeg_file == "":
+        jpeg_file = "vision/test_images/small-shelf.jpeg"
+        print(f"\nUsing default image: {jpeg_file}\n")
 
     start = time.time()
 
@@ -48,11 +56,21 @@ def vision():
 
     print(f"\nSpine objects created. Time taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
 
-    # # Scan entire image for text
-    # spine_text_as_string = ""
-    # for spine in spines:
-    #     spine_text_as_string += spine.text + " "
 
+    # Get all text scanned from spines
+    all_spine_text = []
+    for spine in spines:
+        all_spine_text += spine.text
+    
+    # Scan original image for text
+    full_image_text = dt.detect_text(jpeg_file)
+    full_image_text = [text for text in full_image_text if len(text) > 2]
+    
+    full_image_text_unique = [text for text in full_image_text if text not in all_spine_text] 
+
+    print("\n************************************************")
+    print(f"\nAll additional unique text detected from full image:\n\n{full_image_text_unique}\n")
+    print("************************************************\n\n")
     
 
     print("\nAll processes complete.\n")
