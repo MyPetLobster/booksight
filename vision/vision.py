@@ -23,6 +23,7 @@ transform = transforms.Compose([
     transforms.ToTensor(),
 ])
 
+book_count = 0 
 
 def calculate_brightness(image):
     # Convert the image to grayscale
@@ -183,10 +184,9 @@ def crop_spines(jpeg_file):
         book_img_path = f"vision/spines/book_{i}.jpeg"
         list_of_spine_images.append(book_img_path)
 
-    return list_of_spine_images
+    spine_count = len(list_of_spine_images)
 
-
-
+    return list_of_spine_images, spine_count
 
 
 
@@ -198,7 +198,7 @@ def main():
     print("\nDetecting book spines in the image...\n")
 
     jpeg_file = "vision/test_images/short-shelf.jpeg"
-    spine_images = crop_spines(jpeg_file)
+    spine_images, spine_count = crop_spines(jpeg_file)
 
     print("\nBook spines detected and saved in 'vision/spines' directory.\n")
     print(f"Number of book spines detected: {len(spine_images)}\n")
@@ -206,7 +206,14 @@ def main():
     spine_detection_end = time.time()
     print(f"Spine detection complete. Time taken: {round(spine_detection_end - start, 2)} seconds\n")
 
-    print("\nCreating Spine objects. This may take several minutes...\n")
+    if spine_count == 0:
+        print("\nNo books detected. Exiting program.\n")
+        return
+    elif 0 < spine_count < 20:
+        print("\nCreating Spine objects. This may take several minutes...\n")
+    else:
+        print("\nCreating Spine objects. This image contains a lot of books. Go stretch your legs. This may take a while...\n")
+
     # Create a list of Spine objects, and assign the spine image path to each object (Spine.image_path)
     spines = []
 
