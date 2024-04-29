@@ -8,14 +8,12 @@ import easyocr as ocr
 
 
 def draw_bounding_boxes(image, detections):
-    # Make sure to create a copy of the image to not overwrite the original one
     image_with_boxes = image.copy()
     
     for detection in detections:
-        # EasyOCR returns the bounding box as a list of vertices starting top left clockwise
         bbox, text, _ = detection
-        top_left = tuple(map(int, bbox[0]))  # Top left corner
-        bottom_right = tuple(map(int, bbox[2]))  # Bottom right corner
+        top_left = tuple(map(int, bbox[0])) 
+        bottom_right = tuple(map(int, bbox[2]))  
         
         cv.rectangle(image_with_boxes, top_left, bottom_right, (0, 255, 0), 5)
         cv.putText(image_with_boxes, text, top_left, cv.FONT_HERSHEY_COMPLEX_SMALL, 0.65, (255, 0, 0), 2)
