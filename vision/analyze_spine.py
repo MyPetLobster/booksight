@@ -36,6 +36,7 @@ def find_dominant_color(image_array):
     dominant_color = np.array(most_frequent_index) * 8
     return dominant_color
 
+
 def find_spine_dimensions(image_path):
     # Load the image and convert to a proper NumPy array
     image = Image.open(image_path)
@@ -44,16 +45,33 @@ def find_spine_dimensions(image_path):
     # Convert the image to grayscale
     gray = cv.cvtColor(image_array, cv.COLOR_BGR2GRAY)
 
+    # Apply adaptive thresholding to highlight the spine
+    adaptive_thresh = cv.adaptiveThreshold(gray, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                           cv.THRESH_BINARY, 11, 2)
+
     # Apply edge detection
-    edges = cv.Canny(gray, 50, 150, apertureSize=3)
+    edges = cv.Canny(adaptive_thresh, 50, 150, apertureSize=3)
 
     # Find the contours in the image
     contours, _ = cv.findContours(edges, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
-    # Check if contours are found
-    if contours:
-        largest_contour = max(contours, key=cv.contourArea)
+    # Filter out contours that do not have the typical aspect ratio of a book spine
+    potential_spines = [cnt for cnt in contours if is_spine(cnt)]
+
+    # Select the contour with the largest area, which should be the spine
+    if potential_spines:
+        largest_contour = max(potential_spines, key=cv.contourArea)
         x, y, w, h = cv.boundingRect(largest_contour)
+        cv.imshow("Spine", image_array[y:y + h, x:x + w])
+        cv.waitKey(0)
+        cv.destroyAllWindows()
         return x, y, h, w
     else:
-        return 0, 0  # Return 0,0 if no contours found
+        return 0, 0, 0, 0  # Return zeros if no spine-like contours are found
+
+def is_spine(contour):
+    _, _, w, h = cv.boundingRect(contour)
+    aspect_ratio = h / w
+    # Assuming that a book spine has a height greater than its width and within a reasonable range
+    return aspect_ratio > 2 and h > 100  # height threshold to avoid very small contours
+

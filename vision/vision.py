@@ -199,21 +199,20 @@ def main():
 
 
     for spine_image in spine_images:
-        avg_color, dominant_color = asp.analyze_color(spine_image)
-        height, width = asp.find_spine_dimensions(spine_image)
+        avg_color, dominant_color, height, width = asp.analyze_spine(spine_image)
         text = dt.detect_text(spine_image)
         spine = Spine(spine_image, avg_color, dominant_color, height, width, text)
         spines.append(spine)
 
     spine_object_end = time.time()
-    print(f"Spine objects created. Time taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
+    print(f"\nSpine objects created. Time taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
 
 
     # Print the Spine objects
     print("\nPrinting Spine objects...\n")
     i = 0
     for spine in spines:
-        print(f"Book_{i}:\n {spine}")
+        print(f"\nBook_{i}:\n{spine}\n")
         i += 1
     print("\nSpine objects printed.\n")
 
