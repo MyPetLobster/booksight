@@ -69,7 +69,13 @@ def load_image(input_path):
     
     img = img.filter(ImageFilter.EDGE_ENHANCE)
 
-    img.show("Enhanced Image")
+    # img.show("Enhanced Image")
+
+    if os.path.exists("vision/spines/enhanced_image.jpeg"):
+        os.remove("vision/spines/enhanced_image.jpeg")
+    img.save("vision/spines/enhanced_image.jpeg")
+    print("\nEnhanced image saved as 'vision/spines/enhanced_image.jpeg'\n")
+
     print("\nApplying tensor transformation...\n")
 
     img_tensor = transform(img)
@@ -129,7 +135,14 @@ def draw_boxes(img, prediction):
                 ax.add_patch(rect)
 
     print(f"\nNumber of books detected: {book_count}\n\n")
-    plt.show()
+    print("Image with bounding boxes saved as 'vision/spines/full_detected.jpeg'\n")
+    # plt.show()
+    # delete old full_detected.jpeg
+    if os.path.exists("vision/spines/full_detected.jpeg"):
+        os.remove("vision/spines/full_detected.jpeg")
+
+    plt.savefig("vision/spines/full_detected.jpeg")
+
     return valid_books
 
 
@@ -193,29 +206,22 @@ def main():
     spine_detection_end = time.time()
     print(f"Spine detection complete. Time taken: {round(spine_detection_end - start, 2)} seconds\n")
 
-    print("\nCreating Spine objects...\n")
+    print("\nCreating Spine objects. This may take several minutes...\n")
     # Create a list of Spine objects, and assign the spine image path to each object (Spine.image_path)
     spines = []
 
-
+    i = 0
     for spine_image in spine_images:
-        avg_color, dominant_color, height, width = asp.analyze_spine(spine_image)
+        avg_color, dominant_color, color_palette, height, width = asp.analyze_spine(spine_image)
         text = dt.detect_text(spine_image)
-        spine = Spine(spine_image, avg_color, dominant_color, height, width, text)
+        spine = Spine(spine_image, avg_color, dominant_color, color_palette, height, width, text)
         spines.append(spine)
+
+        print(f"\nBook_{i}:\n{spine}\n")
+        i += 1
 
     spine_object_end = time.time()
     print(f"\nSpine objects created. Time taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
-
-
-    # Print the Spine objects
-    print("\nPrinting Spine objects...\n")
-    i = 0
-    for spine in spines:
-        print(f"\nBook_{i}:\n{spine}\n")
-        i += 1
-    print("\nSpine objects printed.\n")
-
 
 
     print("\nAll processes complete.\n")

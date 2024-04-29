@@ -1,36 +1,43 @@
 from PIL import Image
+from sklearn.cluster import KMeans
+import matplotlib.image as mpimg
 import numpy as np
 import cv2 as cv
 
 def analyze_spine(image_path):
+    # Process colors
+    average_color = find_average_color_simple(image_path)
+    dominant_color, color_palette, height, width = find_color_palette(image_path)
+
+    return average_color, dominant_color, color_palette, height, width
+
+
+def find_average_color_simple(image_path):
     # Load the image
     image = Image.open(image_path)
     image_array = np.array(image, dtype=np.uint8)  # Ensure the array is uint8
 
-    # Get dimensions of the image
-    height, width = image_array.shape[:2]
-
-    # Process colors
-    average_color = find_average_color(image_array)
-    dominant_color = find_dominant_color(image_array)
-
-    return average_color, dominant_color, height, width
-
-
-def find_average_color(image_array):
-    # Calculate the average color of the image
+    # Calculate the average color of all pixels in the image
     average_color = np.mean(image_array, axis=(0, 1))
-    average_color = np.round(average_color).astype(int)
-    return average_color
+
+    return average_color.astype(int)
 
 
-def find_dominant_color(image_array):
-    # Reshape the image array to a 2D array of pixels
-    pixels = image_array.reshape(-1, 3)
-    # Calculate the histogram of colors
-    color_histogram = np.histogramdd(pixels, bins=(32, 32, 32), range=[(0, 256), (0, 256), (0, 256)])[0]
-    # Find the index of the most frequent color
-    most_frequent_index = np.unravel_index(color_histogram.argmax(), color_histogram.shape)
-    # Calculate the dominant color
-    dominant_color = np.array(most_frequent_index) * 8
-    return dominant_color
+def find_color_palette(image_path):
+    # Load the image
+    image = mpimg.imread(image_path)
+
+    # Get dimensions
+    height, width, depth = image.shape
+
+    pixels = image.reshape((height * width, depth))
+
+    n_colors = 6
+
+    # Perform KMeans clustering to find the dominant colors
+    kmeans = KMeans(n_clusters=n_colors, random_state=34).fit(pixels)
+
+    color_palette = np.uint8(kmeans.cluster_centers_)
+    dominant_color = color_palette[np.argmax(kmeans.labels_.size)]
+
+    return dominant_color, color_palette, height, width
