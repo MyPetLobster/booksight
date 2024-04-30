@@ -12,6 +12,8 @@ import matplotlib.patches as patches
 import utility as util
 
 
+CONFIDENCE = 0.83
+
 
 # Load a pre-trained Faster R-CNN model
 model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
@@ -104,9 +106,10 @@ def draw_boxes(img, prediction):
 
     # Check for each detected object, determine average book height
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
-        if score > 0.8 and label == 84:  # Label 84 is 'book' in COCO
+        if score > CONFIDENCE and label == 84:  # Label 84 is 'book' in COCO
             total_book_height += element[3] - element[1]
             total_book_thickness += element[2] - element[0]
+            print(f"Book_{book_count} Score: {score}")
             book_count += 1
 
     average_book_height = total_book_height / book_count
@@ -121,7 +124,7 @@ def draw_boxes(img, prediction):
 
     # Remove outliers, draw bounding boxes
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
-        if score > 0.7 and label == 84:  # Label 84 is 'book' in COCO
+        if score > CONFIDENCE and label == 84:  # Label 84 is 'book' in COCO
             box = element.detach().cpu().numpy()
             if box[3] - box[1] > average_book_height * 1.4 or box[3] - box[1] < average_book_height * 0.7:
                 continue
@@ -138,6 +141,7 @@ def draw_boxes(img, prediction):
     print(f"\nNumber of books detected: {book_count}\n\n")
     print("Image with bounding boxes saved as 'vision/spines/full_detected.jpeg'\n")
     # plt.show()
+    
     # delete old full_detected.jpeg
     if os.path.exists("vision/spines/full_detected.jpeg"):
         os.remove("vision/spines/full_detected.jpeg")

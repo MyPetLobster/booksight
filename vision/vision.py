@@ -20,7 +20,7 @@ def vision():
     # Get image file path from user
     jpeg_file = input("\nEnter the path to the image file: ")
     if jpeg_file == "":
-        jpeg_file = "vision/test_images/small-shelf.jpeg"
+        jpeg_file = "vision/test_images/test_five.jpeg"
         print(f"\nUsing default image: {jpeg_file}\n")
 
     # Start timer
