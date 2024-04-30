@@ -7,8 +7,7 @@ import detect_spines as ds
 import detect_text as dt
 import utility as util
 
-from matcher.matcher import match_books
-
+import matcher
 
 
 
@@ -21,7 +20,7 @@ def vision():
     # Get image file path from user
     jpeg_file = input("\nEnter the path to the image file: ")
     if jpeg_file == "":
-        jpeg_file = "vision/test_images/small-shelf.jpeg"
+        jpeg_file = "vision/test_images/test_five.jpeg"
         print(f"\nUsing default image: {jpeg_file}\n")
 
     # Start timer
@@ -71,22 +70,34 @@ def vision():
     print(f"\nAll text detected from all spines:\n\n{all_spine_text}\n")
     print("************************************************\n\n")
 
+    print("\nScanning full image for additional text...\n")
+    print("\nLarge images may take a while to process.\n")
+
+    full_scan_start = time.time()
     # Scan original image for text, apart from individual spines
     full_image_text = dt.detect_text(jpeg_file)
     full_image_text = [text for text in full_image_text if len(text) > 2]
     
     full_image_text_unique = [text for text in full_image_text if text not in all_spine_text] 
 
+    full_scan_end = time.time()
+    print(f"\nFull image scanned. Time taken: {round(full_scan_end - full_scan_start, 2)} seconds\n\n")
+
     print("\n************************************************")
     print(f"\nAll additional unique text detected from full image:\n\n{full_image_text_unique}\n")
     print("************************************************\n\n")
+    
     
 
     print("\nAll processes complete.\n")
     end = time.time()
     print(f"\nTotal time taken: {round(end - start, 2)} seconds\n")
 
-    match_books(spines, full_image_text_unique)
+
+    # Match books
+
+    print("\nBegin book identification process...\n")
+    matcher.match_books(spines, full_image_text_unique)
 
 
 

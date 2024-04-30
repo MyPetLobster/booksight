@@ -102,6 +102,7 @@ def detect_text(image_path):
 
     book_text_list = [text for text in book_text_list if len(text) > 2]
     book_text_list = list(set(book_text_list)) # Remove dupes
+    # Remove all non-alphanumeric characters
 
     book_text_string = ", ".join(book_text_list)
 
