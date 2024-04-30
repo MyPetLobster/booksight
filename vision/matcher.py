@@ -16,11 +16,13 @@ GPT_TEMP = 0.3
 
 
 def match_books(spines, full_img_text):
+    print("\nPreparing text for GPT input...\n")
     book_data = format_GPT_input(spines, full_img_text)
-    print(f"\nbook_data: {book_data}\n")
+    print(f"\nBook Data (Raw):\n{book_data}\n")
 
-    book_info_string = identify_basic_info(book_data)
-    print(f"\nbook_info_string: {book_info_string}\n")
+    print(f"\nIdentifying basic book info using {GPT_MODEL} set to a temperature of {GPT_TEMP}...\n")
+    book_data_basic = identify_basic_info(book_data)
+    print(f"\nBook Data (Basic):\n{book_data_basic}\n")
 
 
 
