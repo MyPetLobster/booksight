@@ -1,6 +1,9 @@
+import json 
+
 from openai import OpenAI
 from dotenv import load_dotenv
 
+import db_requests as dbr
 from classes import Spine
 
 
@@ -23,6 +26,23 @@ def match_books(spines, full_img_text):
     print(f"\nIdentifying basic book info using {GPT_MODEL} set to a temperature of {GPT_TEMP}...\n")
     book_data_basic = identify_basic_info(book_data)
     print(f"\nBook Data (Basic):\n{book_data_basic}\n")
+
+    book_dict = json.loads(book_data_basic)
+    book_count = len(book_dict)
+
+    print(f"\nNumber of books positively identified: {book_count}\n")
+    
+    # Update spines -- spine.author, spine.title
+    for i, spine in enumerate(spines):
+        book = book_dict[f"Book_{i}"]
+        spine.author = book["author"]
+        spine.title = book["title"]
+
+    # Retrieve potential ISBN's from OpenLibrary and update spine.possible_matches with list of ISBN's
+    for spine in spines:
+        spine.possible_matches = dbr.get_isbns_openlibrary(spine.title, spine.author)
+
+    print(f"All Spine Object:\n\n{spines}\n\n")
 
 
 
