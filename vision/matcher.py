@@ -9,17 +9,47 @@ load_dotenv()
 client = OpenAI()
 
 
-GPT_MODEL = "gpt-3.5-turbo"
+GPT_MODEL = "gpt-3.5"
 GPT_TEMP = 0.7
 
 
 
 
 def match_books(spines, full_img_text):
+    book_data = format_GPT_input(spines, full_img_text)
     book_info_string = identify_basic_info(book_data)
+
 
     print(f"\nbook_info_string: {book_info_string}\n")
 
+
+
+def format_GPT_input(spines, full_img_text):
+    """
+    Format all data to be included in prompt message
+
+    inputs: 
+        - spines: list of spine objects
+        - full_img_text: list of text detected in the full image
+
+    output:
+        - book_data: formatted string with all book data
+    """
+
+    book_data = ""
+
+    for i, spine in enumerate(spines):
+        book_data += f"Book_{i}: \n"
+        book_data += f"Text: {spine}\n"
+        # book_data += f"Height: {spine.height}\n"
+        # book_data += f"Thickness: {spine.thickness}\n"
+        # book_data += f"Background Color: {spine.background_color}\n"
+        # book_data += f"Text Color: {spine.text_color}\n\n"
+
+    book_data += "Full Image Text: \n"
+    book_data += "\n".join(full_img_text)
+
+    return book_data
 
 
 def identify_basic_info(text):
@@ -36,20 +66,37 @@ def identify_basic_info(text):
 
     instructions = {
         "role": "system", 
-        "content": f"""You are a sophisticated text analysis tool designed to extract book titles and authors from noisy OCR data. 
+        "content": f"""You are a sophisticated text analysis tool designed to extract book titles and authors from noisy OCR data. You are an expert
+        at identifying book titles and authors, even when the text is riddled with errors. You know every English language book ever published and can
+        recognize them with ease.
+        
         Here is how you should approach the task:
         
-        - The input text '{text}' contains potential book data with various OCR-induced errors like misplaced spaces and misinterpreted characters.
+        - The input text contains potential book data with various OCR-induced errors like misplaced spaces and misinterpreted characters.
+        - There may be instances where the OCR detects a few books individually, but then also recognizes the grouping of multiple spines 
+            as a single book. If this occurs, treat each book as a separate entity, but be careful not to include the same book twice. 
+            For example, let's say you get the text "Book_04: ..." and you are able to identify three books in the text. But you already detected
+            two of those books in "Book_03" and "Book_02." In this case, you should only include the new book in the response. However, if you then
+            get to "Book_05" and it is a repeat of "Book_04", you should fill in "Book_05" as you normally would. Then go back and replace "Book_04"
+            reponse with: "Book_04: IGNORE - BAD SCAN, DUPES"
+        - We need to maintain order with the books because the next step of the process will be to add the info you provide (author and title) to
+            a list of Python "Spine" objects that already exist. The info provided to you comes from this list of spines. 
         - Your goal is to sift through the noise and accurately identify each book's title and author. Consider strategies like ignoring extraneous spaces or 
-          substituting visually similar characters (e.g., '0' with 'O').
+          substituting visually similar characters (e.g., '0' with 'O' or '$' with 'S'). Ignore spaces between characters if doing so helps identify the correct title or author.
         - Generate a response in the format 'Title - Author,' for each book you identify. If a book cannot be confidently identified, use 'Unknown - Unknown'.
-        - Accuracy is critical, as your output will guide further data retrieval. Ensure that names and titles are correctly spelled.
-        - Remove duplicate books from the list. If the same book is identified multiple times, include it only once.
+        - Accuracy is critical, as your output will guide further data retrieval. Be sure to correct all spelling errors and spacing errors. Your responses
+            will be used to query databases. 
+        - Remove duplicate books from the list. If the same book is identified multiple times, include it only once. Only include one 
+            instance of each unique book. But be sure to associate it with the correct book number as stated earlier.
 
         Example of expected output format:
-        'Train Dreams - Denis Johnson, Great Expectations - Charles Dickens, '
+        'Book_01: Train Dreams - Denis Johnson,\n Book_02: Great Expectations - Charles Dickens, '
 
-        If uncertain about any data piece, review it once more, aiming to resolve ambiguities. If still in doubt, opt for 'Unknown - Unknown' rather than risking incorrect information.
+        - Be sure to keep book information labelled with the corresponding 'Book_X' identifier. And if you detect additional books in the full image text, 
+            include them in the same format, adding Book_X identifiers as needed.
+
+        If uncertain about any data piece, review it once more, aiming to resolve ambiguities. If you are still unsure, mark it as 'Unknown - Unknown.' 
+        This should be a last resort.
         
         Finally, end your response with "Number of books identified: X," where X is the total number of books you have identified.
         """

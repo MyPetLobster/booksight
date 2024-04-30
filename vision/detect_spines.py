@@ -125,7 +125,7 @@ def draw_boxes(img, prediction):
             box = element.detach().cpu().numpy()
             if box[3] - box[1] > average_book_height * 1.4 or box[3] - box[1] < average_book_height * 0.7:
                 continue
-            elif box[2] - box[0] > average_book_thickness * 2.5 or box[2] - box[0] < average_book_thickness * 0.3:
+            elif box[2] - box[0] > average_book_thickness * 2 or box[2] - box[0] < average_book_thickness * 0.3:
                 continue
             else: 
                 book_count += 1
