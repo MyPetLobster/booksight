@@ -1,5 +1,5 @@
 class Spine:
-    def __init__(self, image_path, avg_color, dominant_color, color_palette, height, width, text, possible_matches=None):
+    def __init__(self, image_path, avg_color, dominant_color, color_palette, height, width, text, title=None, author=None, possible_matches=None):
         self.image_path = image_path
         self.avg_color = avg_color
         self.dominant_color = dominant_color
@@ -7,6 +7,8 @@ class Spine:
         self.height = height
         self.width = width
         self.text = text
+        self.title = title
+        self.author = author
         self.possible_matches = possible_matches
 
     def __str__(self):
