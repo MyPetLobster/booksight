@@ -112,6 +112,10 @@ def draw_boxes(img, prediction):
             print(f"Book_{book_count} Score: {score}")
             book_count += 1
 
+    if book_count == 0:
+        print("\nNo books detected. Exiting...\n")
+        return None
+    
     average_book_height = total_book_height / book_count
     average_book_thickness = total_book_thickness / book_count
 
@@ -137,6 +141,10 @@ def draw_boxes(img, prediction):
                 rect = patches.Rectangle((box[0], box[1]), box[2] - box[0], box[3] - box[1],
                                      linewidth=1, edgecolor='r', facecolor='none')
                 ax.add_patch(rect)
+    
+    if book_count == 0:
+        print("\nNo valid books detected. Exiting...\n")
+        return None
 
     print(f"\nNumber of books detected: {book_count}\n\n")
     print("Image with bounding boxes saved as 'vision/spines/full_detected.jpeg'\n")
@@ -166,6 +174,9 @@ def detect_spines(jpeg_file):
     # Draw bounding boxes on the image and display it
     valid_books = draw_boxes(img, prediction)
 
+    if valid_books == None:
+        return None
+
     return valid_books
 
 
@@ -174,6 +185,8 @@ def crop_spines(jpeg_file):
 
     # Detect book spines in the image
     book_boxes = detect_spines(jpeg_file)
+    if book_boxes == None:
+        return None, None
     list_of_spine_images = []
 
     # Create a new image for each book spine and save in 'vision/spines' directory
