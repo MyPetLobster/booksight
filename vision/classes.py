@@ -12,7 +12,21 @@ class Spine:
         self.possible_matches = possible_matches
 
     def __str__(self):
-        return f"Spine Image Path: {self.image_path}, \nAverage Color: {self.avg_color}, \nDominant Color: {self.dominant_color}, \nColor Palette:\n{self.color_palette}, \nHeight: {self.height}, \nWidth: {self.width}, \nText: {self.text}"
+        return f"""
+        Image Path: {self.image_path}
+        Average Color: {self.avg_color}
+        Dominant Color: {self.dominant_color}
+        Color Palette: {self.color_palette}
+        Height: {self.height}
+        Width: {self.width}
+        Text: {self.text}
+        Title: {self.title}
+        Author: {self.author}
+        Possible Matches: {self.possible_matches}
+        """
+    
+    def __repr__(self):
+        return self.__str__()
 
         
 class Book:

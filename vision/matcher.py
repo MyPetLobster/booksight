@@ -31,7 +31,7 @@ def match_books(spines, full_img_text):
     book_count = len(book_dict)
 
     print(f"\nNumber of books positively identified: {book_count}\n")
-    
+
     # Update spines -- spine.author, spine.title
     for i, spine in enumerate(spines):
         book = book_dict[f"Book_{i}"]
@@ -40,9 +40,10 @@ def match_books(spines, full_img_text):
 
     # Retrieve potential ISBN's from OpenLibrary and update spine.possible_matches with list of ISBN's
     for spine in spines:
-        spine.possible_matches = dbr.get_isbns_openlibrary(spine.title, spine.author)
+        spine.possible_matches = dbr.get_isbns(spine.title, spine.author)
+        
 
-    print(f"All Spine Object:\n\n{spines}\n\n")
+    print(f"All Spine Objects:\n\n{spines}\n\n")
 
 
 
@@ -93,10 +94,14 @@ def identify_basic_info(text):
 
         - DO NOT MAKE UP BOOK TITLES OR AUTHORS. Use all of the data you have to identify a REAL author and REAL book title that would make 
         sense in the context of OCR text from the spine of a book. For Example, if you have some OCR text that says "HARY BFARD ROME Q R mistory", 
-        You should be able to look through existing books and realize that the book is "SPQR - A History of Ancient Rome" by Mary Beard. 
+        You should be able to look through existing books and realize that the book is "SPQR" by Mary Beard. Do not include
+        subtitles. Do not make up any authors or titles. 
 
         - If you are only able to identify an author, you should search your knowledge to find all the books that author has written, then 
         use that information in order to determine which title is most likely to be correct.
+
+        - Your response is being decoded directly with Python's json.loads() function. Make sure your response is in the correct format without
+        any additional characters or formatting.
 
         Here is the input text you will be working with: \n\n  {text}
         """
@@ -117,23 +122,8 @@ def identify_basic_info(text):
 
 
 
-def retrieve_google_books_info(text):
-    # Split the text at commas, create list where each item is formatted as "<Title> - <Author>"
-    book_list = text.split(", ")
-    
-    # Remove the "-" from each item
-    book_list = [book.replace(" - ", " ") for book in book_list]
-
-    results = []
-    for book in book_list:
-        results += search_google_books(book)
-
-    return results
 
 
-
-def search_google_books(query):
-    ...
 
 
 

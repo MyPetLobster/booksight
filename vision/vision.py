@@ -54,7 +54,7 @@ def vision():
         text = dt.detect_text(image)
         spine = Spine(image, avg_color, dominant_color, color_palette, height, width, text)
         spines.append(spine)
-        print(f"\nBook_{i}:\n{spine}\n")
+        print(f"\nBook_{i}:\n{spine}")
         i += 1
 
     spine_object_end = time.time()
