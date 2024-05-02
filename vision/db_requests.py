@@ -10,15 +10,16 @@ load_dotenv()
 ISBNDB_API_KEY = os.getenv("ISBNDB_API_KEY")
 
 
-def get_isbns(title, author):
+# Get potential ISBNs from Open Library and Google Books
+def get_potential_isbns(title, author):
     """
     This function takes in an author and title and returns a list of all possible ISBNs from 
     Open Library and Google Books APIs.
     """
-    openlib_isbns = get_isbns_openlibrary(title, author)
+    openlibrary_isbns = get_isbns_openlibrary(title, author)
     google_isbns = get_isbns_google_books(title, author)
     
-    all_isbns = openlib_isbns + google_isbns
+    all_isbns = openlibrary_isbns + google_isbns
     
     print(f"All ISBNs: {all_isbns}")
     return all_isbns
@@ -50,9 +51,6 @@ def get_isbns_openlibrary(title, author):
         if "isbn" in result:
             isbns.extend(result["isbn"])
 
-    isbn_set = set(isbns)
-    # isbn_chunks = [list(isbn_set)[i:i + 20] for i in range(0, len(isbn_set), 20)]
-
     return isbns
 
 
@@ -83,11 +81,10 @@ def get_isbns_google_books(title, author):
                 if identifier["type"] == "ISBN_13" or identifier["type"] == "ISBN_10":
                     isbns.append(identifier["identifier"])
 
-    isbns
-
     return isbns
 
 
+# Get book information using ISBNdb API
 def get_isbn_info(isbn):
     """
     This function queries ISBNdb API to retrieve information about a book given its ISBN. Requires a paid API key.
@@ -98,43 +95,47 @@ def get_isbn_info(isbn):
     Returns:
         dict: A dictionary containing information about the book.
     """
+    time.sleep(1) # Prevent rate limiting
 
     h = {'Authorization': ISBNDB_API_KEY}
     resp = requests.get(f"https://api2.isbndb.com/book/{isbn}", headers=h)
     
-        
-    print("\n**********************\n")
-    print(f"\nISBN: {isbn}\n")
-    print(resp.json())
-    print("\n**********************\n")
+    if resp.status_code == 200:
+        # Get the 'Height' and 'Width' of the book
+        book_info = resp.json()
+        height, width = get_dimensions(book_info)
+        language, cover = get_language_and_cover(book_info)
+        return (height, width, language, cover)
+    else:
+        print(f"Error: {resp.status_code}")
+        return None
+    
 
 
+def get_dimensions(book_info):
+    height = ""
+    width = ""
+    height = book_info["book"]["dimensions"]["Height"].lower()
+    height = height.replace(" inches", "")
+    width = book_info["book"]["dimensions"]["Width"].lower()
+    width = width.replace(" inches", "")
+
+    # {'book': {'publisher': 'Atlas Contact', 'language': 'nl', 'image': 'https://images.isbndb.com/covers/28/42/9789025442842.jpg', 'title_long': 'Norwegian wood (Dutch Edition)', 'edition': '01', 'dimensions': 'Height: 8.2677 Inches, Length: 5.31495 Inches, Width: 0.90551 Inches', 'dimensions_structured': {'length': {'value': 5.31495, 'unit': 'inches'}, 'width': {'value': 0.90551, 'unit': 'inches'}, 'height': {'value': 8.2677, 'unit': 'inches'}}, 'pages': 317, 'date_published': '2013', 'authors': ['Murakami, Haruki'], 'title': 'Norwegian wood (Dutch Edition)', 'isbn13': '9789025442842', 'msrp': '0.00', 'binding': 'Paperback', 'isbn': '9025442846', 'isbn10': '9025442846'}}
+    if height == "":
+        height = book_info["book"]["dimensions_structured"]["height"]["value"]
+    if width == "":
+        width = book_info["book"]["dimensions_structured"]["width"]["value"]
+
+    return height, width
+
+def get_language_and_cover(book_info):
+    language = book_info["book"]["language"]
+    cover = book_info["book"]["image"]
+
+    return language, cover
 
 def main():
-    # title = "Norwegian Wood"
-    # author = "Haruki Murakami"
-    # isbns = get_isbns_openlibrary(title, author)
-    # openlib_result_count = len(isbns)
-    # print("\n**********************\n")
-    # print("\nOpen Library API\n")
-    # print(isbns)
-    # print("\n**********************\n")
-
-    # g_isbns = get_isbns_google_books(title, author)
-    # print("\n**********************\n")
-    # print("\nGoogle Books API\n")
-    # print(g_isbns)
-    # print("\n**********************\n")
-
-    # print(f"\nOpen Library ISBNs: {openlib_result_count}\n")
-    # print(f"Google Books ISBNs: {len(g_isbns)}\n")
-
-    # get first ISBN info
-    # print("\n**********************\n")
-    # print(f"ISBN Info for {g_isbns[0]}")
-    # get_isbn_info(g_isbns[0])
-
-    isbns = get_isbns("Norwegian Wood", "Haruki Murakami")
+    isbns = get_potential_isbns("Norwegian Wood", "Haruki Murakami")
 
     print("\nISBNdb API\n")
     # Get ISBN info for all Open Library ISBNs
