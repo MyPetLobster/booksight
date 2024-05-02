@@ -1,14 +1,14 @@
 import time
 
-from classes import Spine
+from classes import Spine, Book
 
 import analyze_spine as asp
 import detect_spines as ds
 import detect_text as dt
 import utility as util
 
+import db_requests as dbr
 import matcher
-
 
 
 def vision():
@@ -16,6 +16,7 @@ def vision():
     # Empty temp image directories
     util.empty_directory("vision/debug_images")
     util.empty_directory("vision/spines")
+    util.empty_directory("vision/downloaded_images")
 
     # Get image file path from user
     jpeg_file = input("\nEnter the path to the image file: ")
@@ -95,11 +96,127 @@ def vision():
 
 
     # Match books
-
     print("\nBegin book identification process...\n")
-    matcher.match_books(spines, full_image_text_unique)
+
+    # Clean up text data and retrieve potential ISBNs for each spine
+    spines = matcher.id_possible_matches(spines, full_image_text_unique)
+
+    print("\n***********************************\n")
+    print("\nAll spines:\n")
+    for spine in spines:
+        print(spine)
+        print("\n")
+    
+    print("\nBegin matching spines to books...\n")
+
+    books = match_spines_to_books(spines)
+
+    print("\nBook identification process complete.\n")
+
+    print("\n************************************************")
+    print("\nAll identified books:\n")
+    for book in books:
+        print(book)
+    print("************************************************\n\n")
+
+    print("\nAll processes complete. Thank you for using Booksight.\n")
+
+
+
+def match_spines_to_books(spines):
+    util.empty_directory("vision/downloaded_images")
+    books = []
+    color_filter = (1, 1, 1)
+    px_to_inches = 1
+
+    for spine in spines:
+        second_pass = False
+        found = False
+        possible = False
+        possible_isbns = spine.possible_matches
+
+        while not found:
+            for isbn in possible_isbns:
+                confidence, color_filter, px_to_inches, second_pass, isbn = matcher.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass)
+
+                print(f"\n\nconfidence: {confidence}\n\n")
+
+                if confidence >= 0.3:
+                    print(f"\n{spine.title} identified with ISBN: {isbn}\n")
+                    print(f"Identification confidence: {confidence}\n")
+
+                    # Create a Book object for the matched spine and populate with data
+                    book = matcher.create_book_object(isbn, confidence)
+                    books.append(book)
+                    found = True
+                    break
+                elif 0.1 < confidence < 0.3:
+                    print(f"\n{spine.title} possibly identified with ISBN: {isbn}\n")
+                    print(f"Identification confidence: {confidence}\n")
+                    print("Please verify the identification manually.\n")
+                    # Create a Book object for the matched spine and populate with data
+                    if possible:
+                        if confidence > possible_book.confidence:
+                            possible_book = matcher.create_book_object(isbn, confidence)
+                    else:
+                        possible_book = matcher.create_book_object(isbn, confidence)
+                    possible = True
+                    break
+
+            if not found and not possible and not second_pass:
+                print(f"\n\nNo Matches found for {spine.title}. Starting second pass, disregarding dimensions. Thank you for your patience...\n\n")
+                confidence, color_filter, px_to_inches, second_pass, isbn = matcher.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=True)
+                if confidence >= 0.3:
+                    print(f"\n{spine.title} identified with ISBN: {isbn}\n")
+                    print(f"Identification confidence: {confidence}\n")
+
+
+                    # Create a Book object for the matched spine and populate with data
+                    book = matcher.create_book_object(isbn, confidence)
+                    books.append(book)
+                    found = True
+                elif 0.1 < confidence < 0.3:
+                    print(f"\n{spine.title} possibly identified with ISBN: {isbn}\n")
+                    print(f"Identification confidence: {confidence}\n")
+                    print("Please verify the identification manually.\n")
+                    # Create a Book object for the matched spine and populate with data
+                    if possible:
+                        if confidence > possible_book.confidence:
+                            possible_book = matcher.create_book_object(isbn, confidence)
+                    else:
+                        possible_book = matcher.create_book_object(isbn, confidence)
+                    possible = True
+            elif not found and not possible and second_pass:
+                print(f"\n{spine.title} could not be identified. Please verify the identification manually.\n")
+                book = Book()
+                book.title = spine.title
+                book.authors = spine.author
+                book.confidence = 0
+                books.append(book)
+                found = True
+            elif not found and possible:
+                print(f"\n{spine.title} could not be identified. Please verify the identification manually.\n")
+                books.append(possible_book)
+                found = True
+                
+
+    return books
+
 
 
 
 if __name__ == "__main__":
-    vision()
+    spines = [
+        Spine("vision/spines/book_0.jpeg", [164, 149, 137], [211, 198, 185], [[211, 198, 185], [18, 14, 11], [242, 230, 215], [211, 67, 32], [101, 93, 93], [191, 172, 156]], 1129, 263, ['uiz', 'UZumakl', 'Uig', 'UZUMAKL', 'JUNII ITO'], "Uzumaki", "Junji Ito", ['8575326902', '9788417490270', '9781421561325', '9788575327302', '6555140577', '1421561328', '9786555140576', '8417490272', '8575327305', '9788575326909', '9781569317143', '1569317143', '9781421513898', '9781421513904', '1421513900', '1421513897', '9781421513911', '9781591160489', '1421513919', '1591160480', '1591160332', '9781591160335', '9781974706952', '1974706958', '1421561328', '9781421561325', '1569317143', '9781569317143', '1421513900', '9781421513904', '1421513919', '9781421513911', '1974713008', '9781974713004', '3486840142', '9783486840148', '9781974715794', '1974715795', '9781974729661', '1974729664']),
+        Spine("vision/spines/book_1.jpeg", [169, 160, 148], [217, 194, 172], [[217, 194, 172], [31, 26, 21], [240, 230, 215], [157, 134, 116], [85, 81, 65], [7, 5, 3]], 1102, 210, ['mistory', 'Arr', '0  O m', 'MARY', 'BFARD', 'KFARD', 'ROMi', '0i Anciint', 'Udsi', 'c  Q x', 'ROME', 'ddsUu'], "SPQR: A History of Ancient Rome", "Mary Beard", ['9781631491252', '1631491253', '9781631491252', '1631491253', '9781631494109', '1631494104', '9780674032187', '0674032187', '0521456460', '9780521456463', '9781847650641', '1847650643', '9780521840620', '0521840627', '9780691222363', '0691222363']),
+        Spine("vision/spines/book_2.jpeg", [91, 84, 68], [20, 17, 13], [[20, 17, 13], [245, 240, 227], [115, 89, 47], [12, 123, 87], [185, 174, 151], [50, 42, 32]], 1094, 159, ['nods', 'DESTSELLER', 'Autmon0', 'WAR ipe SEBASTIAI JUHGER 4', 'Mltoat', 'DestSELLeR', 'Muthor or', 'AOa', 'Ing Ptrttgt', 'Wewtoat', 'nheS', 'Jiont', 'IhE ctaftGT', 'Jtoat', '1 WAR ip SEBASTIAII JUHGER'], "War", "Sebastian Junger", ['0446556246', '9780446566971', '9780007362134', '9780007337712', '9781609415013', '9780007337705', '9781607881988', '9781455500352', '9780446556248', '9781554685554', '0007362137', '1455500356', '1455501581', '1554685559', '1607881985', '0446583286', '000733771X', '0446566977', '9780446583282', '0007337701', '1609415019', '9781455501588', '0446566977', '0446556246', '9780446556248', '9780446566971', '0007352263', '9780007352265', '9780446556248', '0446556246', '9780446569767', '0446569763', '9780446556248', '0446566977', '9780446566971', '0446556246', '9780446556224', '044655622X', '0446569763', '9780446569767', '1609415019', '9781609415013', '3570551768', '9783570551769', '9780007362134', '0007362137']),
+        Spine("vision/spines/book_3.jpeg", [93, 89, 103], [92, 83, 101], [[92, 83, 101], [243, 232, 220], [11, 15, 10], [103, 97, 133], [48, 55, 50], [184, 166, 158]], 1005, 124, ['haruki Murakami', 'W 0 0', 'N 0 R W E 6 a N'], "Norwegian Wood", "Haruki Murakami", ['9025442846', '9789025442842', '009952029X', '9780099520290', '9786074211214', '6074211213', '9784062748698', '406274869X', '9780307762719', '0307762718', '9780307430014', '0307430014', '9722621750', '9789722621755', '4770022328', '9784770022325', '9780451494658', '0451494652', '6074211213', '9786074211214', '9780307762740', '0307762742', '8373198334', '9788373198333', '9781400044610', '1400044618', '9788858407240', '8858407245']),
+        Spine("vision/spines/book_4.jpeg", [111, 95, 68], [168, 151, 117], [[168, 151, 117], [56, 46, 31], [111, 83, 42], [243, 237, 223], [23, 17, 12], [135, 113, 74]], 1088, 172, ['InD ardtoti', 'dID', 'Orocotar', 'SELLER', '8888', 'iJC', 'JDHMSON', 'Itorr', 'HE LAUGHing MOMSTERS', 'Toht', 'TtGT', 'Jaor', 'VeS', 'HE LAUGHING MONSTERS 83 DEMIS', 'tallo'], "The Laughing Monsters", "Denis Johnson", ['9781443437998', '9781410476562', '1410476561', '9780374280598', '1443437999', '0374280592', '9781427252272', '1846559359', '1427252270', '9781784700225', '1784700223', '9781846559358', '1444831208', '9781444831207', '9780374280598', '0374280592', '9780374709235', '0374709238', '0060192488', '9780060192488', '9780812988659', '0812988655', '9780061869464', '0061869465', '9780593469774', '0593469771', '9780061869396', '0061869392', '0887486274', '9780887486272', '9780061869549', '0061869546'])
+    ]
+    books = match_spines_to_books(spines)
+    print("\nAll identified books:\n")
+    for book in books:
+        print(book)
+        print("\n")
+
+    # vision()

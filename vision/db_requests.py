@@ -21,7 +21,7 @@ def get_potential_isbns(title, author):
     
     all_isbns = openlibrary_isbns + google_isbns
     
-    print(f"All ISBNs: {all_isbns}")
+    print(f"{title} - {author}: {all_isbns}")
     return all_isbns
 
 
@@ -35,7 +35,7 @@ def get_isbns_openlibrary(title, author):
         author (str): The author of the book.
 
     Returns:
-        list: A list of ISBNs associated with the book, divided into chunks(lists) of 20.
+        list: A list of ISBNs associated with the book
     """
 
     # Query the Open Library API
@@ -43,7 +43,7 @@ def get_isbns_openlibrary(title, author):
 
     result_count = response.json()["numFound"]
     if result_count == 0:
-        return ""
+        return []
     
     # Extract the ISBNs from the response
     isbns = []
@@ -51,6 +51,7 @@ def get_isbns_openlibrary(title, author):
         if "isbn" in result:
             isbns.extend(result["isbn"])
 
+    print("Open Library ISBNs: ", isbns)
     return isbns
 
 
@@ -66,13 +67,14 @@ def get_isbns_google_books(title, author):
         list: A list of ISBNs associated with the book, divided into chunks(lists) of 20.
     """
 
+    api_key = os.getenv("GOOGLE_BOOKS_API_KEY")
+
     # Query the Google Books API
-    response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}+inauthor:{author}&maxResults=10")
+    response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}+inauthor:{author}&maxResults=10&key={api_key}")
 
-    result_count = response.json()["totalItems"]
-    if result_count == 0:
-        return ""
-
+    if response.json().get("totalItems", 0) == 0:
+        return []
+    
     # Extract the ISBNs from the response
     isbns = []
     for item in response.json()["items"]:
@@ -81,6 +83,7 @@ def get_isbns_google_books(title, author):
                 if identifier["type"] == "ISBN_13" or identifier["type"] == "ISBN_10":
                     isbns.append(identifier["identifier"])
 
+    print("Google Books ISBNs: ", isbns)
     return isbns
 
 
@@ -103,30 +106,67 @@ def get_isbn_info(isbn):
     if resp.status_code == 200:
         # Get the 'Height' and 'Width' of the book
         book_info = resp.json()
+
+        print(f"\n\nBook Info:\n{book_info}\n\n")
+
         height, width = get_dimensions(book_info)
         language, cover = get_language_and_cover(book_info)
-        return (height, width, language, cover)
+        return {
+            "title": book_info["book"]["title"],
+            "height": height, 
+            "width": width,
+            "language": language,
+            "cover": cover,
+            "isbn13": book_info["book"]["isbn13"],
+            "isbn10": book_info["book"]["isbn10"],
+            "isbn": book_info["book"]["isbn"],
+        }
     else:
         print(f"Error: {resp.status_code}")
         return None
-    
+
+# Book Info:
+# {'book': {'publisher': 'Devir Livraria', 'language': 'pt', 'image': 'https://images.isbndb.com/covers/69/09/9788575326909.jpg', 'title_long': 'Uzumaki', 'dimensions': 'Height: 1.6535433054 Inches, Length: 9.448818888 Inches, Weight: 0 Pounds, Width: 6.4566929068 Inches', 'dimensions_structured': {'length': {'value': 9.448818888, 'unit': 'inches'}, 'width': {'value': 6.4566929068, 'unit': 'inches'}, 'weight': {'value': 0, 'unit': 'pounds'}, 'height': {'value': 1.6535433054, 'unit': 'inches'}}, 'date_published': '2021', 'authors': ['Junji Ito'], 'title': 'Uzumaki', 'isbn13': '9788575326909', 'msrp': '0.00', 'binding': 'Paperback', 'isbn': '8575326902', 'isbn10': '8575326902'}}
 
 
 def get_dimensions(book_info):
+    """
+    Extract dimensions from the book_info dictionary.
+    """
     height = ""
     width = ""
-    height = book_info["book"]["dimensions"]["Height"].lower()
-    height = height.replace(" inches", "")
-    width = book_info["book"]["dimensions"]["Width"].lower()
-    width = width.replace(" inches", "")
 
-    # {'book': {'publisher': 'Atlas Contact', 'language': 'nl', 'image': 'https://images.isbndb.com/covers/28/42/9789025442842.jpg', 'title_long': 'Norwegian wood (Dutch Edition)', 'edition': '01', 'dimensions': 'Height: 8.2677 Inches, Length: 5.31495 Inches, Width: 0.90551 Inches', 'dimensions_structured': {'length': {'value': 5.31495, 'unit': 'inches'}, 'width': {'value': 0.90551, 'unit': 'inches'}, 'height': {'value': 8.2677, 'unit': 'inches'}}, 'pages': 317, 'date_published': '2013', 'authors': ['Murakami, Haruki'], 'title': 'Norwegian wood (Dutch Edition)', 'isbn13': '9789025442842', 'msrp': '0.00', 'binding': 'Paperback', 'isbn': '9025442846', 'isbn10': '9025442846'}}
+    try:
+        book_dimension_string = book_info["book"]["dimensions"]
+        if "Height" in book_dimension_string:
+            height = book_dimension_string.split(",")[0].split(":")[1].strip()
+            height = height.split(" ")[0]
+        if "Width" in book_dimension_string:
+            width = book_dimension_string.split(",")[2].split(":")[1].strip()
+            width = width.split(" ")[0]
+    except KeyError:
+        pass
+
+    try:
+        if height == "":
+            height = book_info["book"]["dimensions_structured"]["height"]["value"]
+        if width == "":
+            width = book_info["book"]["dimensions_structured"]["width"]["value"]
+    except KeyError:
+        pass
+
     if height == "":
-        height = book_info["book"]["dimensions_structured"]["height"]["value"]
+        height = 0
+    else:
+        height = float(height)
+
     if width == "":
-        width = book_info["book"]["dimensions_structured"]["width"]["value"]
+        width = 0
+    else:
+        width = float(width)
 
     return height, width
+
 
 def get_language_and_cover(book_info):
     language = book_info["book"]["language"]
@@ -134,19 +174,78 @@ def get_language_and_cover(book_info):
 
     return language, cover
 
-def main():
-    isbns = get_potential_isbns("Norwegian Wood", "Haruki Murakami")
 
-    print("\nISBNdb API\n")
-    # Get ISBN info for all Open Library ISBNs
-    for isbn in isbns:
-        get_isbn_info(isbn)
-        # wait one second
-        time.sleep(1)
+def get_all_data_isbndb(isbn):
+    """
+    This function queries ISBNdb API to retrieve information about a book given its ISBN. Requires a paid API key.
+
+    Args:
+        isbn (str): The ISBN of the book.
+
+    Returns:
+        dict: A dictionary containing information about the book.
+    """
+    time.sleep(1) # Prevent rate limiting
+
+    h = {'Authorization': ISBNDB_API_KEY}
+    resp = requests.get(f"https://api2.isbndb.com/book/{isbn}", headers=h)
+    
+    if resp.status_code == 200:
+        # Get the 'Height' and 'Width' of the book
+        book_info = resp.json()
+        return book_info
+    else:
+        print(f"Error: {resp.status_code}")
+        return None
+    
+
+def get_all_data_google(isbn):
+    """
+    This function queries Google Books API to retrieve all information about a book given its ISBN.
+
+    Args:
+        isbn (str): The ISBN of the book.
+
+    Returns:
+        dict: A dictionary containing information about the book.
+    """
+    api_key = os.getenv("GOOGLE_BOOKS_API_KEY")
+    response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}&key={api_key}")
+
+    if response.status_code == 200:
+        book_info = response.json()
+        return book_info
+    else:
+        print(f"Error: {response.status_code}")
+        return None
+    
+
+def get_all_data_openlibrary(isbn):
+    """
+    This function queries Open Library API to retrieve all information about a book given its ISBN.
+
+    Args:
+        isbn (str): The ISBN of the book.
+
+    Returns:
+        dict: A dictionary containing information about the book.
+    """
+    response = requests.get(f"https://openlibrary.org/isbn/{isbn}.json")
+
+    if response.status_code == 200:
+        book_info = response.json()
+        return book_info
+    else:
+        print(f"Error: {response.status_code}")
+        return None
+    
 
 
-
+def test_isbndb_response():
+    isbn = "9780099520290"
+    book_info = get_all_data_isbndb(isbn)
+    print(book_info)
 
 
 if __name__ == "__main__":
-    main()
+    test_isbndb_response()

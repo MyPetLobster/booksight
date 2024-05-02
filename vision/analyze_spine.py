@@ -41,3 +41,8 @@ def find_color_palette(image_path):
     dominant_color = color_palette[np.argmax(kmeans.labels_.size)]
 
     return dominant_color, color_palette, height, width
+
+
+def get_color_data(image_path):
+    average_color, dominant_color, color_palette, height, width = analyze_spine(image_path)
+    return average_color, dominant_color, color_palette

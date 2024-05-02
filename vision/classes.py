@@ -30,10 +30,40 @@ class Spine:
 
         
 class Book:
-    def __init__(self, title, subtitle, author, publisher, publish_date, isbn):
-        self.title = title
-        self.subtitle = subtitle
-        self.author = author
-        self.publisher = publisher
-        self.publish_date = publish_date
-        self.isbn = isbn
+    def __init__(self):
+        self.title = None
+        self.subtitle = None
+        self.authors = None
+        self.language = None
+        self.publisher = None
+        self.date_published = None
+        self.description = None
+        self.isbn = None
+        self.isbn10 = None
+        self.isbn13 = None
+        self.pages = None
+        self.binding = None
+        self.image = None
+        self.confidence = None
+
+
+    def __str__(self):
+        return f"""
+        Title: {self.title}
+        Subtitle: {self.subtitle}
+        Authors: {self.authors}
+        Language: {self.language}
+        Publisher: {self.publisher}
+        Publish Date: {self.date_published}
+        Description: {self.description}
+        ISBN: {self.isbn}
+        ISBN10: {self.isbn10}
+        ISBN13: {self.isbn13}
+        Pages: {self.pages}
+        Binding: {self.binding}
+        Image: {self.image}
+        Confidence: {self.confidence}
+        """ 
+    
+    def __repr__(self):
+        return self.__str__()
