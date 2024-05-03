@@ -1,23 +1,23 @@
 import os
-import shutil
 
 import cv2 as cv
-import easyocr as ocr
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 import torch
 from torchvision import models, transforms
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 
 import utility as util
 
 
-CONFIDENCE = 0.83
 
 
 # Load a pre-trained Faster R-CNN model
 model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
 model.eval()
+
+# Confidence threshold for detected objects
+CONFIDENCE = 0.83
 
 # Define the image transformation
 transform = transforms.Compose([
@@ -26,34 +26,37 @@ transform = transforms.Compose([
 
 book_count = 0 
 
+
 def calculate_brightness(image):
-    # Convert the image to grayscale
-    grayscale_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    """
+    This function calculates the average brightness of an image.
     
-    # Calculate the average brightness of the image
+    Args:
+        image (numpy.ndarray): The image to calculate the brightness of.
+        
+    Returns:
+        float: The average brightness of the image (0-255).
+    """
+    grayscale_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     brightness = cv.mean(grayscale_image)
 
-    # Return average brightness, range 0-255
     return brightness[0]
 
 
 def adjust_brightness(image, brightness):
-    # Adjust the brightness of the image
-    if 80 < brightness < 100:
-        enhancer = ImageEnhance.Brightness(image)
-        image = enhancer.enhance(1.2)
-    elif 50 < brightness < 80:
-        enhancer = ImageEnhance.Brightness(image)
-        image = enhancer.enhance(1.4)
-    elif brightness < 50:
-        enhancer = ImageEnhance.Brightness(image)
-        image = enhancer.enhance(1.6)
-    elif 140 < brightness < 160:
-        enhancer = ImageEnhance.Brightness(image)
-        image = enhancer.enhance(0.8)
-    elif brightness > 160:
-        enhancer = ImageEnhance.Brightness(image)
-        image = enhancer.enhance(0.6)
+    """
+    This function adjusts the brightness of an image based on the average brightness value. Target brightness ~120.
+
+    Args:
+        image (PIL.Image): The image to adjust the brightness of.
+        brightness (float): The average brightness of the image (0-255).
+
+    Returns:
+        PIL.Image: The adjusted image.
+    """
+    enhancer = ImageEnhance.Brightness(image)
+    factor = 120 / brightness
+    image = enhancer.enhance(factor)
     
     return image
 
