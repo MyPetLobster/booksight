@@ -1,5 +1,23 @@
 import os
 import shutil
+import time
+
+timestamp = time.strftime("%Y%m%d-%H%M%S")
+
+def create_log_file():
+    """ Creates a log file for the current session. """
+    
+    with open(f'vision/logs/booksight_{timestamp}.log', 'w') as file:
+        file.write(f"Booksight Log - {timestamp}\n\n")
+
+def log_print(message):
+    """ Prints a message and logs it to a text file. """
+    
+    with open(f'vision/logs/booksight_{timestamp}.log', 'a') as file:
+        file.write(f"{message}\n")
+    print(message)
+
+
 
 # Delete all files in a directory
 def empty_directory(directory):
@@ -11,4 +29,4 @@ def empty_directory(directory):
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
         except Exception as e:
-            print(f"Failed to delete {file_path}. Reason: {e}")
+            log_print(f"Failed to delete {file_path}. Reason: {e}")

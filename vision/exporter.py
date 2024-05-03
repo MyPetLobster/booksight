@@ -2,6 +2,8 @@ import time
 import csv
 import json
 
+import utility as util
+
 
 
 def export_to_csv(books):
@@ -47,7 +49,7 @@ def export_to_csv(books):
                 'Confidence': book.confidence
             })
     
-    print(f"\nBooks exported to CSV: {csv_file}\n")
+    util.log_print(f"\nBooks exported to CSV: {csv_file}\n")
 
 
 def export_to_json(books):
@@ -70,5 +72,5 @@ def export_to_json(books):
     with open(json_file, 'w') as file:
         json.dump([book.__dict__ for book in books], file, indent=4)
     
-    print(f"\nBooks exported to JSON: {json_file}\n")
+    util.log_print(f"\nBooks exported to JSON: {json_file}\n")
 

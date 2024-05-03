@@ -59,10 +59,10 @@ def adjust_brightness(image, brightness):
 
 
 def load_image(input_path):
-    print("\nLoading image...\n")
+    util.log_print("\nLoading image...\n")
     img = Image.open(input_path).convert("RGB")
     
-    print("\nEnhancing image...\n")
+    util.log_print("\nEnhancing image...\n")
     
     # Enhance the image
     img = ImageOps.autocontrast(img)
@@ -77,9 +77,9 @@ def load_image(input_path):
     if os.path.exists("vision/images/detection_temp/spines/enhanced_image.jpeg"):
         os.remove("vision/images/detection_temp/spines/enhanced_image.jpeg")
     img.save("vision/images/detection_temp/spines/enhanced_image.jpeg")
-    print("\nEnhanced image saved as 'vision/images/detection_temp/spines/enhanced_image.jpeg'\n")
+    util.log_print("\nEnhanced image saved as 'vision/images/detection_temp/spines/enhanced_image.jpeg'\n")
 
-    print("\nApplying tensor transformation...\n")
+    util.log_print("\nApplying tensor transformation...\n")
 
     img_tensor = transform(img)
 
@@ -87,19 +87,19 @@ def load_image(input_path):
 
 
 def predict(model, img_tensor):
-    print("\nPerforming prediction...\n")
+    util.log_print("\nPerforming prediction...\n")
     with torch.no_grad():
         prediction = model([img_tensor])
     return prediction
 
 
 def draw_boxes(img, prediction):
-    print("\nDrawing bounding boxes...\n")
+    util.log_print("\nDrawing bounding boxes...\n")
     plt.figure(figsize=(12, 8))
     plt.imshow(img)
     ax = plt.gca()
 
-    print("\nProcessing detected objects...\n")
+    util.log_print("\nProcessing detected objects...\n")
     book_count = 0
     total_book_height = 0
     total_book_thickness = 0
@@ -109,24 +109,24 @@ def draw_boxes(img, prediction):
         if score > CONFIDENCE and label == 84:  # Label 84 is 'book' in COCO
             total_book_height += element[3] - element[1]
             total_book_thickness += element[2] - element[0]
-            print(f"Book_{book_count} Score: {score}")
+            util.log_print(f"Book_{book_count} Score: {score}")
             book_count += 1
 
     if book_count == 0:
-        print("\nNo books detected. Exiting...\n")
+        util.log_print("\nNo books detected. Exiting...\n")
         return None
     
     average_book_height = total_book_height / book_count
     average_book_thickness = total_book_thickness / book_count
 
-    print(f"\n\nPreliminary statistics:\n")
-    print(f"Average book height: {round(float(average_book_height), 2)} pixels\nAverage book thickness: {round(float(average_book_thickness), 2)} pixels\n")
+    util.log_print(f"\n\nPreliminary statistics:\n")
+    util.log_print(f"Average book height: {round(float(average_book_height), 2)} pixels\nAverage book thickness: {round(float(average_book_thickness), 2)} pixels\n")
 
     book_count = 0
     valid_books = []
 
     # Remove outliers, draw bounding boxes
-    print("\nValidating detected books and drawing bounding boxes...\n")
+    util.log_print("\nValidating detected books and drawing bounding boxes...\n")
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
         if score > CONFIDENCE and label == 84:  # Label 84 is 'book' in COCO
             box = element.detach().cpu().numpy()
@@ -143,11 +143,11 @@ def draw_boxes(img, prediction):
                 ax.add_patch(rect)
     
     if book_count == 0:
-        print("\nNo valid books detected. Exiting...\n")
+        util.log_print("\nNo valid books detected. Exiting...\n")
         return None
 
-    print(f"Number of verified books: {book_count}\n")
-    print("Image with bounding boxes saved as 'vision/images/detection_temp/spines/full_detected.jpeg'\n")
+    util.log_print(f"Number of verified books: {book_count}\n")
+    util.log_print("Image with bounding boxes saved as 'vision/images/detection_temp/spines/full_detected.jpeg'\n")
     # plt.show()
     
     # delete old full_detected.jpeg
@@ -181,7 +181,7 @@ def detect_spines(jpeg_file):
 
 
 def crop_spines(jpeg_file):
-    print("\nCropping book spines (see vision/images/detection_temp/spines/ dir)...\n")
+    util.log_print("\nCropping book spines (see vision/images/detection_temp/spines/ dir)...\n")
 
     # Detect book spines in the image
     book_boxes = detect_spines(jpeg_file)

@@ -4,7 +4,7 @@ import time
 import requests
 from dotenv import load_dotenv
 
-
+import utility as util
 
 load_dotenv()
 ISBNDB_API_KEY = os.getenv("ISBNDB_API_KEY")
@@ -21,7 +21,7 @@ def get_potential_isbns(title, author):
     
     all_isbns = openlibrary_isbns + google_isbns
     
-    print(f"\n{title} - {author}: {all_isbns}\n")
+    util.log_print(f"\n{title} - {author}: {all_isbns}\n")
     return all_isbns
 
 
@@ -105,7 +105,7 @@ def get_isbn_info(isbn):
         # Get the 'Height' and 'Width' of the book
         book_info = resp.json()
 
-        print(f"\nData for {isbn}:\n\n{book_info}\n")
+        util.log_print(f"\nData for {isbn}:\n\n{book_info}\n")
 
         height, width = get_dimensions(book_info)
         language, cover = get_language_and_cover(book_info)
@@ -120,7 +120,7 @@ def get_isbn_info(isbn):
             "isbn": book_info["book"]["isbn"],
         }
     else:
-        print(f"Error: {resp.status_code}")
+        util.log_print(f"Error: {resp.status_code}")
         return None
 
 # Book Info:
@@ -193,7 +193,7 @@ def get_all_data_isbndb(isbn):
         book_info = resp.json()
         return book_info
     else:
-        print(f"Error: {resp.status_code}")
+        util.log_print(f"Error: {resp.status_code}")
         return None
     
 
@@ -214,7 +214,7 @@ def get_all_data_google(isbn):
         book_info = response.json()
         return book_info
     else:
-        print(f"Error: {response.status_code}")
+        util.log_print(f"Error: {response.status_code}")
         return None
     
 
@@ -234,7 +234,7 @@ def get_all_data_openlibrary(isbn):
         book_info = response.json()
         return book_info
     else:
-        print(f"Error: {response.status_code}")
+        util.log_print(f"Error: {response.status_code}")
         return None
     
 
@@ -242,7 +242,7 @@ def get_all_data_openlibrary(isbn):
 def test_isbndb_response():
     isbn = "9780099520290"
     book_info = get_all_data_isbndb(isbn)
-    print(book_info)
+    util.log_print(book_info)
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 import analyze_spine as asp
 import db_requests as dbr
+import utility as util
 from classes import Spine, Book
 
 
@@ -26,25 +27,25 @@ GPT_TEMP = 0.3
 
 
 def id_possible_matches(spines, full_img_text):
-    print("\nPreparing text for GPT input...\n")
+    util.log_print("\nPreparing text for GPT input...\n")
     book_data = format_GPT_input(spines, full_img_text)
-    print(f"\nBook Data (Raw):\n{book_data}\n")
+    util.log_print(f"\nBook Data (Raw):\n{book_data}\n")
 
-    print("\n\n*****************************************************************************************\n\n")
-    print(f"\nIdentifying basic book info using {GPT_MODEL} set to a temperature of {GPT_TEMP}...\n")
+    util.log_print("\n\n*****************************************************************************************\n\n")
+    util.log_print(f"\nIdentifying basic book info using {GPT_MODEL} set to a temperature of {GPT_TEMP}...\n")
     start_gpt = time.time()
     book_data_basic = identify_basic_info(book_data)
     book_dict = json.loads(book_data_basic)
     book_count = len(book_dict)
     end_gpt = time.time()
-    print(f"\n{GPT_MODEL} identified book information in {round(end_gpt - start_gpt,2)} seconds.\n")
-    print(f"Number of books identified: {book_count}\n")
-    print(f"\nBook Identification (Preliminary):\n\n{book_data_basic}\n")
+    util.log_print(f"\n{GPT_MODEL} identified book information in {round(end_gpt - start_gpt,2)} seconds.\n")
+    util.log_print(f"Number of books identified: {book_count}\n")
+    util.log_print(f"\nBook Identification (Preliminary):\n\n{book_data_basic}\n")
 
 
-    print("\n\n*****************************************************************************************\n\n")
+    util.log_print("\n\n*****************************************************************************************\n\n")
 
-    print("\nRetrieving potential ISBN's from OpenLibrary and Google Books...\nUpdating Spine objects with possible title, author, possible ISBNs...\n")
+    util.log_print("\nRetrieving potential ISBN's from OpenLibrary and Google Books...\nUpdating Spine objects with possible title, author, possible ISBNs...\n")
     # Update spines -- spine.author, spine.title
     for i, spine in enumerate(spines):
         book = book_dict[f"Book_{i}"]
@@ -152,14 +153,14 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     # Try to get an isbn13 if the provided isbn is not 13 digits
     if len(isbn) != 13:
         p_match_isbn13 = p_match["isbn13"] if p_match else None
-        if p_match["isbn13"] != None:
+        if p_match_isbn13 != None:
             isbn = p_match["isbn13"]
             p_match = dbr.get_isbn_info(isbn)
 
     # Confirm that language is English 
     # TODO: Add language detection
     if p_match and p_match["language"].lower().strip() not in ["en", "eng", "english", "English", "EN", "ENG", "ENGLISH", "En"]:
-        print("Booksight only supports English books at this time.\n")
+        util.log_print("Booksight only supports English books at this time.\n")
         return confidence, color_filter, px_to_inches, second_pass, isbn
     
     # Confirm that spine.title is included in p_match title
@@ -168,15 +169,15 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     else:
         p_match_title = p_match["title"] if p_match else None
         if p_match_title != None:
-            print(f"Title mismatch: '{p_match['title']}' -- '{spine.title}'\n")
+            util.log_print(f"Title mismatch: '{p_match['title']}' -- '{spine.title}'\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
         else:
-            print(f"Title not found in ISBNdb data.\n")
+            util.log_print(f"Title not found in ISBNdb data.\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
     
     # Check if essential data is missing or incorrect
     if second_pass:
-        print("\nSecond pass, skipping dimension checks.\n")
+        util.log_print("\nSecond pass, skipping dimension checks.\n")
         if not p_match:
             # Create a fake p_match with the spine dimensions
             p_match = {
@@ -194,7 +195,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
 
     else:
         if not p_match or "height" not in p_match or "width" not in p_match or not p_match["height"] or not p_match["width"]:
-            print("\nEssential dimension data is missing or zero, skipping match checks for this ISBN.\n")
+            util.log_print("\nEssential dimension data is missing or zero, skipping match checks for this ISBN.\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
 
     # Calculate ratios if dimensions are valid
@@ -231,8 +232,8 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     p_avg_color, p_dom_color, p_color_palette = asp.get_color_data(p_match_cover_path)
     avg_color, dom_color, color_palette = spine.avg_color, spine.dominant_color, spine.color_palette
 
-    print(f"\np_match_color_data:\navg:{p_avg_color},\n{p_dom_color},\n{p_color_palette}\n")
-    print(f"\nspine_color_data:\navg:{avg_color},\n{dom_color},\n{color_palette}\n")
+    util.log_print(f"\np_match_color_data:\navg:{p_avg_color},\n{p_dom_color},\n{p_color_palette}\n")
+    util.log_print(f"\nspine_color_data:\navg:{avg_color},\n{dom_color},\n{color_palette}\n")
     # Apply color filter
     avg_color = tuple([avg_color[i] * color_filter[i] for i in range(3)])
     dom_color = tuple([dom_color[i] * color_filter[i] for i in range(3)])
@@ -242,13 +243,13 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     avg_color_diff = sum([abs(avg_color[i] - p_avg_color[i]) for i in range(3)]) / 3
     if avg_color_diff < 20:
         confidence += 0.2
-        print("\navg color match, confidence + 0.2\n")
+        util.log_print("\navg color match, confidence + 0.2\n")
 
     # Compare dominant color
     dom_color_diff = sum([abs(dom_color[i] - p_dom_color[i]) for i in range(3)]) / 3
     if dom_color_diff < 20:
         confidence += 0.2
-        print("\ndom color match, confidence + 0.2\n")
+        util.log_print("\ndom color match, confidence + 0.2\n")
 
     # Compare color palette
     palette_diff = 0
@@ -257,7 +258,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
 
     if palette_diff < 40:
         confidence += 0.1
-        print("\npalette match, confidence + 0.1\n")
+        util.log_print("\npalette match, confidence + 0.1\n")
 
 
     if confidence >= 0.5:
@@ -373,10 +374,10 @@ def download_image(url, isbn):
         # Open the image and save it to the file
         image = Image.open(BytesIO(response.content))
         image.save(image_path)
-        print(f"Image saved to {image_path}")
+        util.log_print(f"Image saved to {image_path}")
         return image_path
     else:
-        print(f"Failed to download the image. HTTP status: {response.status_code}")
+        util.log_print(f"Failed to download the image. HTTP status: {response.status_code}")
         return None
 
 
