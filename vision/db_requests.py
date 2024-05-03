@@ -21,7 +21,7 @@ def get_potential_isbns(title, author):
     
     all_isbns = openlibrary_isbns + google_isbns
     
-    print(f"{title} - {author}: {all_isbns}")
+    print(f"\n{title} - {author}: {all_isbns}\n")
     return all_isbns
 
 
@@ -51,7 +51,6 @@ def get_isbns_openlibrary(title, author):
         if "isbn" in result:
             isbns.extend(result["isbn"])
 
-    print("Open Library ISBNs: ", isbns)
     return isbns
 
 
@@ -83,7 +82,6 @@ def get_isbns_google_books(title, author):
                 if identifier["type"] == "ISBN_13" or identifier["type"] == "ISBN_10":
                     isbns.append(identifier["identifier"])
 
-    print("Google Books ISBNs: ", isbns)
     return isbns
 
 
@@ -107,7 +105,7 @@ def get_isbn_info(isbn):
         # Get the 'Height' and 'Width' of the book
         book_info = resp.json()
 
-        print(f"\n\nBook Info:\n{book_info}\n\n")
+        print(f"\nData for {isbn}:\n\n{book_info}\n")
 
         height, width = get_dimensions(book_info)
         language, cover = get_language_and_cover(book_info)

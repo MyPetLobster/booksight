@@ -8,7 +8,8 @@ import detect_text as dt
 import utility as util
 
 import db_requests as dbr
-import matcher
+import exporter as export
+import matcher as match
 
 
 def vision():
@@ -33,10 +34,8 @@ def vision():
     if spine_images == None:
         print("\nNo valid books detected. Exiting program.\n")
         return
-    
-    print("\nBook spines detected. Images saved in 'vision/spines' directory.\n")
-    spines_detected = len(spine_images)
-    print(f"Number of book spines detected: {spines_detected}\n")
+   
+    print(f"Spine images saved in 'vision/images/detection_temp/spines/'\n")
 
     spine_detection_end = time.time()
     print(f"Spine detection complete. Time taken: {round(spine_detection_end - start, 2)} seconds\n")
@@ -47,9 +46,9 @@ def vision():
         print("\nNo books detected. Exiting program.\n")
         return
     elif 0 < spine_count < 20:
-        print("\nCreating Spine objects. This may take several minutes...\n")
+        print("\nAnalyzing images and creating Spine objects. This may take several minutes...\n")
     else:
-        print("\nCreating Spine objects. This image contains a lot of books. Go stretch your legs. This may take a while...\n")
+        print("\nAnalyzing images and creating Spine objects. This image contains a lot of books. Go stretch your legs. This may take a while...\n")
 
     spines = []
 
@@ -59,11 +58,11 @@ def vision():
         text = dt.detect_text(image)
         spine = Spine(image, avg_color, dominant_color, color_palette, height, width, text)
         spines.append(spine)
-        print(f"\nBook_{i}:\n{spine}")
+        print(f"\n- Spine_{i}: {spine}")
         i += 1
 
     spine_object_end = time.time()
-    print(f"\nSpine objects created. Time taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
+    print(f"\nSpine objects created.\nTime taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
 
 
     # Get all scanned text from each Spine
@@ -73,7 +72,7 @@ def vision():
 
     print("\n************************************************")
     print(f"\nAll text detected from all spines:\n\n{all_spine_text}\n")
-    print("************************************************\n\n")
+    print("************************************************\n")
 
     print("\nScanning full image for additional text...\n")
     print("\nLarge images may take a while to process.\n")
@@ -86,49 +85,62 @@ def vision():
     full_image_text_unique = [text for text in full_image_text if text not in all_spine_text] 
 
     full_scan_end = time.time()
-    print(f"\nFull image scanned. Time taken: {round(full_scan_end - full_scan_start, 2)} seconds\n\n")
+    print(f"\nFull image scanned.\nTime taken: {round(full_scan_end - full_scan_start, 2)} seconds\n\n")
 
     print("\n************************************************")
     print(f"\nAll additional unique text detected from full image:\n\n{full_image_text_unique}\n")
-    print("************************************************\n\n")
+    print("************************************************\n")
     
-    
-
-    print("\nAll processes complete.\n")
-    end = time.time()
-    print(f"\nTotal time taken: {round(end - start, 2)} seconds\n")
-
-
+    print("\nAll image processing and OCR operations complete.\n")
+    print(f"\nTotal time taken for image processing and OCR: {round(time.time() - start, 2)} seconds\n\n")
+    print("************************************************\n")
+    print("************************************************\n")
+    print("************************************************\n\n\n\n")
     # Match books
     print("\nBegin book identification process...\n")
 
     # Clean up text data and retrieve potential ISBNs for each spine
-    spines = matcher.id_possible_matches(spines, full_image_text_unique)
+    spines = match.id_possible_matches(spines, full_image_text_unique)
 
-    print("\n***********************************\n")
-    print("\nAll spines:\n")
+    print("\n***********************************************\n")
+    print("\nAll Spine Objects:\n")
     for spine in spines:
         print(spine)
         print("\n")
-    
-    print("\nBegin matching spines to books...\n")
+    print("\n***********************************************\n")
+
+
+    print("\nBegin precise book identification process.\nThis may take a while...\n")
 
     books = match_spines_to_books(spines)
 
     print("\nBook identification process complete.\n")
 
-    print("\n************************************************")
-    print("\nAll identified books:\n")
+    print("\n\n\n************************************************")
+    print("\n\nAll identified books:\n")
     for book in books:
-        print(book)
-    print("************************************************\n\n")
+        print(f"{book}\n")
+    print("************************************************\n\n\n")
+
+    print(f"Total time taken to identify books: {round(time.time() - start, 2)} seconds\n\n")
+
+    # Export identified books to CSV and JSON
+    print("\nExporting identified books to CSV and JSON...\n")
+
+    export.export_to_csv(books)
+    export.export_to_json(books)
 
     print("\nAll processes complete. Thank you for using Booksight.\n")
 
 
 
 def match_spines_to_books(spines):
-    util.empty_directory("vision/downloaded_images")
+    util.empty_directory("vision/images/detection_temp/downloaded_images")
+
+    start_spine_match = time.time()
+    total_spines = len(spines)
+    total_potential_isbns = 0
+
     books = []
     color_filter = (1, 1, 1)
     px_to_inches = 1
@@ -138,19 +150,27 @@ def match_spines_to_books(spines):
         found = False
         possible = False
         possible_isbns = spine.possible_matches
+        total_potential_isbns += len(possible_isbns)
 
         while not found:
             for isbn in possible_isbns:
-                confidence, color_filter, px_to_inches, second_pass, isbn = matcher.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass)
+                confidence, color_filter, px_to_inches, second_pass, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass)
 
-                print(f"\n\nconfidence: {confidence}\n\n")
+                print(f"Confidence: {confidence}\n")
 
                 if confidence >= 0.3:
                     print(f"\n{spine.title} identified with ISBN: {isbn}\n")
                     print(f"Identification confidence: {confidence}\n")
 
                     # Create a Book object for the matched spine and populate with data
-                    book = matcher.create_book_object(isbn, confidence)
+                    print(f"Creating book object for {spine.title}...\n")
+                    book = match.create_book_object(isbn, confidence)
+                    if len(book.description) > 75:
+                        truncated_description = book.description[0:75] + "..."
+                    else:
+                        truncated_description = book.description
+
+                    print(f"""Title: {book.title}\nSubtitles: {book.subtitle}\nAuthors: {book.authors}\nISBN: {book.isbn}\nLang: {book.language}\nPublisher: {book.publisher}\nDate Published: {book.date_published}\nDescription: {truncated_description}\nPage Count: {book.pages}\nThumbnail: {book.image_path}\nIdentification Confidence: {book.confidence}\n\n""")
                     books.append(book)
                     found = True
                     break
@@ -161,22 +181,22 @@ def match_spines_to_books(spines):
                     # Create a Book object for the matched spine and populate with data
                     if possible:
                         if confidence > possible_book.confidence:
-                            possible_book = matcher.create_book_object(isbn, confidence)
+                            possible_book = match.create_book_object(isbn, confidence)
                     else:
-                        possible_book = matcher.create_book_object(isbn, confidence)
+                        possible_book = match.create_book_object(isbn, confidence)
                     possible = True
                     break
 
             if not found and not possible and not second_pass:
                 print(f"\n\nNo Matches found for {spine.title}. Starting second pass, disregarding dimensions. Thank you for your patience...\n\n")
-                confidence, color_filter, px_to_inches, second_pass, isbn = matcher.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=True)
+                confidence, color_filter, px_to_inches, second_pass, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=True)
                 if confidence >= 0.3:
                     print(f"\n{spine.title} identified with ISBN: {isbn}\n")
                     print(f"Identification confidence: {confidence}\n")
 
 
                     # Create a Book object for the matched spine and populate with data
-                    book = matcher.create_book_object(isbn, confidence)
+                    book = match.create_book_object(isbn, confidence)
                     books.append(book)
                     found = True
                 elif 0.1 < confidence < 0.3:
@@ -186,9 +206,9 @@ def match_spines_to_books(spines):
                     # Create a Book object for the matched spine and populate with data
                     if possible:
                         if confidence > possible_book.confidence:
-                            possible_book = matcher.create_book_object(isbn, confidence)
+                            possible_book = match.create_book_object(isbn, confidence)
                     else:
-                        possible_book = matcher.create_book_object(isbn, confidence)
+                        possible_book = match.create_book_object(isbn, confidence)
                     possible = True
             elif not found and not possible and second_pass:
                 print(f"\n{spine.title} could not be identified. Please verify the identification manually.\n")
@@ -199,10 +219,16 @@ def match_spines_to_books(spines):
                 books.append(book)
                 found = True
             elif not found and possible:
-                print(f"\n{spine.title} could not be identified. Please verify the identification manually.\n")
+                print(f"\n{spine.title} - Low confidence. Please verify the identification manually.\n")
                 books.append(possible_book)
                 found = True
                 
+    end_spine_match = time.time()
+    print(f"\nSpine matching complete. Time taken: {round(end_spine_match - start_spine_match, 2)} seconds\n")
+    print(f"\nTotal spines checked: {total_spines}\n")
+    print(f"\nTime taken per spine: {round((end_spine_match - start_spine_match) / total_spines, 2)} seconds\n")
+    print(f"\nTotal potential ISBNs checked: {total_potential_isbns}\n")
+    print(f"Time taken per potential ISBN: {round((end_spine_match - start_spine_match) / total_potential_isbns, 2)} seconds\n")
 
     return books
 

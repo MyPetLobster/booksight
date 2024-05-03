@@ -1,6 +1,7 @@
 import json 
 import os
 import requests
+import time
 from PIL import Image
 import cv2 as cv
 import numpy as np
@@ -29,15 +30,21 @@ def id_possible_matches(spines, full_img_text):
     book_data = format_GPT_input(spines, full_img_text)
     print(f"\nBook Data (Raw):\n{book_data}\n")
 
+    print("\n\n*****************************************************************************************\n\n")
     print(f"\nIdentifying basic book info using {GPT_MODEL} set to a temperature of {GPT_TEMP}...\n")
+    start_gpt = time.time()
     book_data_basic = identify_basic_info(book_data)
-    print(f"\nBook Identification (Preliminary):\n{book_data_basic}\n")
-
     book_dict = json.loads(book_data_basic)
     book_count = len(book_dict)
+    end_gpt = time.time()
+    print(f"\n{GPT_MODEL} identified book information in {round(end_gpt - start_gpt,2)} seconds.\n")
+    print(f"Number of books identified: {book_count}\n")
+    print(f"\nBook Identification (Preliminary):\n\n{book_data_basic}\n")
 
-    print(f"\nNumber of books positively identified: {book_count}\n")
 
+    print("\n\n*****************************************************************************************\n\n")
+
+    print("\nRetrieving potential ISBN's from OpenLibrary and Google Books...\nUpdating Spine objects with possible title, author, possible ISBNs...\n")
     # Update spines -- spine.author, spine.title
     for i, spine in enumerate(spines):
         book = book_dict[f"Book_{i}"]
@@ -67,7 +74,7 @@ def format_GPT_input(spines, full_img_text):
     for i, spine in enumerate(spines):
         book_data += f"Book_{i}: {spine.text},\n"
 
-    return f"Individual Spine OCR Text: {book_data}\nFull Image OCR Text: {full_img_text}"
+    return f"\nIndividual Spine OCR Text:\n{book_data}\nFull Image OCR Text:\n{full_img_text}"
 
 
 def identify_basic_info(text):
@@ -142,27 +149,34 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     confidence = 0
     p_match = dbr.get_isbn_info(isbn)
 
+    # Try to get an isbn13 if the provided isbn is not 13 digits
     if len(isbn) != 13:
-        if p_match["isbn13"]:
+        p_match_isbn13 = p_match["isbn13"] if p_match else None
+        if p_match["isbn13"] != None:
             isbn = p_match["isbn13"]
             p_match = dbr.get_isbn_info(isbn)
 
     # Confirm that language is English 
     # TODO: Add language detection
     if p_match and p_match["language"].lower().strip() not in ["en", "eng", "english", "English", "EN", "ENG", "ENGLISH", "En"]:
-        print("Booksight only supports English books at this time.")
+        print("Booksight only supports English books at this time.\n")
         return confidence, color_filter, px_to_inches, second_pass, isbn
     
     # Confirm that spine.title is included in p_match title
     if p_match and spine.title.lower().strip() in p_match["title"].lower().strip():
         pass
     else:
-        print(f"Title mismatch: {p_match['title']} vs {spine.title}")
-        return confidence, color_filter, px_to_inches, second_pass, isbn
+        p_match_title = p_match["title"] if p_match else None
+        if p_match_title != None:
+            print(f"Title mismatch: '{p_match['title']}' -- '{spine.title}'\n")
+            return confidence, color_filter, px_to_inches, second_pass, isbn
+        else:
+            print(f"Title not found in ISBNdb data.\n")
+            return confidence, color_filter, px_to_inches, second_pass, isbn
     
     # Check if essential data is missing or incorrect
     if second_pass:
-        print("SECOND PASS")
+        print("\nSecond pass, skipping dimension checks.\n")
         if not p_match:
             # Create a fake p_match with the spine dimensions
             p_match = {
@@ -180,7 +194,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
 
     else:
         if not p_match or "height" not in p_match or "width" not in p_match or not p_match["height"] or not p_match["width"]:
-            print("Essential dimension data is missing or zero, skipping match checks for this ISBN.")
+            print("\nEssential dimension data is missing or zero, skipping match checks for this ISBN.\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
 
     # Calculate ratios if dimensions are valid
@@ -217,8 +231,8 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     p_avg_color, p_dom_color, p_color_palette = asp.get_color_data(p_match_cover_path)
     avg_color, dom_color, color_palette = spine.avg_color, spine.dominant_color, spine.color_palette
 
-    print(f"p_match_color_data:\navg:{p_avg_color},\n{p_dom_color},\n{p_color_palette}")
-    print(f"spine_color_data:\navg:{avg_color},\n{dom_color},\n{color_palette}")
+    print(f"\np_match_color_data:\navg:{p_avg_color},\n{p_dom_color},\n{p_color_palette}\n")
+    print(f"\nspine_color_data:\navg:{avg_color},\n{dom_color},\n{color_palette}\n")
     # Apply color filter
     avg_color = tuple([avg_color[i] * color_filter[i] for i in range(3)])
     dom_color = tuple([dom_color[i] * color_filter[i] for i in range(3)])
@@ -228,13 +242,13 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     avg_color_diff = sum([abs(avg_color[i] - p_avg_color[i]) for i in range(3)]) / 3
     if avg_color_diff < 20:
         confidence += 0.2
-        print("avg color match, confidence + 0.2")
+        print("\navg color match, confidence + 0.2\n")
 
     # Compare dominant color
     dom_color_diff = sum([abs(dom_color[i] - p_dom_color[i]) for i in range(3)]) / 3
     if dom_color_diff < 20:
         confidence += 0.2
-        print("dom color match, confidence + 0.2")
+        print("\ndom color match, confidence + 0.2\n")
 
     # Compare color palette
     palette_diff = 0
@@ -243,7 +257,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
 
     if palette_diff < 40:
         confidence += 0.1
-        print("palette match, confidence + 0.1")
+        print("\npalette match, confidence + 0.1\n")
 
 
     if confidence >= 0.5:
@@ -287,7 +301,7 @@ def create_book_object(isbn, confidence):
         book.date_published = volume_info.get('publishedDate', "")
         book.description = volume_info.get('description', "")
         book.pages = volume_info.get('pageCount', 0)
-        book.image = volume_info.get('imageLinks', {}).get('thumbnail', "")
+        book.image_path = volume_info.get('imageLinks', {}).get('thumbnail', "")
         # Check if ISBN-13 is present
         if 'industryIdentifiers' in volume_info:
             for identifier in volume_info['industryIdentifiers']:
@@ -346,7 +360,7 @@ def download_image(url, isbn):
         str: The path to the downloaded image.
     """
     # Ensure the directory exists where the images will be saved
-    directory = "vision/downloaded_images"
+    directory = "vision/images/detection_temp/downloaded_images"
     if not os.path.exists(directory):
         os.makedirs(directory)
 

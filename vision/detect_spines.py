@@ -119,14 +119,14 @@ def draw_boxes(img, prediction):
     average_book_height = total_book_height / book_count
     average_book_thickness = total_book_thickness / book_count
 
-    print(f"\nPreliminary statistics:\n")
-    print(f"\nAverage book height: {round(float(average_book_height), 2)} pixels")
-    print(f"\nAverage book thickness: {round(float(average_book_thickness), 2)} pixels\n")
+    print(f"\n\nPreliminary statistics:\n")
+    print(f"Average book height: {round(float(average_book_height), 2)} pixels\nAverage book thickness: {round(float(average_book_thickness), 2)} pixels\n")
 
     book_count = 0
     valid_books = []
 
     # Remove outliers, draw bounding boxes
+    print("\nValidating detected books and drawing bounding boxes...\n")
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
         if score > CONFIDENCE and label == 84:  # Label 84 is 'book' in COCO
             box = element.detach().cpu().numpy()
@@ -146,7 +146,7 @@ def draw_boxes(img, prediction):
         print("\nNo valid books detected. Exiting...\n")
         return None
 
-    print(f"\nNumber of books detected: {book_count}\n\n")
+    print(f"Number of verified books: {book_count}\n")
     print("Image with bounding boxes saved as 'vision/images/detection_temp/spines/full_detected.jpeg'\n")
     # plt.show()
     

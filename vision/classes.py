@@ -43,7 +43,7 @@ class Book:
         self.isbn13 = None
         self.pages = None
         self.binding = None
-        self.image = None
+        self.image_path = None
         self.confidence = None
 
 
@@ -55,13 +55,13 @@ class Book:
         Language: {self.language}
         Publisher: {self.publisher}
         Publish Date: {self.date_published}
-        Description: {self.description}
+        Description: {self.description:75}...
         ISBN: {self.isbn}
         ISBN10: {self.isbn10}
         ISBN13: {self.isbn13}
         Pages: {self.pages}
         Binding: {self.binding}
-        Image: {self.image}
+        Image: {self.image_path}
         Confidence: {self.confidence}
         """ 
     
