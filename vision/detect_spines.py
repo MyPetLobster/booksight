@@ -74,10 +74,10 @@ def load_image(input_path):
 
     # img.show("Enhanced Image")
 
-    if os.path.exists("vision/spines/enhanced_image.jpeg"):
-        os.remove("vision/spines/enhanced_image.jpeg")
-    img.save("vision/spines/enhanced_image.jpeg")
-    print("\nEnhanced image saved as 'vision/spines/enhanced_image.jpeg'\n")
+    if os.path.exists("vision/images/detection_temp/spines/enhanced_image.jpeg"):
+        os.remove("vision/images/detection_temp/spines/enhanced_image.jpeg")
+    img.save("vision/images/detection_temp/spines/enhanced_image.jpeg")
+    print("\nEnhanced image saved as 'vision/images/detection_temp/spines/enhanced_image.jpeg'\n")
 
     print("\nApplying tensor transformation...\n")
 
@@ -147,14 +147,14 @@ def draw_boxes(img, prediction):
         return None
 
     print(f"\nNumber of books detected: {book_count}\n\n")
-    print("Image with bounding boxes saved as 'vision/spines/full_detected.jpeg'\n")
+    print("Image with bounding boxes saved as 'vision/images/detection_temp/spines/full_detected.jpeg'\n")
     # plt.show()
     
     # delete old full_detected.jpeg
-    if os.path.exists("vision/spines/full_detected.jpeg"):
-        os.remove("vision/spines/full_detected.jpeg")
+    if os.path.exists("vision/images/detection_temp/spines/full_detected.jpeg"):
+        os.remove("vision/images/detection_temp/spines/full_detected.jpeg")
 
-    plt.savefig("vision/spines/full_detected.jpeg")
+    plt.savefig("vision/images/detection_temp/spines/full_detected.jpeg")
 
     return valid_books
 
@@ -181,7 +181,7 @@ def detect_spines(jpeg_file):
 
 
 def crop_spines(jpeg_file):
-    print("\nCropping book spines (see /spines/ dir)...\n")
+    print("\nCropping book spines (see vision/images/detection_temp/spines/ dir)...\n")
 
     # Detect book spines in the image
     book_boxes = detect_spines(jpeg_file)
@@ -195,8 +195,8 @@ def crop_spines(jpeg_file):
         # Convert tensor to list of integers
         x1, y1, x2, y2 = map(int, box.tolist())
         book_img = original_img.crop((x1, y1, x2, y2))
-        book_img.save(f"vision/spines/book_{i}.jpeg")
-        book_img_path = f"vision/spines/book_{i}.jpeg"
+        book_img.save(f"vision/images/detection_temp/spines/book_{i}.jpeg")
+        book_img_path = f"vision/images/detection_temp/spines/book_{i}.jpeg"
         list_of_spine_images.append(book_img_path)
 
     spine_count = len(list_of_spine_images)

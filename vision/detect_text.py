@@ -19,7 +19,7 @@ def draw_bounding_boxes(image, detections):
         cv.putText(image_with_boxes, text, top_left, cv.FONT_HERSHEY_COMPLEX_SMALL, 0.65, (255, 0, 0), 2)
     
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-    cv.imwrite(f"vision/debug_images/text_detection_{timestamp}.jpeg", image_with_boxes)
+    cv.imwrite(f"vision/images/detection/temp/debug_images/text_detection_{timestamp}.jpeg", image_with_boxes)
 
 
 
@@ -116,7 +116,7 @@ def detect_text(image_path):
 
 
 def main():
-    detect_text("vision/spines/book_0.jpeg")
+    detect_text("vision/images/detection_temp/spines/book_0.jpeg")
 
 
 
