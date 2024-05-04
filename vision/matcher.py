@@ -3,8 +3,6 @@ import os
 import requests
 import time
 from PIL import Image
-import cv2 as cv
-import numpy as np
 from io import BytesIO
 from openai import OpenAI
 from dotenv import load_dotenv
