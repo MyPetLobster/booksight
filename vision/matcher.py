@@ -110,7 +110,8 @@ def identify_basic_info(text):
         subtitles. Do not make up any authors or titles. 
 
         - If you are only able to identify an author, you should search your knowledge to find all the books that author has written, then 
-        use that information in order to determine which title is most likely to be correct.
+        use that information along with the other letters in the OCR text in order to determine which title is most likely to be correct. Use the 
+        same problem solving logic if you are only able to identify a title.
 
         - Your response is being decoded directly with Python's json.loads() function. Make sure your response is in the correct format without
         any additional characters or formatting.
