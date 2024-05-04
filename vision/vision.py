@@ -229,6 +229,4 @@ def match_spines_to_books(spines):
 
 
 if __name__ == "__main__":
-
-
     vision("vision/images/test_images/test_five.jpeg")

@@ -17,7 +17,7 @@ model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
 model.eval()
 
 # Confidence threshold for detected objects
-CONFIDENCE = 0.83
+CONFIDENCE = 0.79
 
 # Define the image transformation
 transform = transforms.Compose([
