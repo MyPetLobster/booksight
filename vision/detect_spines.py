@@ -221,7 +221,7 @@ def adjust_brightness(image, brightness):
         PIL.Image: The adjusted image.
     """
     enhancer = ImageEnhance.Brightness(image)
-    factor = 120 / brightness
+    factor = 127 / brightness
     image = enhancer.enhance(factor)
     
     return image

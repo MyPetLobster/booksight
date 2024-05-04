@@ -32,8 +32,6 @@ def vision(image_path):
     spine_detection_end = time.time()
     util.log_print(f"Spine detection complete. Time taken: {round(spine_detection_end - start, 2)} seconds\n")
 
-
-    # Create Spine objects - Detect text, colors, and dimensions
     if spine_count == 0:
         util.log_print("\nNo books detected. Exiting program.\n")
         return
@@ -42,6 +40,7 @@ def vision(image_path):
     else:
         util.log_print("\nAnalyzing images and creating Spine objects. This image contains a lot of books. Go stretch your legs. This may take a while...\n")
 
+    # Create Spine objects - Detect text, colors, and dimensions
     spines = []
 
     i = 0
@@ -55,7 +54,6 @@ def vision(image_path):
 
     spine_object_end = time.time()
     util.log_print(f"\nSpine objects created.\nTime taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
-
 
     # Get all scanned text from each Spine
     all_spine_text = []
