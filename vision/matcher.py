@@ -37,11 +37,11 @@ def id_possible_matches(spines, full_img_text):
         list: A list of spine objects with updated data.
     """
     util.log_print("\nPreparing text for AI input...\n")
-    book_data = format_AI_input(spines, full_img_text)
-    util.log_print(f"\nBook Data (Raw):\n{book_data}\n")
+    book_data_prompt = format_AI_input(spines, full_img_text)
+    util.log_print(f"\nAI Prompt and Raw Book Data:\n{book_data_prompt}\n")
 
     start_ai_process = time.time()
-    book_data_basic = identify_with_AI(book_data)
+    book_data_basic = identify_with_AI(book_data_prompt)
     book_dict = json.loads(book_data_basic)
     book_count = len(book_dict)
     end_ai_process = time.time()
@@ -65,20 +65,20 @@ def id_possible_matches(spines, full_img_text):
     return spines
 
 
-def identify_with_AI(book_data):
+def identify_with_AI(prompt):
     """
     Identify book titles and authors using AI. Choose between GPT and Gemini.
     """
     if AI_OPTION == "gpt":
         gpt_start = time.time()
         print(f"Beginning identification with {GPT_MODEL} set to a temperature of {GPT_TEMP}...\n ")
-        return gpt.run_gpt(book_data, GPT_MODEL, GPT_TEMP)
+        return gpt.run_gpt(prompt, GPT_MODEL, GPT_TEMP)
         gpt_end = time.time()
         print(f"Identification with {GPT_MODEL} complete.\nTime elapsed: {round(gpt_end - gpt_start, 2)} seconds.\n")
     elif AI_OPTION == "gemini":
         gemini_start = time.time()
         print("Beginning identification with {GEMINI_MODEL}...\n")
-        return gemini.run_gemini(book_data, GEMINI_MODEL)
+        return gemini.run_gemini(prompt, GEMINI_MODEL)
         gemini_end = time.time()
         print(f"Identification with {GEMINI_MODEL} complete.\nTime elapsed: {round(gemini_end - gemini_start, 2)} seconds.\n")
     else:
@@ -125,7 +125,7 @@ def format_AI_input(spines, full_img_text):
         same problem solving logic if you are only able to identify a title.
 
         - Your response is being decoded directly with Python's json.loads() function. Make sure your response is in the correct format without
-        any additional characters or formatting.
+        any additional characters or formatting. Do not even label the response as JSON. Just provide the JSON-formatted string.
 
         Here is the input text you will be working with, delimited by three backticks: 
         ```{spine_img_text}```
@@ -385,4 +385,3 @@ def download_image(url, isbn):
 
 
 
-        

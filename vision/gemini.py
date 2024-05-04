@@ -28,6 +28,7 @@ def run_gemini(prompt, model):
     model = genai.GenerativeModel(model)
     response = model.generate_content(prompt)
 
+    print(response.text)
     return response.text
 
 

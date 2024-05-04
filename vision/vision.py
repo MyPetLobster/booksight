@@ -18,6 +18,8 @@ def vision(image_path):
     util.empty_directory("vision/images/detection_temp/debug_images")
     util.empty_directory("vision/images/detection_temp/spines")
     util.empty_directory("vision/images/detection_temp/downloaded_images")
+    util.empty_directory("vision/exports/csv")
+    util.empty_directory("vision/exports/json")
 
     # Start timer
     start = time.time()

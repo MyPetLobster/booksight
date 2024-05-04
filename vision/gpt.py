@@ -29,4 +29,5 @@ def run_gpt(prompt, model, temperature):
         max_tokens=1000,
     )
 
+    print(response.choices[0].message.content.strip())
     return response.choices[0].message.content.strip()
