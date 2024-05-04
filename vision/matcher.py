@@ -4,60 +4,89 @@ import requests
 import time
 from PIL import Image
 from io import BytesIO
-from openai import OpenAI
-from dotenv import load_dotenv
 
 import analyze_spine as asp
 import db_requests as dbr
 import utility as util
 from classes import Spine, Book
 
+import gpt
+import gemini
 
 
-load_dotenv()
-client = OpenAI()
+# Choose between 'gpt' and 'gemini'
+AI_OPTION = "gemini"
 
-
+# OpenAI config. Valid GPT models for Booksight (as of 2024-05-04): gpt-4-turbo, gpt-4, gpt-3.5-turbo
 GPT_MODEL = "gpt-4"
 GPT_TEMP = 0.3
 
-
+# Gemini config. Valid Gemini models for Booksight (as of 2024-05-04): gemini-pro (alias for gemini-1.0-pro)
+GEMINI_MODEL = "gemini-pro"
 
 
 def id_possible_matches(spines, full_img_text):
-    util.log_print("\nPreparing text for GPT input...\n")
-    book_data = format_GPT_input(spines, full_img_text)
+    """
+    Identify possible matches for each spine using AI and external APIs.
+
+    Args:
+        spines (list): A list of spine objects.
+        full_img_text (str): The text detected in the full image.
+
+    Returns:
+        list: A list of spine objects with updated data.
+    """
+    util.log_print("\nPreparing text for AI input...\n")
+    book_data = format_AI_input(spines, full_img_text)
     util.log_print(f"\nBook Data (Raw):\n{book_data}\n")
 
-    util.log_print("\n\n*****************************************************************************************\n\n")
-    util.log_print(f"\nIdentifying basic book info using {GPT_MODEL} set to a temperature of {GPT_TEMP}...\n")
-    start_gpt = time.time()
-    book_data_basic = identify_basic_info(book_data)
+    start_ai_process = time.time()
+    book_data_basic = identify_with_AI(book_data)
     book_dict = json.loads(book_data_basic)
     book_count = len(book_dict)
-    end_gpt = time.time()
-    util.log_print(f"\n{GPT_MODEL} identified book information in {round(end_gpt - start_gpt,2)} seconds.\n")
+    end_ai_process = time.time()
+
+    util.log_print(f"\nAI processing complete. Time elapsed: {round(end_ai_process - start_ai_process, 2)} seconds.\n")
     util.log_print(f"Number of books identified: {book_count}\n")
     util.log_print(f"\nBook Identification (Preliminary):\n\n{book_data_basic}\n")
-
-
     util.log_print("\n\n*****************************************************************************************\n\n")
+    util.log_print("\nRetrieving potential ISBN's from OpenLibrary and Google Books...\nUpdating Spine objects with title, author, and possible ISBNs...\n")
 
-    util.log_print("\nRetrieving potential ISBN's from OpenLibrary and Google Books...\nUpdating Spine objects with possible title, author, possible ISBNs...\n")
     # Update spines -- spine.author, spine.title
     for i, spine in enumerate(spines):
         book = book_dict[f"Book_{i}"]
         spine.author = book["author"]
         spine.title = book["title"]
 
-    # Retrieve potential ISBN's from OpenLibrary and update spine.possible_matches with list of ISBN's
+    # Retrieve potential ISBN's from OpenLibrary/Google Books and update spine.possible_matches with list of ISBN's
     for spine in spines:
         spine.possible_matches = dbr.get_potential_isbns(spine.title, spine.author)
         
     return spines
 
 
-def format_GPT_input(spines, full_img_text):
+def identify_with_AI(book_data):
+    """
+    Identify book titles and authors using AI. Choose between GPT and Gemini.
+    """
+    if AI_OPTION == "gpt":
+        gpt_start = time.time()
+        print(f"Beginning identification with {GPT_MODEL} set to a temperature of {GPT_TEMP}...\n ")
+        return gpt.run_gpt(book_data, GPT_MODEL, GPT_TEMP)
+        gpt_end = time.time()
+        print(f"Identification with {GPT_MODEL} complete.\nTime elapsed: {round(gpt_end - gpt_start, 2)} seconds.\n")
+    elif AI_OPTION == "gemini":
+        gemini_start = time.time()
+        print("Beginning identification with {GEMINI_MODEL}...\n")
+        return gemini.run_gemini(book_data, GEMINI_MODEL)
+        gemini_end = time.time()
+        print(f"Identification with {GEMINI_MODEL} complete.\nTime elapsed: {round(gemini_end - gemini_start, 2)} seconds.\n")
+    else:
+        util.log_print("Invalid AI option. Please choose 'gpt' or 'gemini'.\n")
+        return None
+
+
+def format_AI_input(spines, full_img_text):
     """
     Format all data to be included in prompt message
 
@@ -68,30 +97,14 @@ def format_GPT_input(spines, full_img_text):
     output:
         - book_data: String containing all book data in the format 'Book_X: <spine_text>,\n'
     """
-
     book_data = ""
     for i, spine in enumerate(spines):
         book_data += f"Book_{i}: {spine.text},\n"
 
-    return f"\nIndividual Spine OCR Text:\n{book_data}\nFull Image OCR Text:\n{full_img_text}"
+    spine_img_text = f"\nIndividual Spine OCR Text:\n{book_data}\nFull Image OCR Text:\n{full_img_text}"
 
-
-def identify_basic_info(text):
-    """
-    This function interprets OCR text to identify book titles and authors. The OCR text often contains errors and unconventional spacing, 
-    which requires intelligent parsing to deduce the correct information.
-
-    Args:
-        text (str): A string containing OCR text for each spine.
-
-    Returns:
-        str: A JSON-formatted string containing the book titles and authors.
-    """
-
-    instructions = {
-        "role": "system", 
-        "content": f"""You will receive a string formatted as list of text detected from spines of books, formatted like this --
-        "Book_X: <OCR text>,\n". You must interpret the OCR text and identify each book's title and author. The OCR text may contain errors,
+    prompt = f"""You will receive a string formatted as list of text detected from spines of books, formatted like this --
+        "Book_X: <OCR text>,". You must interpret the OCR text and identify each book's title and author. The OCR text may contain errors,
         unconventional spacing, or other issues that require intelligent parsing to deduce the correct information. Return a JSON-formatted
         string where each "Book_X" identifier is associated with an "author" and "title" key. If a book title and/or author cannot be confidently
         identified, use "Unknown" as the value. Correct all spelling and spacing errors in your response.
@@ -114,36 +127,27 @@ def identify_basic_info(text):
         - Your response is being decoded directly with Python's json.loads() function. Make sure your response is in the correct format without
         any additional characters or formatting.
 
-        Here is the input text you will be working with: \n\n  {text}
+        Here is the input text you will be working with, delimited by three backticks: 
+        ```{spine_img_text}```
         """
-    }
-
-    response = client.chat.completions.create(
-        model=GPT_MODEL,
-        messages=[instructions],
-        temperature=GPT_TEMP,
-        max_tokens=1000,
-    )
-
-    return response.choices[0].message.content.strip()
-
-
+    
+    return prompt
 
 
 def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     """
     Check for a positive match using dimension ratio comparison, average color, dominant color, and color palette
-    comparisons. First, the function will retrieve all the info about the ISBN from ISBNdb. Then it will determine
-    the dimensions of the book associated with the ISBN and compare it to the dimensions of the spine. If the dimensions
-    are within a certain ratio, the function will then determine the average color, dominant color, and color palette of the
-    book cover and compare it to the spine's color data. If all of these comparisons are within a certain threshold, the function
-    will return a confidence score for the match.
+    comparisons. If a match is found, update the color filter and pixel-to-inch ratio and return a confidence score.
 
     Args:
+        spine (Spine): A Spine object.
         isbn (str): The ISBN of the book.
+        color_filter (list): A list of RGB values to filter colors.
+        px_to_inches (float): The pixel-to-inch ratio.
+        second_pass (bool): Whether to skip dimension checks.
 
     Returns:
-        float: A confidence score for the match.
+        tuple: A tuple containing the confidence score, updated color filter, updated pixel-to-inch ratio, and whether a second pass is needed.
     """
     set_local_img = False
     confidence = 0
