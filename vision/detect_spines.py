@@ -10,8 +10,6 @@ from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 import utility as util
 
 
-
-
 # Load a pre-trained Faster R-CNN model
 model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
 model.eval()
@@ -27,41 +25,72 @@ transform = transforms.Compose([
 book_count = 0 
 
 
-def calculate_brightness(image):
+def crop_spines(jpeg_file):
     """
-    This function calculates the average brightness of an image.
-    
-    Args:
-        image (numpy.ndarray): The image to calculate the brightness of.
-        
-    Returns:
-        float: The average brightness of the image (0-255).
-    """
-    grayscale_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-    brightness = cv.mean(grayscale_image)
-
-    return brightness[0]
-
-
-def adjust_brightness(image, brightness):
-    """
-    This function adjusts the brightness of an image based on the average brightness value. Target brightness ~120.
+    This function detects book spines in an image and creates a new image for each spine.
 
     Args:
-        image (PIL.Image): The image to adjust the brightness of.
-        brightness (float): The average brightness of the image (0-255).
+        jpeg_file (str): The path to the image file.
+
+    Returns:    
+        list: A list of paths to the cropped book spine images.
+        int: The number of book spines detected.
+    """
+    util.log_print("\nCropping book spines (see vision/images/detection_temp/spines/ dir)...\n")
+
+    # Detect book spines in the image
+    book_boxes = detect_spines(jpeg_file)
+    if book_boxes == None:
+        return None, None
+    list_of_spine_images = []
+
+    # Create a new image for each book spine and save in 'vision/spines' directory
+    original_img = Image.open(jpeg_file)
+    for i, box in enumerate(book_boxes):
+        # Convert tensor to list of integers
+        x1, y1, x2, y2 = map(int, box.tolist())
+        book_img = original_img.crop((x1, y1, x2, y2))
+        book_img.save(f"vision/images/detection_temp/spines/book_{i}.jpeg")
+        book_img_path = f"vision/images/detection_temp/spines/book_{i}.jpeg"
+        list_of_spine_images.append(book_img_path)
+
+    spine_count = len(list_of_spine_images)
+
+    return list_of_spine_images, spine_count
+
+
+def detect_spines(jpeg_file):
+    """
+    This function detects book spines in an image and draws bounding boxes around them.
+
+    Args:
+        jpeg_file (str): The path to the image file.
 
     Returns:
-        PIL.Image: The adjusted image.
+        list: A list of bounding boxes for the detected book spines.
     """
-    enhancer = ImageEnhance.Brightness(image)
-    factor = 120 / brightness
-    image = enhancer.enhance(factor)
-    
-    return image
+    input_img = jpeg_file
+    img_tensor = load_image(input_img)
+    prediction = predict(model, img_tensor)
+    img = Image.open(input_img)
+    valid_books = draw_boxes(img, prediction)
+
+    if valid_books == None:
+        return None
+
+    return valid_books
 
 
 def load_image(input_path):
+    """
+    This function loads an image, enhances it, and applies a tensor transformation.
+
+    Args:
+        input_path (str): The path to the image file.
+
+    Returns:
+        torch.Tensor: The transformed image tensor.
+    """
     util.log_print("\nLoading image...\n")
     img = Image.open(input_path).convert("RGB")
     
@@ -69,19 +98,16 @@ def load_image(input_path):
     
     # Enhance the image
     img = ImageOps.autocontrast(img)
-
     brightness = calculate_brightness(cv.imread(input_path))
     img = adjust_brightness(img, brightness)
-    
     img = img.filter(ImageFilter.EDGE_ENHANCE)
 
-    # img.show("Enhanced Image")
-
+    # Save enhanced image
     if os.path.exists("vision/images/detection_temp/spines/enhanced_image.jpeg"):
         os.remove("vision/images/detection_temp/spines/enhanced_image.jpeg")
     img.save("vision/images/detection_temp/spines/enhanced_image.jpeg")
-    util.log_print("\nEnhanced image saved as 'vision/images/detection_temp/spines/enhanced_image.jpeg'\n")
 
+    util.log_print("\nEnhanced image saved as 'vision/images/detection_temp/spines/enhanced_image.jpeg'\n")
     util.log_print("\nApplying tensor transformation...\n")
 
     img_tensor = transform(img)
@@ -97,17 +123,27 @@ def predict(model, img_tensor):
 
 
 def draw_boxes(img, prediction):
+    """
+    This function draws bounding boxes around detected objects in an image. It also validates the detected books using 
+    average book height and thickness.
+
+    Args:
+        img (PIL.Image): The image to draw bounding boxes on.
+        prediction (dict): The prediction results from the model.
+
+    Returns:
+        list: A list of bounding boxes for the detected book spines.
+    """
     util.log_print("\nDrawing bounding boxes...\n")
     plt.figure(figsize=(12, 8))
     plt.imshow(img)
     ax = plt.gca()
-
     util.log_print("\nProcessing detected objects...\n")
     book_count = 0
     total_book_height = 0
     total_book_thickness = 0
 
-    # Check for each detected object, determine average book height
+    # Check for each detected object, if it is a book and meets the confidence threshold
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
         if score > CONFIDENCE and label == 84:  # Label 84 is 'book' in COCO
             total_book_height += element[3] - element[1]
@@ -151,57 +187,41 @@ def draw_boxes(img, prediction):
 
     util.log_print(f"Number of verified books: {book_count}\n")
     util.log_print("Image with bounding boxes saved as 'vision/images/detection_temp/spines/full_detected.jpeg'\n")
-    # plt.show()
-    
-    # delete old full_detected.jpeg
-    if os.path.exists("vision/images/detection_temp/spines/full_detected.jpeg"):
-        os.remove("vision/images/detection_temp/spines/full_detected.jpeg")
 
     plt.savefig("vision/images/detection_temp/spines/full_detected.jpeg")
 
     return valid_books
 
 
-def detect_spines(jpeg_file):
-    input_img = jpeg_file
+def calculate_brightness(image):
+    """
+    This function calculates the average brightness of an image.
     
-    # Load and transform the image
-    img_tensor = load_image(input_img)
+    Args:
+        image (numpy.ndarray): The image to calculate the brightness of.
+        
+    Returns:
+        float: The average brightness of the image (0-255).
+    """
+    grayscale_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    brightness = cv.mean(grayscale_image)
+
+    return brightness[0]
+
+
+def adjust_brightness(image, brightness):
+    """
+    This function adjusts the brightness of an image based on the average brightness value. Target brightness ~120.
+
+    Args:
+        image (PIL.Image): The image to adjust the brightness of.
+        brightness (float): The average brightness of the image (0-255).
+
+    Returns:
+        PIL.Image: The adjusted image.
+    """
+    enhancer = ImageEnhance.Brightness(image)
+    factor = 120 / brightness
+    image = enhancer.enhance(factor)
     
-    # Perform prediction
-    prediction = predict(model, img_tensor)
-    
-    # Load the original image to draw on
-    img = Image.open(input_img)
-
-    # Draw bounding boxes on the image and display it
-    valid_books = draw_boxes(img, prediction)
-
-    if valid_books == None:
-        return None
-
-    return valid_books
-
-
-def crop_spines(jpeg_file):
-    util.log_print("\nCropping book spines (see vision/images/detection_temp/spines/ dir)...\n")
-
-    # Detect book spines in the image
-    book_boxes = detect_spines(jpeg_file)
-    if book_boxes == None:
-        return None, None
-    list_of_spine_images = []
-
-    # Create a new image for each book spine and save in 'vision/spines' directory
-    original_img = Image.open(jpeg_file)
-    for i, box in enumerate(book_boxes):
-        # Convert tensor to list of integers
-        x1, y1, x2, y2 = map(int, box.tolist())
-        book_img = original_img.crop((x1, y1, x2, y2))
-        book_img.save(f"vision/images/detection_temp/spines/book_{i}.jpeg")
-        book_img_path = f"vision/images/detection_temp/spines/book_{i}.jpeg"
-        list_of_spine_images.append(book_img_path)
-
-    spine_count = len(list_of_spine_images)
-
-    return list_of_spine_images, spine_count
+    return image

@@ -27,6 +27,9 @@ def empty_directories():
 
 
 def empty_directory(directory):
+    if os.path.exists("vision/images/detection_temp/spines/full_detected.jpeg"):
+        os.remove("vision/images/detection_temp/spines/full_detected.jpeg")
+        
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
         try:
