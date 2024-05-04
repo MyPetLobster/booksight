@@ -22,7 +22,7 @@ def get_potential_isbns(title, author):
     all_isbns = openlibrary_isbns + google_isbns
     
     util.log_print(f"\n{title} - {author}: {all_isbns}\n")
-    return all_isbns
+    return all_isbns[:10]
 
 
 
@@ -48,10 +48,20 @@ def get_isbns_openlibrary(title, author):
     # Extract the ISBNs from the response
     isbns = []
     for result in response.json()["docs"]:
-        if "isbn" in result:
-            isbns.extend(result["isbn"])
+        languages = result.get("language")
+        
+        if languages and "eng" in languages:
+            titles = []
+            titles.append(result.get("title").lower())
 
-    return isbns
+            if "title_suggest" in result:
+                titles.append(result.get("title_suggest").lower())
+            
+            if title.lower() in titles:
+                if "isbn" in result:
+                    isbns += result["isbn"]
+        
+    return isbns[:5]
 
 
 def get_isbns_google_books(title, author):
@@ -69,7 +79,7 @@ def get_isbns_google_books(title, author):
     api_key = os.getenv("GOOGLE_BOOKS_API_KEY")
 
     # Query the Google Books API
-    response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}+inauthor:{author}&maxResults=10&key={api_key}")
+    response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}+inauthor:{author}&maxResults=5&key={api_key}")
 
     if response.json().get("totalItems", 0) == 0:
         return []
@@ -77,12 +87,13 @@ def get_isbns_google_books(title, author):
     # Extract the ISBNs from the response
     isbns = []
     for item in response.json()["items"]:
-        if "industryIdentifiers" in item["volumeInfo"]:
-            for identifier in item["volumeInfo"]["industryIdentifiers"]:
-                if identifier["type"] == "ISBN_13" or identifier["type"] == "ISBN_10":
-                    isbns.append(identifier["identifier"])
-
-    return isbns
+        # Check if title matches
+        if item["volumeInfo"]["title"].lower() == title.lower():
+            if "industryIdentifiers" in item["volumeInfo"]:
+                for identifier in item["volumeInfo"]["industryIdentifiers"]:
+                    if identifier["type"] == "ISBN_13" or identifier["type"] == "ISBN_10":
+                        isbns.append(identifier["identifier"])
+    return isbns[:5]
 
 
 # Get book information using ISBNdb API

@@ -151,7 +151,7 @@ def match_spines_to_books(spines):
 
                 util.log_print(f"Confidence: {confidence}\n")
 
-                if confidence >= 0.3:
+                if confidence >= 0.6:
                     util.log_print(f"\n{spine.title} identified with ISBN: {isbn}\n")
                     util.log_print(f"Identification confidence: {confidence}\n")
 
@@ -167,7 +167,7 @@ def match_spines_to_books(spines):
                     books.append(book)
                     found = True
                     break
-                elif 0.1 < confidence < 0.3:
+                elif 0.1 < confidence < 0.6:
                     util.log_print(f"\n{spine.title} possibly identified with ISBN: {isbn}\n")
                     util.log_print(f"Identification confidence: {confidence}\n")
                     util.log_print("Please verify the identification manually.\n")

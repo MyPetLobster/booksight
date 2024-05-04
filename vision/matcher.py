@@ -261,7 +261,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
         util.log_print("\npalette match, confidence + 0.1\n")
 
 
-    if confidence >= 0.5:
+    if confidence >= 0.6:
         color_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
         px_to_inches = p_match["height"] / spine.height
 
