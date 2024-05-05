@@ -230,16 +230,11 @@ def match_spines_to_books(spines):
 
 
 if __name__ == "__main__":
-    # spines = [
-    #     Spine("vision/images/detection_temp/spines/book_0.jpeg", [172, 156, 144], [211, 198, 185], [[211, 198, 185], [18, 14, 11], [242, 230, 215], [211, 67, 32], [101, 93, 93], [191, 172, 156]], 1129, 263, ['uiz', 'UZumakl', 'Uig', 'UZUMAKL', 'JUNII ITO'], "Uzumaki", "Junji Ito", ['8575326902', '9788417490270', '9781421561325', '9788575327302', '6555140577', '1569317143', '9781569317143', '1421513900', '9781421513904']),
-    #     Spine("vision/images/detection_temp/spines/book_1.jpeg", [169, 160, 148], [217, 194, 172], [[217, 194, 172], [31, 26, 21], [240, 230, 215], [157, 134, 116], [85, 81, 65], [7, 5, 3]], 1102, 210, ['mistory', 'Arr', '0  O m', 'MARY', 'BFARD', 'KFARD', 'ROMi', '0i Anciint', 'Udsi', 'c  Q x', 'ROME', 'ddsUu'], "SPQR: A History of Ancient Rome", "Mary Beard", ['9785961445169', '9781782839675', '1782839674', '3596031346', '3100022300', '9786064018113', '6064018119', '9788498929799', '8498929792', '6555352167']),
-    #     Spine("vision/images/detection_temp/spines/book_2.jpeg", [91, 84, 68], [20, 17, 13], [[20, 17, 13], [245, 240, 227], [115, 89, 47], [12, 123, 87], [185, 174, 151], [50, 42, 32]], 1094, 159, ['nods', 'DESTSELLER', 'Autmon0', 'WAR ipe SEBASTIAI JUHGER 4', 'Mltoat', 'DestSELLeR', 'Muthor or', 'AOa', 'Ing Ptrttgt', 'Wewtoat', 'nheS', 'Jiont', 'IhE ctaftGT', 'Jtoat', '1 WAR ip SEBASTIAII JUHGER'], "War", "Sebastian Junger", ['0446556246', '9780446566971', '9780007362134', '9780007337712', '9781609415013', '0446569763', '9780446569767', '1609415019', '9781609415013', '9780007362134']),
-    #     Spine("vision/images/detection_temp/spines/book_3.jpeg", [93, 89, 103], [92, 83, 101], [[92, 83, 101], [243, 232, 220], [11, 15, 10], [103, 97, 133], [48, 55, 50], [184, 166, 158]], 1005, 124, ['haruki Murakami', 'W 0 0', 'N 0 R W E 6 a N'], "Norwegian Wood", "Haruki Murakami", ['009952029X', '9780099520290', '9780307762719', '0307762718', '9722621750', '9789722621755']),
-    #     Spine("vision/images/detection_temp/spines/book_4.jpeg", [111, 95, 68], [168, 151, 117], [[168, 151, 117], [56, 46, 31], [111, 83, 42], [243, 237, 223], [23, 17, 12], [135, 113, 74]], 1088, 172, ['InD ardtoti', 'dID', 'Orocotar', 'SELLER', '8888', 'iJC', 'JDHMSON', 'Itorr', 'HE LAUGHing MOMSTERS', 'Toht', 'TtGT', 'Jaor', 'VeS', 'HE LAUGHING MONSTERS 83 DEMIS', 'tallo'], "The Laughing Monsters", "Denis Johnson", ['9781443437998', '9781410476562', '1410476561', '9780374280598', '1443437999', '9780374280598', '0374280592', '9780374709235', '0374709238'])
-    # ]
-    # books = match_spines_to_books(spines)
-    # util.log_print("\nAll identified books:\n")
-    # for book in books:
-    #     util.log_print(book)
-    #     util.log_print("\n")
-    vision("vision/images/test_images/test_five.jpeg")
+    import tests
+    spines = tests.spines
+    books = match_spines_to_books(spines)
+    util.log_print("\nAll identified books:\n")
+    for book in books:
+        util.log_print(book)
+        util.log_print("\n")
+    # vision("vision/images/test_images/test_five.jpeg")
