@@ -42,7 +42,6 @@ def vision(image_path):
 
     # Create Spine objects - Detect text, colors, and dimensions
     spines = []
-
     i = 0
     for image in spine_images:
         avg_color, dominant_color, color_palette, height, width = asp.analyze_spine(image)
@@ -51,7 +50,6 @@ def vision(image_path):
         spines.append(spine)
         util.log_print(f"\n- Spine_{i}: {spine}")
         i += 1
-
     spine_object_end = time.time()
     util.log_print(f"\nSpine objects created.\nTime taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
 

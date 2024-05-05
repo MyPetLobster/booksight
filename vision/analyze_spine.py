@@ -2,10 +2,19 @@ from PIL import Image
 from sklearn.cluster import KMeans
 import matplotlib.image as mpimg
 import numpy as np
-import cv2 as cv
+
 
 def analyze_spine(image_path):
-    # Process colors
+    """
+    This function analyzes the spine of a book image to find the average color, dominant color, and color palette, 
+    as well as the height and width of the image.
+    
+    Args:
+        image_path (str): The path to the image file.
+        
+    Returns:
+        tuple: A tuple containing the average color, dominant color, color palette, height, and width of the image.
+    """
     average_color = find_average_color_simple(image_path)
     dominant_color, color_palette, height, width = find_color_palette(image_path)
 
@@ -13,30 +22,39 @@ def analyze_spine(image_path):
 
 
 def find_average_color_simple(image_path):
-    # Load the image
+    """
+    This function finds the average color of a book spine image using a simple np.mean calculation.
+    
+    Args:
+        image_path (str): The path to the image file.
+        
+    Returns:
+        np.array: An array containing the average color values.
+    """
     image = Image.open(image_path)
-    image_array = np.array(image, dtype=np.uint8)  # Ensure the array is uint8
+    image_array = np.array(image, dtype=np.uint8)
+    average_color = np.mean(image_array, axis=(0, 1)).astype(int)
 
-    # Calculate the average color of all pixels in the image
-    average_color = np.mean(image_array, axis=(0, 1))
-
-    return average_color.astype(int)
+    return average_color
 
 
 def find_color_palette(image_path):
-    # Load the image
+    """
+    This function finds the dominant color and color palette of a book spine image using KMeans clustering.
+
+    Args:
+        image_path (str): The path to the image file.
+
+    Returns:
+        tuple: A tuple containing the dominant color, color palette, height, and width of the image.
+    """
     image = mpimg.imread(image_path)
-
-    # Get dimensions
     height, width, depth = image.shape
-
     pixels = image.reshape((height * width, depth))
-
     n_colors = 6
 
-    # Perform KMeans clustering to find the dominant colors
+    # Perform KMeans clustering to find the dominant colors and color palette
     kmeans = KMeans(n_clusters=n_colors, random_state=34).fit(pixels)
-
     color_palette = np.uint8(kmeans.cluster_centers_)
     dominant_color = color_palette[np.argmax(kmeans.labels_.size)]
 
@@ -44,5 +62,15 @@ def find_color_palette(image_path):
 
 
 def get_color_data(image_path):
+    """
+    This function returns the average color, dominant color, and color palette of a book spine image.
+    (Used in matcher.check_for_match to get color data for covers of potential matches)
+
+    Args:
+        image_path (str): The path to the image file.
+
+    Returns:
+        tuple: A tuple containing the average color, dominant color, and color palette of the image.
+    """
     average_color, dominant_color, color_palette, height, width = analyze_spine(image_path)
     return average_color, dominant_color, color_palette
