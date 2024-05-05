@@ -239,4 +239,4 @@ if __name__ == "__main__":
     # for book in books:
     #     util.log_print(book)
     #     util.log_print("\n")
-    vision("vision/images/test_images/test_five.jpeg")
+    vision("vision/images/test_images/small-shelf.jpeg")

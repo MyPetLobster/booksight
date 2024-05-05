@@ -21,15 +21,12 @@ def log_print(message):
 
 # Delete all files temp files
 def empty_directories():
-    directories = ["vision/images/detection_temp/debug_images", "vision/images/detection_temp/spines", "vision/images/detection_temp/downloaded_images"]
+    directories = ["vision/images/detection_temp/debug_images", "vision/images/detection_temp/spines", "vision/images/detection_temp/downloaded_images", "vision/exports/csv", "vision/exports/json"]
     for directory in directories:
         empty_directory(directory)
 
 
-def empty_directory(directory):
-    if os.path.exists("vision/images/detection_temp/spines/full_detected.jpeg"):
-        os.remove("vision/images/detection_temp/spines/full_detected.jpeg")
-        
+def empty_directory(directory): 
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
         try:

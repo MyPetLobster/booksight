@@ -16,7 +16,7 @@ import gemini
 
 
 # Choose between 'gpt' and 'gemini'
-AI_OPTION = "gemini"
+AI_OPTION = "gpt"
 
 # OpenAI config. Valid GPT models for Booksight (as of 2024-05-04): gpt-4-turbo, gpt-4, gpt-3.5-turbo
 GPT_MODEL = "gpt-4"
@@ -78,14 +78,14 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
         if not p_match:
             # Create a fake p_match with the spine dimensions
             p_match = {
-                "height": spine.height / px_to_inches if px_to_inches else spine.height,
-                "width": spine.width / px_to_inches if px_to_inches else spine.width,
+                "height": spine.height * px_to_inches if px_to_inches else spine.height,
+                "width": spine.width * px_to_inches if px_to_inches else spine.width,
                 "cover": spine.image_path
             }
             set_local_img = True
         elif "height" not in p_match or "width" not in p_match or not p_match["height"] or not p_match["width"]:
-            p_match["height"] = spine.height / px_to_inches if px_to_inches else spine.height
-            p_match["width"] = spine.width / px_to_inches if px_to_inches else spine.width
+            p_match["height"] = spine.height * px_to_inches if px_to_inches else spine.height
+            p_match["width"] = spine.width * px_to_inches if px_to_inches else spine.width
             if "cover" not in p_match:
                 p_match["cover"] = spine.image_path
                 set_local_img = True
@@ -101,8 +101,8 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     p_match_ratio = p_match_height / p_match_width if p_match_width else 0
     log_print(f"\np_match dimensions:\nheight: {p_match_height}, width: {p_match_width}, ratio: {p_match_ratio}\n")
 
-    spine_height = spine.height / px_to_inches if px_to_inches else spine.height
-    spine_width = spine.width / px_to_inches if px_to_inches else spine.width
+    spine_height = spine.height * px_to_inches if px_to_inches else spine.height
+    spine_width = spine.width * px_to_inches if px_to_inches else spine.width
     spine_ratio = spine_height / spine_width if spine_width else 0
     log_print(f"\nspine dimensions:\nheight: {spine_height}, width: {spine_width}, ratio: {spine_ratio}\n")
 
@@ -152,7 +152,17 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     log_print(f"\navg_color_diff: {avg_color_diff} for {isbn}\n")
     if avg_color_diff < 100:
         confidence += 0.2
-        color_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
+        # if color_filter not 1, 1, 1 find average color filter
+        if color_filter != [1, 1, 1]:
+            old_filter = color_filter
+            new_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
+            color_filter = [(new_filter[i] + old_filter[i]) / 2 for i in range(3)]
+        else:
+            color_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
+
+        # dilute the filter to avoid overfitting, 80% dilution
+        color_filter = [(color_filter[i] + 4) / 5 for i in range(3)]
+
         log_print(f"\navg color match, confidence + 0.2\n\nColor filter set to: {color_filter}\n ")
     if avg_color_diff < 50:
         confidence += 0.3
@@ -270,22 +280,28 @@ def identify_with_AI(prompt):
     """
     if AI_OPTION == "gpt":
         gpt_start = time.time()
-        print(f"Beginning identification with {GPT_MODEL} set to a temperature of {GPT_TEMP}...\n ")
+        log_print(f"Beginning identification with {GPT_MODEL} set to a temperature of {GPT_TEMP}...\n ")
         response = gpt.run_gpt(prompt, GPT_MODEL, GPT_TEMP)
         gpt_end = time.time()
-        print(f"Identification with {GPT_MODEL} complete.\nTime elapsed: {round(gpt_end - gpt_start, 2)} seconds.\n")
+        log_print(f"Identification with {GPT_MODEL} complete.\nTime elapsed: {round(gpt_end - gpt_start, 2)} seconds.\n")
     elif AI_OPTION == "gemini":
         gemini_start = time.time()
-        print("Beginning identification with {GEMINI_MODEL}...\n")
+        log_print(f"Beginning identification with {GEMINI_MODEL}...\n")
         response = gemini.run_gemini(prompt, GEMINI_MODEL)
         gemini_end = time.time()
-        print(f"Identification with {GEMINI_MODEL} complete.\nTime elapsed: {round(gemini_end - gemini_start, 2)} seconds.\n")
+        log_print(f"Identification with {GEMINI_MODEL} complete.\nTime elapsed: {round(gemini_end - gemini_start, 2)} seconds.\n")
     else:
         log_print("Invalid AI option. Please choose 'gpt' or 'gemini'.\n")
         response = None
 
     return response
 
+correct_output = """{
+            "Book_0": {"author": "Junji Ito", "title": "Uzumaki"},
+            "Book_1": {"author": "Mary Beard", "title": "SPQR: A History of Ancient Rome"},
+            "Book_2": {"author": "Haruki Murakami", "title": "Norwegian Wood"},
+            "Book_3": {"author": "Sebastian Junger", "title": "War"},
+            "Book_4": {"author": "Denis Johnson", "title": "The Laughing Monsters"}}"""
 
 def format_AI_input(spines, full_img_text):
     """
@@ -324,9 +340,18 @@ def format_AI_input(spines, full_img_text):
         use that information along with the other letters in the OCR text in order to determine which title is most likely to be correct. Use the 
         same problem solving logic if you are only able to identify a title.
 
+        - If you cannot verify an author or title, respond with "" for the author or title. Just an empty string for that field.
+
         - Your response is being decoded directly with Python's json.loads() function. Make sure your response is in the correct format without
         any additional characters or formatting. Do not even label the response as JSON. Just provide the JSON-formatted string.
 
+        - Here is an example of input and correct output, delimited by three backticks: 
+        ```EXAMPLE INPUT: {spine_img_text}
+
+
+        CORRECT OUTPUT FOR EXAMPLE: {correct_output}
+        ```
+        
         Here is the input text you will be working with, delimited by three backticks: 
         ```{spine_img_text}```
         """

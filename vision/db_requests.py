@@ -113,14 +113,14 @@ def get_isbn_info(isbn):
         height, width = get_dimensions(book_info)
         language, cover = get_language_and_cover(book_info)
         return {
-            "title": book_info["book"]["title"],
+            "title": book_info["book"]["title"] if "title" in book_info["book"] else None,
             "height": height, 
             "width": width,
             "language": language,
             "cover": cover,
-            "isbn13": book_info["book"]["isbn13"],
-            "isbn10": book_info["book"]["isbn10"],
-            "isbn": book_info["book"]["isbn"],
+            "isbn13": book_info["book"]["isbn13"] if "isbn13" in book_info["book"] else None,
+            "isbn10": book_info["book"]["isbn10"] if "isbn10" in book_info["book"] else None,
+            "isbn": book_info["book"]["isbn"] if "isbn" in book_info["book"] else None,
         }
     else:
         log_print(f"Error: {resp.status_code}")
