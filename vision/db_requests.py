@@ -4,7 +4,7 @@ import time
 import requests
 from dotenv import load_dotenv
 
-import utility as util
+from utility import log_print
 
 load_dotenv()
 ISBNDB_API_KEY = os.getenv("ISBNDB_API_KEY")
@@ -21,7 +21,8 @@ def get_potential_isbns(title, author):
     
     all_isbns = openlibrary_isbns + google_isbns
     
-    util.log_print(f"\n{title} - {author}: {all_isbns}\n")
+    log_print(f"\n{title} - {author}: {all_isbns}\n")
+
     return all_isbns[:10]
 
 
@@ -48,20 +49,10 @@ def get_isbns_openlibrary(title, author):
     # Extract the ISBNs from the response
     isbns = []
     for result in response.json()["docs"]:
-        languages = result.get("language")
-        
-        if languages and "eng" in languages:
-            titles = []
-            titles.append(result.get("title").lower())
-
-            if "title_suggest" in result:
-                titles.append(result.get("title_suggest").lower())
-            
-            if title.lower() in titles:
-                if "isbn" in result:
-                    isbns += result["isbn"]
-        
-    return isbns[:5]
+        isbns += result.get("isbn", [])
+    
+    log_print(f"\n\nOpen Library ISBNs for {title} - {author}: {isbns}\n\n")
+    return isbns[:10]
 
 
 def get_isbns_google_books(title, author):
@@ -93,7 +84,8 @@ def get_isbns_google_books(title, author):
                 for identifier in item["volumeInfo"]["industryIdentifiers"]:
                     if identifier["type"] == "ISBN_13" or identifier["type"] == "ISBN_10":
                         isbns.append(identifier["identifier"])
-    return isbns[:5]
+    log_print(f"\n\nGoogle Books ISBNs for {title} - {author}: {isbns}\n\n")
+    return isbns[:10]
 
 
 # Get book information using ISBNdb API
@@ -116,7 +108,7 @@ def get_isbn_info(isbn):
         # Get the 'Height' and 'Width' of the book
         book_info = resp.json()
 
-        util.log_print(f"\nData for {isbn}:\n\n{book_info}\n")
+        log_print(f"\nData for {isbn}:\n\n{book_info}\n")
 
         height, width = get_dimensions(book_info)
         language, cover = get_language_and_cover(book_info)
@@ -131,7 +123,7 @@ def get_isbn_info(isbn):
             "isbn": book_info["book"]["isbn"],
         }
     else:
-        util.log_print(f"Error: {resp.status_code}")
+        log_print(f"Error: {resp.status_code}")
         return None
 
 # Book Info:
@@ -204,7 +196,7 @@ def get_all_data_isbndb(isbn):
         book_info = resp.json()
         return book_info
     else:
-        util.log_print(f"Error: {resp.status_code}")
+        log_print(f"Error: {resp.status_code}")
         return None
     
 
@@ -225,7 +217,7 @@ def get_all_data_google(isbn):
         book_info = response.json()
         return book_info
     else:
-        util.log_print(f"Error: {response.status_code}")
+        log_print(f"Error: {response.status_code}")
         return None
     
 
@@ -245,7 +237,7 @@ def get_all_data_openlibrary(isbn):
         book_info = response.json()
         return book_info
     else:
-        util.log_print(f"Error: {response.status_code}")
+        log_print(f"Error: {response.status_code}")
         return None
     
 
@@ -253,7 +245,7 @@ def get_all_data_openlibrary(isbn):
 def test_isbndb_response():
     isbn = "9780099520290"
     book_info = get_all_data_isbndb(isbn)
-    util.log_print(book_info)
+    log_print(book_info)
 
 
 if __name__ == "__main__":

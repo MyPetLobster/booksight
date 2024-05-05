@@ -55,7 +55,7 @@ class Book:
         Language: {self.language}
         Publisher: {self.publisher}
         Publish Date: {self.date_published}
-        Description: {self.description:75}...
+        Description: {self.description}
         ISBN: {self.isbn}
         ISBN10: {self.isbn10}
         ISBN13: {self.isbn13}

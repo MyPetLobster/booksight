@@ -4,6 +4,7 @@ import cv2 as cv
 import numpy as np
 import easyocr as ocr
 
+from utility import log_print
 
 def detect_text(image_path):
     """
@@ -28,11 +29,15 @@ def detect_text(image_path):
 
     original_image = cv.imread(image_path)
     book_text_list = process_image(original_image, True)
+    log_print(f"Text detected: {book_text_list}")
     book_text_list += process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), True)
+    log_print(f"Text detected Rotate 90: {book_text_list}")
     book_text_list += process_image(original_image, False)
+    log_print(f"Text detected No Threshold: {book_text_list}")
     book_text_list += process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), False)
+    log_print(f"Text detected Rotate 90 No Threshold: {book_text_list}")
 
-    book_text_list = list(set([text for text in book_text_list if text.isalnum() or text.isspace()]))
+    # book_text_list = list(set([text for text in book_text_list if text.isalnum() or text.isspace()]))
     book_text_string = ", ".join(book_text_list)
 
     results.append(book_text_string)
@@ -108,7 +113,7 @@ def adjust_brightness(image):
     brightness = cv.mean(grayscale_image)[0]
 
     img_float = image.astype(np.float32)
-    factor = 127 / brightness 
+    factor = 120 / brightness 
     brightened_image = cv.multiply(img_float, factor)
     brightened_image = np.clip(brightened_image, 0, 255) 
 

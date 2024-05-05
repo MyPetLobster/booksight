@@ -21,7 +21,7 @@ def log_print(message):
 
 # Delete all files temp files
 def empty_directories():
-    directories = ["vision/images/detection_temp/debug_images", "vision/images/detection_temp/spines", "vision/images/detection_temp/downloaded_images", "vision/exports/csv", "vision/exports/json"]
+    directories = ["vision/images/detection_temp/debug_images", "vision/images/detection_temp/spines", "vision/images/detection_temp/downloaded_images"]
     for directory in directories:
         empty_directory(directory)
 

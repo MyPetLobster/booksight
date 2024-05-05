@@ -7,7 +7,7 @@ import torch
 from torchvision import models, transforms
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
-import utility as util
+from utility import log_print
 
 
 # Load a pre-trained Faster R-CNN model
@@ -36,9 +36,8 @@ def crop_spines(jpeg_file):
         list: A list of paths to the cropped book spine images.
         int: The number of book spines detected.
     """
-    util.log_print("\nCropping book spines (see vision/images/detection_temp/spines/ dir)...\n")
-
-    # Detect book spines in the image
+    # Detect book spines
+    log_print("\nCropping book spines (see vision/images/detection_temp/spines/ dir)...\n")
     book_boxes = detect_spines(jpeg_file)
     if book_boxes == None:
         return None, None
@@ -55,6 +54,7 @@ def crop_spines(jpeg_file):
         list_of_spine_images.append(book_img_path)
 
     spine_count = len(list_of_spine_images)
+    log_print(f"Spine images saved in 'vision/images/detection_temp/spines/'\n")
 
     return list_of_spine_images, spine_count
 
@@ -91,10 +91,10 @@ def load_image(input_path):
     Returns:
         torch.Tensor: The transformed image tensor.
     """
-    util.log_print("\nLoading image...\n")
+    log_print("\nLoading image...\n")
     img = Image.open(input_path).convert("RGB")
     
-    util.log_print("\nEnhancing image...\n")
+    log_print("\nEnhancing image...\n")
     
     # Enhance the image
     img = ImageOps.autocontrast(img)
@@ -107,8 +107,8 @@ def load_image(input_path):
         os.remove("vision/images/detection_temp/spines/enhanced_image.jpeg")
     img.save("vision/images/detection_temp/spines/enhanced_image.jpeg")
 
-    util.log_print("\nEnhanced image saved as 'vision/images/detection_temp/spines/enhanced_image.jpeg'\n")
-    util.log_print("\nApplying tensor transformation...\n")
+    log_print("\nEnhanced image saved as 'vision/images/detection_temp/spines/enhanced_image.jpeg'\n")
+    log_print("\nApplying tensor transformation...\n")
 
     img_tensor = transform(img)
 
@@ -116,7 +116,17 @@ def load_image(input_path):
 
 
 def predict(model, img_tensor):
-    util.log_print("\nPerforming prediction...\n")
+    """
+    This function performs prediction on an image using a pre-trained model.
+    
+    Args:
+        model: The pre-trained model.
+        img_tensor (torch.Tensor): The transformed image tensor.
+        
+    Returns:
+        dict: The prediction results from the model.
+    """
+    log_print("\nPerforming prediction...\n")
     with torch.no_grad():
         prediction = model([img_tensor])
     return prediction
@@ -134,11 +144,11 @@ def draw_boxes(img, prediction):
     Returns:
         list: A list of bounding boxes for the detected book spines.
     """
-    util.log_print("\nDrawing bounding boxes...\n")
+    log_print("\nDrawing bounding boxes...\n")
     plt.figure(figsize=(12, 8))
     plt.imshow(img)
     ax = plt.gca()
-    util.log_print("\nProcessing detected objects...\n")
+    log_print("\nProcessing detected objects...\n")
     book_count = 0
     total_book_height = 0
     total_book_thickness = 0
@@ -148,24 +158,24 @@ def draw_boxes(img, prediction):
         if score > CONFIDENCE and label == 84:  # Label 84 is 'book' in COCO
             total_book_height += element[3] - element[1]
             total_book_thickness += element[2] - element[0]
-            util.log_print(f"Book_{book_count} Score: {score}")
+            log_print(f"Book_{book_count} Score: {score}")
             book_count += 1
 
     if book_count == 0:
-        util.log_print("\nNo books detected. Exiting...\n")
+        log_print("\nNo books detected. Exiting...\n")
         return None
     
     average_book_height = total_book_height / book_count
     average_book_thickness = total_book_thickness / book_count
 
-    util.log_print(f"\n\nPreliminary statistics:\n")
-    util.log_print(f"Average book height: {round(float(average_book_height), 2)} pixels\nAverage book thickness: {round(float(average_book_thickness), 2)} pixels\n")
+    log_print(f"\n\nPreliminary statistics:\n")
+    log_print(f"Average book height: {round(float(average_book_height), 2)} pixels\nAverage book thickness: {round(float(average_book_thickness), 2)} pixels\n")
 
     book_count = 0
     valid_books = []
 
     # Remove outliers, draw bounding boxes
-    util.log_print("\nValidating detected books and drawing bounding boxes...\n")
+    log_print("\nValidating detected books and drawing bounding boxes...\n")
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
         if score > CONFIDENCE and label == 84:  # Label 84 is 'book' in COCO
             box = element.detach().cpu().numpy()
@@ -182,11 +192,11 @@ def draw_boxes(img, prediction):
                 ax.add_patch(rect)
     
     if book_count == 0:
-        util.log_print("\nNo valid books detected. Exiting...\n")
+        log_print("\nNo valid books detected. Exiting...\n")
         return None
 
-    util.log_print(f"Number of verified books: {book_count}\n")
-    util.log_print("Image with bounding boxes saved as 'vision/images/detection_temp/spines/full_detected.jpeg'\n")
+    log_print(f"Number of verified books: {book_count}\n")
+    log_print("Image with bounding boxes saved as 'vision/images/detection_temp/spines/full_detected.jpeg'\n")
 
     plt.savefig("vision/images/detection_temp/spines/full_detected.jpeg")
 
@@ -221,7 +231,8 @@ def adjust_brightness(image, brightness):
         PIL.Image: The adjusted image.
     """
     enhancer = ImageEnhance.Brightness(image)
-    factor = 127 / brightness
+    factor = 120 / brightness
     image = enhancer.enhance(factor)
+
     
     return image
