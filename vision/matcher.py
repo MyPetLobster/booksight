@@ -108,14 +108,18 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     # Dimension checks
     if 0.8 * spine_height <= p_match_height <= 1.2 * spine_height:
         confidence += 0.25
+        log_print("\np_match height match within 20%, confidence + 0.25\n")
     if 0.8 * spine_width <= p_match_width <= 1.2 * spine_width:
         confidence += 0.25
+        log_print("\np_match width match within 20%, confidence + 0.25\n")
 
     # Ratio checks
     if p_match_ratio and 0.7 * p_match_ratio <= spine_ratio <= 1.3 * p_match_ratio:
         confidence += 0.3
+        log_print("\np_match ratio match within 30% , confidence + 0.3\n")
         if 0.8 * p_match_ratio <= spine_ratio <= 1.2 * p_match_ratio:
             confidence += 0.2
+            log_print("\np_match ratio match within 20%, confidence + 0.2\n")
 
 
     # Download cover image
@@ -142,15 +146,20 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     # Compare average color
     avg_color_diff = sum([abs(avg_color[i] - p_avg_color[i]) for i in range(3)]) / 3
     log_print(f"\navg_color_diff: {avg_color_diff} for {isbn}\n")
-    if avg_color_diff < 20:
+    if avg_color_diff < 100:
         confidence += 0.2
         log_print("\navg color match, confidence + 0.2\n")
-
+    if avg_color_diff < 50:
+        confidence += 0.3
+        log_print("\navg color match, confidence + 0.3\n")
     # Compare dominant color
     dom_color_diff = sum([abs(dom_color[i] - p_dom_color[i]) for i in range(3)]) / 3
     log_print(f"\ndom_color_diff: {dom_color_diff} for {isbn}\n")
-    if dom_color_diff < 20:
+    if dom_color_diff < 100:
         confidence += 0.2
+        log_print("\ndom color match, confidence + 0.2\n")
+    if dom_color_diff < 50:
+        confidence += 0.3
         log_print("\ndom color match, confidence + 0.2\n")
 
     # Compare color palette
@@ -159,9 +168,12 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
         palette_diff += sum([abs(color_palette[i][j] - p_color_palette[i][j]) for j in range(3)]) / 3
 
     log_print(f"\npalette_diff: {palette_diff} for {isbn}\n")
-    if palette_diff < 40:
+    if palette_diff < 600:
         confidence += 0.1
         log_print("\npalette match, confidence + 0.1\n")
+    if palette_diff < 300:
+        confidence += 0.2
+        log_print("\npalette match, confidence + 0.2\n")
 
 
     if confidence >= 0.6:
