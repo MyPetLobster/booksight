@@ -98,10 +98,12 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     p_match_height = p_match["height"]
     p_match_width = p_match["width"]
     p_match_ratio = p_match_height / p_match_width if p_match_width else 0
+    log_print(f"\np_match dimensions:\nheight: {p_match_height}, width: {p_match_width}, ratio: {p_match_ratio}\n")
 
     spine_height = spine.height / px_to_inches if px_to_inches else spine.height
     spine_width = spine.width / px_to_inches if px_to_inches else spine.width
     spine_ratio = spine_height / spine_width if spine_width else 0
+    log_print(f"\nspine dimensions:\nheight: {spine_height}, width: {spine_width}, ratio: {spine_ratio}\n")
 
     # Dimension checks
     if 0.8 * spine_height <= p_match_height <= 1.2 * spine_height:
@@ -125,11 +127,13 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
         p_match_cover_path = download_image(p_match_cover_url, isbn)
 
     # Retrieve color data for cover image
-    p_avg_color, p_dom_color, p_color_palette = asp.get_color_data(p_match_cover_path)
+    p_avg_color = asp.find_average_color_simple(p_match_cover_path)
+    p_dom_color, p_color_palette, h, w = asp.find_color_palette(p_match_cover_path)
     avg_color, dom_color, color_palette = spine.avg_color, spine.dominant_color, spine.color_palette
 
     log_print(f"\np_match_color_data:\navg:{p_avg_color},\n{p_dom_color},\n{p_color_palette}\n")
     log_print(f"\nspine_color_data:\navg:{avg_color},\n{dom_color},\n{color_palette}\n")
+
     # Apply color filter
     avg_color = tuple([avg_color[i] * color_filter[i] for i in range(3)])
     dom_color = tuple([dom_color[i] * color_filter[i] for i in range(3)])
@@ -137,12 +141,14 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
 
     # Compare average color
     avg_color_diff = sum([abs(avg_color[i] - p_avg_color[i]) for i in range(3)]) / 3
+    log_print(f"\navg_color_diff: {avg_color_diff} for {isbn}\n")
     if avg_color_diff < 20:
         confidence += 0.2
         log_print("\navg color match, confidence + 0.2\n")
 
     # Compare dominant color
     dom_color_diff = sum([abs(dom_color[i] - p_dom_color[i]) for i in range(3)]) / 3
+    log_print(f"\ndom_color_diff: {dom_color_diff} for {isbn}\n")
     if dom_color_diff < 20:
         confidence += 0.2
         log_print("\ndom color match, confidence + 0.2\n")
@@ -152,6 +158,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     for i in range(6):
         palette_diff += sum([abs(color_palette[i][j] - p_color_palette[i][j]) for j in range(3)]) / 3
 
+    log_print(f"\npalette_diff: {palette_diff} for {isbn}\n")
     if palette_diff < 40:
         confidence += 0.1
         log_print("\npalette match, confidence + 0.1\n")

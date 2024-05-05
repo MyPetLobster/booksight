@@ -231,6 +231,8 @@ def match_spines_to_books(spines):
 
 if __name__ == "__main__":
     import tests
+    current_datetime = time.strftime("%Y%m%d-%H%M%S")
+    log_print(f"*** TESTING MATCHING FUNCTIONALITY ***\n\nTest Run: {current_datetime}\n\n")
     spines = tests.spines
     books = match_spines_to_books(spines)
     util.log_print("\nAll identified books:\n")

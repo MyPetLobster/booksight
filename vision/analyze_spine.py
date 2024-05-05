@@ -59,18 +59,3 @@ def find_color_palette(image_path):
     dominant_color = color_palette[np.argmax(kmeans.labels_.size)]
 
     return dominant_color, color_palette, height, width
-
-
-def get_color_data(image_path):
-    """
-    This function returns the average color, dominant color, and color palette of a book spine image.
-    (Used in matcher.check_for_match to get color data for covers of potential matches)
-
-    Args:
-        image_path (str): The path to the image file.
-
-    Returns:
-        tuple: A tuple containing the average color, dominant color, and color palette of the image.
-    """
-    average_color, dominant_color, color_palette, height, width = analyze_spine(image_path)
-    return average_color, dominant_color, color_palette
