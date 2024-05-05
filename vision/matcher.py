@@ -16,7 +16,7 @@ import gemini
 
 
 # Choose between 'gpt' and 'gemini'
-AI_OPTION = "gpt"
+AI_OPTION = "gemini"
 
 # OpenAI config. Valid GPT models for Booksight (as of 2024-05-04): gpt-4-turbo, gpt-4, gpt-3.5-turbo
 GPT_MODEL = "gpt-4"
@@ -54,8 +54,9 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
 
     # Confirm that language is English 
     # TODO: Add language detection
-    print(f"Language: {p_match['language']}")
+    
     if p_match and p_match["language"].lower().strip() not in ["en", "eng", "english", "English", "EN", "ENG", "ENGLISH", "En"]:
+        log_print(f"Language: {p_match['language']}")
         log_print("Booksight only supports English books at this time.\n")
         return confidence, color_filter, px_to_inches, second_pass, isbn
     
