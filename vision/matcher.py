@@ -41,6 +41,20 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     Returns:
         tuple: A tuple containing the confidence score, updated color filter, updated pixel-to-inch ratio, and whether a second pass is needed.
     """
+    if spine.height == None or spine.width == None or spine.text == None:
+        log_print(f"\nSpine data is incomplete. This book likely went undetected by torchvision and was picked up by AI in full image OCR text.\n")
+        log_print(f"\nPopulating Book Object with general data and skipping match process.\n")
+        confidence = 0
+        p_match = dbr.get_isbn_info(isbn)
+        # Check if english language
+        if p_match and p_match["language"].lower().strip() not in ["en", "eng", "english", "English", "EN", "ENG", "ENGLISH", "En"]:
+            log_print(f"Language: {p_match['language']}")
+            log_print("Booksight only supports English books at this time.\n")
+            return confidence, color_filter, px_to_inches, second_pass, isbn
+        else:
+            confidence = 5
+            return confidence, color_filter, px_to_inches, second_pass, isbn
+    
     set_local_img = False
     confidence = 0
     p_match = dbr.get_isbn_info(isbn)
@@ -255,6 +269,12 @@ def id_possible_matches(spines, full_img_text):
     log_print("\n\n*****************************************************************************************\n\n")
     log_print("\nRetrieving potential ISBN's from OpenLibrary and Google Books...\nUpdating Spine objects with title, author, and possible ISBNs...\n")
 
+    spine_count = len(spines)
+    if book_count > spine_count:
+        # create new spine objects for additional books (added to the end of the list)
+        for i in range(spine_count, book_count):
+            spines.append(Spine())
+
     # Update spines -- spine.author, spine.title
     for i, spine in enumerate(spines):
         book = book_dict[f"Book_{i}"]
@@ -328,7 +348,10 @@ def format_AI_input(spines, full_img_text):
         
         The input text that follows "Full Image OCR Text: " is a scan of the full input image. If you have trouble identifying a spine's 
         text, there may be additional clues in the full image text. Additionally, there may be books whose spines went undetected. 
-        If you identify additional books within that text, include them in the response, but you will have to add additional "Book_X" identifiers.
+        The text from those books will not be included in the individual spine OCR text, but may be present in the full image OCR text. It is
+        very important to cross-reference the individual spine text with the full image text to ensure all books are accounted for. If you receive
+        OCR text for only two spines, but the full image text contains three book titles, you must identify the third book using the full image text
+        and include that book in your response.
 
         Use every resource at your disposal to decipher the text and correctly identify all book titles and authors. Accuracy is critical. 
 
@@ -354,6 +377,9 @@ def format_AI_input(spines, full_img_text):
         
         Here is the input text you will be working with, delimited by three backticks: 
         ```{spine_img_text}```
+
+        Check your response. If you enter your response directly into Pythons json.loads() function, will there be any errors? Don't add any 
+        additional text in your response whatsoever. Just the JSON object formatted as a string.
         """
     
     return prompt

@@ -1,6 +1,7 @@
 import time
 
 import analyze_spine as asp
+import db_requests as dbr
 import detect_spines as ds
 import detect_text as dt
 import exporter as export
@@ -152,6 +153,15 @@ def match_spines_to_books(spines):
             for isbn in possible_isbns:
                 confidence, color_filter, px_to_inches, second_pass, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass)
 
+                if confidence == 5: # Spine not detected with torch, AI book detection only, no dimension or color to match. General info only.
+                    log_print(f"\nSorry, we were unable to identify the specific edition of {spine.title}.\n The spine was undetected by torchvision and identified with AI model during OCR cleanup.\n")
+                    log_print("No dimensions or color to match. General information only for this book.\n")
+                    book = match.create_book_object(isbn, 0)
+                    books.append(book)
+                    found = True
+                    log_print(f"""Title: {book.title}\nSubtitles: {book.subtitle}\nAuthors: {book.authors}\nISBN: {book.isbn}\nLang: {book.language}\nPublisher: {book.publisher}\nDate Published: {book.date_published}\nDescription: {truncated_description}\nPage Count: {book.pages}\nThumbnail: {book.image_path}\nIdentification Confidence: {book.confidence}\n\n""")
+                    log_print("\n************************************************************\n\n")
+                    break
                 if confidence >= 0.6:
                     log_print(f"\n{spine.title} identified with ISBN: {isbn}\n")
                     log_print(f"Identification confidence: {confidence}\n")
@@ -165,13 +175,14 @@ def match_spines_to_books(spines):
                         truncated_description = book.description
 
                     log_print(f"""Title: {book.title}\nSubtitles: {book.subtitle}\nAuthors: {book.authors}\nISBN: {book.isbn}\nLang: {book.language}\nPublisher: {book.publisher}\nDate Published: {book.date_published}\nDescription: {truncated_description}\nPage Count: {book.pages}\nThumbnail: {book.image_path}\nIdentification Confidence: {book.confidence}\n\n""")
+                    log_print("\n************************************************************\n\n")
                     books.append(book)
                     found = True
                     break
                 elif 0.1 < confidence < 0.6:
                     log_print(f"\n{spine.title} possibly identified with ISBN: {isbn}\n")
                     log_print(f"Identification confidence: {confidence}\n")
-                    log_print("Please verify the identification manually.\n")
+                    log_print("Continuing search...\n\n")
                     # Create a Book object for the matched spine and populate with data
                     if possible:
                         if confidence > possible_book.confidence:
@@ -188,15 +199,17 @@ def match_spines_to_books(spines):
                     log_print(f"\n{spine.title} identified with ISBN: {isbn}\n")
                     log_print(f"Identification confidence: {confidence}\n")
 
-
                     # Create a Book object for the matched spine and populate with data
+                    log_print(f"Creating book object for {spine.title}...\n")
                     book = match.create_book_object(isbn, confidence)
                     books.append(book)
                     found = True
+                    log_print(f"""Title: {book.title}\nSubtitles: {book.subtitle}\nAuthors: {book.authors}\nISBN: {book.isbn}\nLang: {book.language}\nPublisher: {book.publisher}\nDate Published: {book.date_published}\nDescription: {truncated_description}\nPage Count: {book.pages}\nThumbnail: {book.image_path}\nIdentification Confidence: {book.confidence}\n\n""")
+                    log_print("\n************************************************************\n\n")
                 elif 0.1 < confidence < 0.3:
                     log_print(f"\n{spine.title} possibly identified with ISBN: {isbn}\n")
                     log_print(f"Identification confidence: {confidence}\n")
-                    log_print("Please verify the identification manually.\n")
+                    log_print("Continuing search...\n\n")
                     # Create a Book object for the matched spine and populate with data
                     if possible:
                         if confidence > possible_book.confidence:
@@ -205,17 +218,22 @@ def match_spines_to_books(spines):
                         possible_book = match.create_book_object(isbn, confidence)
                     possible = True
             elif not found and not possible and second_pass:
-                log_print(f"\n{spine.title} could not be identified. Please verify the identification manually.\n")
+                log_print(f"\nWe're sorry! '{spine.title}' could not be identified. Book object created with only detected title and authors.\n")
                 book = Book()
                 book.title = spine.title
                 book.authors = spine.author
                 book.confidence = 0
                 books.append(book)
                 found = True
+                log_print(f"""Title: {book.title}\nSubtitles: {book.subtitle}\nAuthors: {book.authors}\nISBN: {book.isbn}\nLang: {book.language}\nPublisher: {book.publisher}\nDate Published: {book.date_published}\nDescription: {truncated_description}\nPage Count: {book.pages}\nThumbnail: {book.image_path}\nIdentification Confidence: {book.confidence}\n\n""")
+                log_print("\n************************************************************\n\n")
             elif not found and possible:
                 log_print(f"\n{spine.title} - Low confidence. Please verify the identification manually.\n")
+                log_print(f"Identification confidence: {possible_book.confidence}\n")
                 books.append(possible_book)
                 found = True
+                log_print(f"""Title: {possible_book.title}\nSubtitles: {possible_book.subtitle}\nAuthors: {possible_book.authors}\nISBN: {possible_book.isbn}\nLang: {possible_book.language}\nPublisher: {possible_book.publisher}\nDate Published: {possible_book.date_published}\nDescription: {truncated_description}\nPage Count: {possible_book.pages}\nThumbnail: {possible_book.image_path}\nIdentification Confidence: {possible_book.confidence}\n\n""")
+                log_print("\n************************************************************\n\n")
                 
     end_spine_match = time.time()
     log_print(f"\nSpine matching complete. Time taken: {round(end_spine_match - start_spine_match, 2)} seconds\n")
@@ -239,4 +257,4 @@ if __name__ == "__main__":
     # for book in books:
     #     util.log_print(book)
     #     util.log_print("\n")
-    vision("vision/images/test_images/small-shelf.jpeg")
+    vision("vision/images/test_images/test_3_gloss.jpeg")
