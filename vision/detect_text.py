@@ -33,7 +33,7 @@ def detect_text(image_path):
 
     def alt_process_one(image):
         """
-        Preprocesses an image for OCR using EasyOCR.
+        Alt Preprocessing focusing on making font weight appear more bold and increasing contrast.
 
         Args:
             image_path: Path to the input image.
@@ -44,34 +44,29 @@ def detect_text(image_path):
         # Convert to grayscale
         grayscale_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
-        # Adaptive thresholding for better contrast
-        thresh = cv.adaptiveThreshold(grayscale_image, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 15, 2)
+        # Calculate the average brightness of the grayscale image
+        brightness = np.mean(grayscale_image)
 
-        # Deskew the image if necessary (adjust threshold as needed)
-        coords, _ = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-        if len(coords) > 0:
-            largest_contour = max(coords, key=cv.contourArea)
-            approx = cv.approxPolyDP(largest_contour, 0.02 * cv.arcLength(largest_contour, True), True)
-            if len(approx) == 4:
-                corners = np.reshape(approx, (4, 2))
-                top_left, top_right, bottom_right, bottom_left = corners
-                width_top = np.sqrt(((top_right[0] - top_left[0]) ** 2) + ((top_right[1] - top_left[1]) ** 2))
-                width_bottom = np.sqrt(((bottom_right[0] - bottom_left[0]) ** 2) + ((bottom_right[1] - bottom_left[1]) ** 2))
-                if abs(width_top - width_bottom) > 10:
-                    angle = math.degrees(math.atan((top_right[1] - top_left[1]) / (top_right[0] - top_left[0])))
-                    M = cv.getRotationMatrix2D((image.shape[1] // 2, image.shape[0] // 2), angle, 1.0)
-                    deskewed_image = cv.warpAffine(thresh, M, (image.shape[1], image.shape[0]))
-                    thresh = deskewed_image
+        # Make text appear bold
+        if brightness < 130:
+            alpha = 1.5
+            beta = 50
+        else:
+            alpha = 1.1
+            beta = 20
 
-        # Noise reduction (adjust kernel size as needed)
-        denoised_image = cv.bilateralFilter(thresh, 9, 75, 75)
+        # Adjust brightness and contrast
+        adjusted_image = cv.convertScaleAbs(grayscale_image, alpha=alpha, beta=beta)
 
-        # Morphological closing to remove small holes (adjust kernel size as needed)
-        kernel = np.ones((5, 5), np.uint8)
-        closed_image = cv.morphologyEx(denoised_image, cv.MORPH_CLOSE, kernel)
+        # Apply GaussianBlur to reduce noise
+        blurred_image = cv.GaussianBlur(adjusted_image, (5, 5), 0)
 
-        # Invert the image for EasyOCR
-        preprocessed_image = cv.bitwise_not(closed_image)
+        preprocessed_image = cv.fastNlMeansDenoising(blurred_image, None, 10, 7, 21)
+        
+
+        cv.imshow("Preprocessed Image", preprocessed_image)
+        cv.waitKey(0)
+        cv.destroyAllWindows()
 
         result = reader.readtext(preprocessed_image, detail=1)
         draw_bounding_boxes(preprocessed_image, result, "alt_process_one")
