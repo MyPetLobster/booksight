@@ -31,88 +31,6 @@ def detect_text(image_path):
         draw_bounding_boxes(preprocessed_image, result, "process_image")
         return [text for bbox, text, _ in result if len(text) > 2]
 
-    def alt_process_one(image):
-        """
-        Alt Preprocessing focusing on making font weight appear more bold and increasing contrast.
-
-        Args:
-            image_path: Path to the input image.
-
-        Returns:
-            preprocessed_image: The preprocessed image ready for OCR.
-        """
-        # Convert to grayscale
-        grayscale_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-
-        # Calculate the average brightness of the grayscale image
-        brightness = np.mean(grayscale_image)
-
-        # Make text appear bold
-        if brightness < 130:
-            alpha = 1.5
-            beta = 50
-        else:
-            alpha = 1.1
-            beta = 20
-
-        # Adjust brightness and contrast
-        adjusted_image = cv.convertScaleAbs(grayscale_image, alpha=alpha, beta=beta)
-
-        # Apply GaussianBlur to reduce noise
-        blurred_image = cv.GaussianBlur(adjusted_image, (5, 5), 0)
-
-        preprocessed_image = cv.fastNlMeansDenoising(blurred_image, None, 10, 7, 21)
-        
-
-        cv.imshow("Preprocessed Image", preprocessed_image)
-        cv.waitKey(0)
-        cv.destroyAllWindows()
-
-        result = reader.readtext(preprocessed_image, detail=1)
-        draw_bounding_boxes(preprocessed_image, result, "alt_process_one")
-        return [text for bbox, text, _ in result if len(text) > 2]
-
-
-
-    def alt_process_two(image):
-        # Read the image using OpenCV
-        
-        if image is None:
-            raise FileNotFoundError(f"No image found at the path {image_path}")
-        
-        # Convert image to grayscale
-        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-        
-        # Calculate the average brightness of the grayscale image
-        brightness = np.mean(gray)
-        
-        # Adjust brightness and contrast based on the average brightness
-        if brightness < 130:
-            alpha = 1.5  # Contrast control (1.0-3.0)
-            beta = 50    # Brightness control (0-100)
-        else:
-            alpha = 1.1  # Lesser contrast adjustment
-            beta = 20    # Lesser brightness adjustment
-        
-        adjusted = cv.convertScaleAbs(gray, alpha=alpha, beta=beta)
-        
-        # Apply GaussianBlur to reduce image noise if it's too high
-        blurred = cv.GaussianBlur(adjusted, (5, 5), 0)
-        
-        # Apply thresholding to get a binary image
-        _, thresh = cv.threshold(blurred, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
-        
-        # Edge enhancement
-        kernel = np.array([[0, -1, 0], [-1, 5,-1], [0, -1, 0]])
-        sharpened = cv.filter2D(thresh, -1, kernel)
-        
-        result = reader.readtext(sharpened, detail=1)
-        draw_bounding_boxes(sharpened, result, "alt_process_two")
-        return [text for bbox, text, _ in result if len(text) > 2]
-
-
-
-
     original_image = cv.imread(image_path)
 
     # If image width is greater than 800 pixels, resize the image while maintaining the aspect ratio
@@ -143,36 +61,19 @@ def detect_text(image_path):
     log_print(f"Text detected Rotate 90 No Threshold: {no_threshold_90}\n")
 
 
-    # Two alternative preprocessing approaches
-
-    image = cv.imread(image_path)
-    alt_preprocessing_01 = alt_process_one(image)
-    log_print(f"Text detected (alt preprocess 01): {alt_preprocessing_01}\n")
-    alt_preprocessing_01_90 = alt_process_one(cv.rotate(image, cv.ROTATE_90_COUNTERCLOCKWISE))
-    log_print(f"Text detected (alt preprocess 01 rotated 90 degrees): {alt_preprocessing_01_90}\n")
-    alt_preprocessing_02 = alt_process_two(image)
-    log_print(f"Text detected (alt preprocess 02): {alt_preprocessing_02}\n")
-    alt_preprocessing_02_90 = alt_process_two(cv.rotate(image, cv.ROTATE_90_COUNTERCLOCKWISE))
-    log_print(f"Text detected (alt preprocess 02 rotated 90 degrees): {alt_preprocessing_02_90}\n")
-
-
-    log_print("\nCompleted text detection. Combining results...\n")    
+    log_print("\n\nCompleted text detection. Combining results...\n")    
     book_text_list.extend(original_90)
     book_text_list.extend(full_preprocess)
     book_text_list.extend(full_preprocess_90)
     book_text_list.extend(no_threshold)
-    book_text_list.extend(no_threshold_90)
-    book_text_list.extend(alt_preprocessing_01)
-    book_text_list.extend(alt_preprocessing_01_90)
-    book_text_list.extend(alt_preprocessing_02)
-    book_text_list.extend(alt_preprocessing_02_90)
-    log_print(f"Combined text list: {book_text_list}\n")
+
+    log_print(f"\nCombined text list: {book_text_list}\n")
 
     # Remove duplicates and return the list of detected text
     log_print("\nRemoving duplicates...\n")
     book_text_list = list(set(book_text_list))
 
-    log_print("\nbook_text_list: ")
+    log_print(f"\nbook_text_list: {book_text_list}\n")
     return book_text_list
 
 

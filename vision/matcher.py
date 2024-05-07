@@ -16,7 +16,7 @@ import gemini
 
 
 # Choose between 'gpt' and 'gemini'
-AI_OPTION = "gpt"
+AI_OPTION = "gemini"
 
 # OpenAI config. Valid GPT models for Booksight (as of 2024-05-04): gpt-4-turbo, gpt-4, gpt-3.5-turbo
 GPT_MODEL = "gpt-3.5-turbo"
@@ -134,7 +134,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
         if p_match_ratio and 0.7 * p_match_ratio <= spine_ratio <= 1.3 * p_match_ratio:
             confidence += 0.3
             px_to_inches = p_match["height"] / spine.height
-            log_print("\np_match ratio match within 30% , confidence + 0.3\n\npx_to_inches set to: {px_to_inches}\n")
+            log_print(f"\np_match ratio match within 30% , confidence + 0.3\n\npx_to_inches set to: {px_to_inches}\n")
             if 0.8 * p_match_ratio <= spine_ratio <= 1.2 * p_match_ratio:
                 confidence += 0.2
                 log_print("\np_match ratio match within 20%, confidence + 0.2\n")
@@ -189,7 +189,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
         log_print("\ndom color match, confidence + 0.2\n")
     if dom_color_diff < 50:
         confidence += 0.3
-        log_print("\ndom color match, confidence + 0.2\n")
+        log_print("\ndom color match, confidence + 0.3\n")
 
     # Compare color palette
     palette_diff = 0
