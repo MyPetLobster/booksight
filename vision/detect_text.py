@@ -20,7 +20,6 @@ def detect_text(image_path):
         list: A list of strings containing the detected text.
     """
     reader = ocr.Reader(lang_list=['en'], gpu=True)
-    results = []
 
     def process_image(image, with_threshold, raw_processed):
         if not raw_processed:
@@ -121,43 +120,65 @@ def detect_text(image_path):
 
     original_image = cv.imread(image_path)
 
-    # If image width is greater than 1000 pixels, resize the image while maintaining the aspect ratio
-    if original_image.shape[1] > 1000:
-        scale_percent = 1000 / original_image.shape[1] * 100
+    # If image width is greater than 800 pixels, resize the image while maintaining the aspect ratio
+    log_print(f"\nOriginal image shape: {original_image.shape}\n")
+    if original_image.shape[1] > 800:
+        scale_percent = 800 / original_image.shape[1] * 100
         width = int(original_image.shape[1] * scale_percent / 100)
         height = int(original_image.shape[0] * scale_percent / 100)
         dim = (width, height)
         original_image = cv.resize(original_image, dim, interpolation=cv.INTER_AREA)
+        log_print(f"Resized image shape: {original_image.shape}\n\n")
 
     # Process the raw image and the image rotated 90 degrees counter-clockwise
+    log_print(f"Detecting all text from image: {image_path}\n")
     book_text_list = process_image(original_image, False, False)
-    book_text_list += process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), False, False)
+    log_print(f"Text detected (original image): {book_text_list}\n")
+    original_90 = process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), False, False)
+    log_print(f"Text detected (original rotated 90 degrees): {original_90}\n")
 
     # Basic preprocessing with and without threshold
-    book_text_list += process_image(original_image, True, True)
-    log_print(f"Text detected: {book_text_list}")
-    book_text_list += process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), True, True)
-    log_print(f"Text detected Rotate 90: {book_text_list}")
-    book_text_list += process_image(original_image, False, True)
-    log_print(f"Text detected No Threshold: {book_text_list}")
-    book_text_list += process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), False, True)
-    log_print(f"Text detected Rotate 90 No Threshold: {book_text_list}")
+    full_preprocess = process_image(original_image, True, True)
+    log_print(f"Text detected (full preprocess): {full_preprocess}\n")
+    full_preprocess_90 = process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), True, True)
+    log_print(f"Text detected (full preprocess rotated 90 degrees): {full_preprocess_90}\n")
+    no_threshold = process_image(original_image, False, True)
+    log_print(f"Text detected No Threshold: {no_threshold}\n")
+    no_threshold_90 = process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), False, True)
+    log_print(f"Text detected Rotate 90 No Threshold: {no_threshold_90}\n")
 
 
     # Two alternative preprocessing approaches
 
     image = cv.imread(image_path)
-    book_text_list += alt_process_one(image)
-    book_text_list += alt_process_one(cv.rotate(image, cv.ROTATE_90_COUNTERCLOCKWISE))
-    book_text_list += alt_process_two(image)
-    book_text_list += alt_process_two(cv.rotate(image, cv.ROTATE_90_COUNTERCLOCKWISE))
+    alt_preprocessing_01 = alt_process_one(image)
+    log_print(f"Text detected (alt preprocess 01): {alt_preprocessing_01}\n")
+    alt_preprocessing_01_90 = alt_process_one(cv.rotate(image, cv.ROTATE_90_COUNTERCLOCKWISE))
+    log_print(f"Text detected (alt preprocess 01 rotated 90 degrees): {alt_preprocessing_01_90}\n")
+    alt_preprocessing_02 = alt_process_two(image)
+    log_print(f"Text detected (alt preprocess 02): {alt_preprocessing_02}\n")
+    alt_preprocessing_02_90 = alt_process_two(cv.rotate(image, cv.ROTATE_90_COUNTERCLOCKWISE))
+    log_print(f"Text detected (alt preprocess 02 rotated 90 degrees): {alt_preprocessing_02_90}\n")
 
-    # book_text_list = list(set([text for text in book_text_list if text.isalnum() or text.isspace()]))
-    book_text_string = ", ".join(book_text_list)
 
-    results.append(book_text_string)
+    log_print("\nCompleted text detection. Combining results...\n")    
+    book_text_list.extend(original_90)
+    book_text_list.extend(full_preprocess)
+    book_text_list.extend(full_preprocess_90)
+    book_text_list.extend(no_threshold)
+    book_text_list.extend(no_threshold_90)
+    book_text_list.extend(alt_preprocessing_01)
+    book_text_list.extend(alt_preprocessing_01_90)
+    book_text_list.extend(alt_preprocessing_02)
+    book_text_list.extend(alt_preprocessing_02_90)
+    log_print(f"Combined text list: {book_text_list}\n")
 
-    return results
+    # Remove duplicates and return the list of detected text
+    log_print("\nRemoving duplicates...\n")
+    book_text_list = list(set(book_text_list))
+
+    log_print("\nbook_text_list: ")
+    return book_text_list
 
 
 def preprocess(image, threshold):

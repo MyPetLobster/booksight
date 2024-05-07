@@ -19,7 +19,7 @@ import gemini
 AI_OPTION = "gpt"
 
 # OpenAI config. Valid GPT models for Booksight (as of 2024-05-04): gpt-4-turbo, gpt-4, gpt-3.5-turbo
-GPT_MODEL = "gpt-4"
+GPT_MODEL = "gpt-3.5-turbo"
 GPT_TEMP = 0.3
 
 # Gemini config. Valid Gemini models for Booksight (as of 2024-05-04): gemini-pro (alias for gemini-1.0-pro)
@@ -318,7 +318,7 @@ def identify_with_AI(prompt):
 
 correct_output = """{
             "Book_0": {"author": "Junji Ito", "title": "Uzumaki"},
-            "Book_1": {"author": "Mary Beard", "title": "SPQR: A History of Ancient Rome"},
+            "Book_1": {"author": "Mary Beard", "title": "SPQR"},
             "Book_2": {"author": "Haruki Murakami", "title": "Norwegian Wood"},
             "Book_3": {"author": "Sebastian Junger", "title": "War"},
             "Book_4": {"author": "Denis Johnson", "title": "The Laughing Monsters"}}"""

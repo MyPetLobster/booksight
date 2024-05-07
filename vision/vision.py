@@ -31,12 +31,12 @@ def vision(image_path):
    
     spine_detection_end = time.time()
     log_print(f"Spine detection complete. Time taken: {round(spine_detection_end - start, 2)} seconds\n")
-
+    log_print("\n************************************************\n\n")
     if spine_count == 0:
         log_print("\nNo books detected. Exiting program.\n")
         return
     elif 0 < spine_count < 20:
-        log_print("\nAnalyzing images and creating Spine objects. This may take several minutes...\n")
+        log_print("\nAnalyzing images and creating Spine objects. This may take several minutes...\n\n")
     else:
         log_print("\nAnalyzing images and creating Spine objects. This image contains a lot of books. Go stretch your legs. This may take a while...\n")
 
@@ -46,11 +46,14 @@ def vision(image_path):
     spines = []
     i = 0
     for image in spine_images:
+        log_print(f"Analyzing detected_spine_{i}. Extracting color data and dimensions.\n")
         avg_color, dominant_color, color_palette, height, width = asp.analyze_spine(image)
+        log_print(f"Beginning OCR text detection on detected_spine_{i}...\n")
         text = dt.detect_text(image)
         spine = Spine(image, avg_color, dominant_color, color_palette, height, width, text)
         spines.append(spine)
-        log_print(f"\n- Spine_{i}: {spine}")
+        log_print(f"Detected_spine_{i} analyzed and Spine object created.\n")
+        log_print(f"Spine_{i} Details: {spine}\n")
         i += 1
     spine_object_end = time.time()
     log_print(f"\nSpine objects created.\nTime taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
@@ -232,7 +235,7 @@ def match_spines_to_books(spines):
                 log_print(f"Identification confidence: {possible_book.confidence}\n")
                 books.append(possible_book)
                 found = True
-                log_print(f"""Title: {possible_book.title}\nSubtitles: {possible_book.subtitle}\nAuthors: {possible_book.authors}\nISBN: {possible_book.isbn}\nLang: {possible_book.language}\nPublisher: {possible_book.publisher}\nDate Published: {possible_book.date_published}\nDescription: {truncated_description}\nPage Count: {possible_book.pages}\nThumbnail: {possible_book.image_path}\nIdentification Confidence: {possible_book.confidence}\n\n""")
+                log_print(f"\n{possible_book}\n")
                 log_print("\n************************************************************\n\n")
                 
     end_spine_match = time.time()
@@ -257,4 +260,4 @@ if __name__ == "__main__":
     # for book in books:
     #     util.log_print(book)
     #     util.log_print("\n")
-    vision("vision/images/test_images/test_3_gloss.jpeg")
+    vision("vision/images/test_images/test_five_books.jpeg")
