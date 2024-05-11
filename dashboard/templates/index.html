@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Booksight{% endblock %}
+{% block body %}
+    <h1>Booksight</h1>
+    <p>Welcome to Booksight.</p>
+
+    <img src="{{ scan.uploaded_image.url }}" width="300">
+{% endblock %}
