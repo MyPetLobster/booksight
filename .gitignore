@@ -168,3 +168,6 @@ spines/
 debug_images/
 downloaded_images/
 exports/
+
+# User uploaded images
+media/

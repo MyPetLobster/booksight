@@ -6,5 +6,10 @@
     <h1>Booksight</h1>
     <p>Welcome to Booksight.</p>
 
-    <img src="{{ scan.uploaded_image.url }}" width="300">
+    <form action="{% url 'index' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="uploaded-image">Upload Photo</label>
+        <input type="file" id="uploaded-image" name="uploaded-image">
+        <input type="submit" value="Submit">
+    </form>
 {% endblock %}

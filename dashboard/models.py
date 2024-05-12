@@ -31,7 +31,7 @@ class Book(models.Model):
     spine = models.ForeignKey(Spine, on_delete=models.CASCADE, null=True, related_name='books')
 
 class Scan(models.Model):
-    uploaded_image = models.ImageField(upload_to='uploaded_images/')
+    uploaded_image = models.ImageField(upload_to='uploaded_images/', default='', blank=True, null=True)
     object_creation_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -42,7 +42,6 @@ class Scan(models.Model):
             "id": self.id,
             "uploaded_image": self.uploaded_image.url,
             "object_creation_date": self.object_creation_date.strftime("%b %d %Y, %I:%M %p"),
-            "user": self.user.username if self.user else "Unknown"
         }
     
     def __str__(self):
