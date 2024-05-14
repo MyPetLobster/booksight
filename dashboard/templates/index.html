@@ -9,7 +9,20 @@
             <img id="logo-eyes" src="{% static 'dashboard/images/eyes-only.png' %}" alt="Booksight Logo Owl Eyes">
             <img id="logo-text" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
         </div>
+        <div class="floating-form"  style="opacity:0">
+            <form id="upload-img-form" action="{% url 'index' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" id="uploaded-image" name="uploaded-image">
+                <div class="btn-box">
+                    <button type="button">Cancel</button>
+                    <input type="submit" value="Submit">
+                </div>
+            </form> 
+        </div>
     </div>
+
+
+
     <script>
         const logoEyes = document.getElementById('logo-eyes');
         const logoText = document.getElementById('logo-text');
@@ -29,6 +42,27 @@
             logoText.style.maxWidth = "100%";
             logoEyes.style.maxWidth = "60%";
         })
+
+        const floatingForm = document.querySelector('.floating-form');
+        const landingLogoDiv = document.querySelector('.landing-logo-div');
+        landingLogoDiv.addEventListener('click', () => {
+            floatingForm.style.opacity = 1;
+            floatingForm.style.zIndex = 999;
+            landingLogoDiv.style.opacity = 0;
+        })
+
+        const uploadImageForm = document.getElementById('upload-img-form');
+        const cancelBtn = document.querySelector('.btn-box button');
+
+        cancelBtn.addEventListener('click', () => {
+            floatingForm.style.opacity = 0;
+            floatingForm.style.zIndex = -1;
+            landingLogoDiv.style.opacity = 1;
+        })
+        
+        
+
+        
     </script>
 {% endblock %}
 
@@ -38,9 +72,3 @@
 
 
 
-    <!-- <form action="{% url 'index' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label for="uploaded-image">Upload Photo</label>
-        <input type="file" id="uploaded-image" name="uploaded-image">
-        <input type="submit" value="Submit">
-    </form> --

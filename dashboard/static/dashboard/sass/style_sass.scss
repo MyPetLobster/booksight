@@ -11,6 +11,16 @@ a:hover {
 }
 
 
+.btn-box {
+    margin: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
+}
+
+
 /* NAVBAR STYLES */
 .navbar {
     margin-bottom: 0;
@@ -108,4 +118,14 @@ a:hover {
 #logo-text {
     max-width: 100%;
     transition: 400ms;
+}
+
+.floating-form {
+    z-index: -1;
+}
+
+#uploaded-image {
+    position: relative;
+    left: 38px;
+    margin-bottom: 16px;
 }
