@@ -10,7 +10,7 @@
             <img id="logo-text" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
         </div>
         <div class="floating-form"  style="opacity:0">
-            <form id="upload-img-form" action="{% url 'index' %}" method="post" enctype="multipart/form-data">
+            <form id="upload-img-form" action="{% url 'vision' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="file" id="uploaded-image" name="uploaded-image">
                 <div class="btn-box">

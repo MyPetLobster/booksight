@@ -111,6 +111,22 @@ a:hover {
         cursor: pointer;
     }
 }
+.landing-logo-div-vision {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+
+    #logo-eyes-vision {
+        max-width: 20%;
+        transition: 400ms;
+    }
+    #logo-text-vision {
+        max-width: 40%;
+        transition: 400ms;
+    }
+}
 #logo-eyes {
     max-width: 60%;
     transition: 400ms;
@@ -128,4 +144,19 @@ a:hover {
     position: relative;
     left: 38px;
     margin-bottom: 16px;
+}
+
+#proc-upload-img {
+    border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+.vision-para-div * {
+    text-align: center;
+}
+.vision-link {
+    color: rgb(120, 157, 183) !important;
+}
+.vision-link:hover {
+    color: black !important;
 }

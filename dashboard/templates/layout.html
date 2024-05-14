@@ -35,12 +35,18 @@
 
         <script>
             const logoLink = document.getElementById('logo-link');
+            const footer = document.getElementById('footer');
             const pageIdentifier = document.querySelector('.page-identifier').textContent;
 
             if (pageIdentifier === 'index') {
                 logoLink.href = "{% url 'about' %}";
+                footer.style.display = 'block';
             } else if (pageIdentifier === 'about') {
                 logoLink.href = "{% url 'index' %}";
+                footer.style.display = 'block';
+            } else if (pageIdentifier === 'vision') {
+                logoLink.style.display = 'none';
+                footer.style.display = 'none';
             }
 
             const lightOwlLogo = document.getElementById('owl-logo-img-light');
