@@ -1,13 +1,14 @@
 import os
 
 import cv2 as cv
+import matplotlib 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import torch
 from torchvision import models, transforms
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
-from utility import log_print
+from vision.utility import log_print
 
 
 # Load a pre-trained Faster R-CNN model
@@ -145,6 +146,7 @@ def draw_boxes(img, prediction):
         list: A list of bounding boxes for the detected book spines.
     """
     log_print("\nDrawing bounding boxes...\n")
+    matplotlib.use('Agg')
     plt.figure(figsize=(12, 8))
     plt.imshow(img)
     ax = plt.gca()

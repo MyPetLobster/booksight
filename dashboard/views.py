@@ -1,6 +1,9 @@
 from django.shortcuts import render
 
+import shutil
+
 from .models import Scan
+from vision.vision import vision as vision_app
 
 
 def index(request):
@@ -21,6 +24,17 @@ def vision(request):
         new_scan = Scan.objects.create()
         new_scan.uploaded_image = image
         new_scan.save()
+
+        # Create separate thread to run vision function
+        # vision_thread = Thread(target=vision, args=(new_scan.uploaded_image.path,))
+        # vision_thread.start()
+        
+        # Scan image dir -- "vision/images/scan_images/" 
+        # Copy user uploaded image to scan_images directory
+        shutil.copy(new_scan.uploaded_image.path, f'vision/images/scan_images/{new_scan.id}.jpg')
+        new_path = f'vision/images/scan_images/{new_scan.id}.jpg'
+        # Run vision function
+        vision_app(new_path)
 
         return render(request, 'vision.html', {
             'scan': new_scan.serialize()

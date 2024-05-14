@@ -1,20 +1,22 @@
 import time
 
-import analyze_spine as asp
-import db_requests as dbr
-import detect_spines as ds
-import detect_text as dt
-import exporter as export
-import matcher as match
-import utility as util
-from utility import log_print 
+import vision.analyze_spine as asp
+import vision.db_requests as dbr
+import vision.detect_spines as ds
+import vision.detect_text as dt
+import vision.exporter as export
+import vision.matcher as match
+import vision.utility as util
+from vision.utility import log_print 
 
 
-from classes import Spine, Book
+from vision.classes import Spine, Book
 
 
 def vision(image_path):
 
+    print(f"Image path: {image_path}\n")
+    
     # Create log file and empty directories
     util.create_log_file()
     util.empty_directories()
@@ -24,6 +26,7 @@ def vision(image_path):
     ### Book Object Detection ###
     # Detect book spines and create individual spine jpegs
     log_print("\nDetecting book spines in the image...\n")
+    log_print(f"Image path: {image_path}\n")
     spine_images, spine_count = ds.crop_spines(image_path)
     if spine_images == None:
         log_print("\nNo valid books detected. Exiting program.\n")

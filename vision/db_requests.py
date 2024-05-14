@@ -4,7 +4,7 @@ import time
 import requests
 from dotenv import load_dotenv
 
-from utility import log_print
+from vision.utility import log_print
 
 load_dotenv()
 ISBNDB_API_KEY = os.getenv("ISBNDB_API_KEY")

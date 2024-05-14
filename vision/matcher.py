@@ -5,14 +5,14 @@ import time
 from PIL import Image
 from io import BytesIO
 
-import analyze_spine as asp
-import db_requests as dbr
-import utility as util
-from utility import log_print
-from classes import Spine, Book
+import vision.analyze_spine as asp
+import vision.db_requests as dbr
+import vision.utility as util
+from vision.utility import log_print
+from vision.classes import Spine, Book
 
-import gpt
-import gemini
+import vision.gpt as gpt
+import vision.gemini as gemini
 
 
 # Choose between 'gpt' and 'gemini'

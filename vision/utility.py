@@ -8,7 +8,7 @@ date = time.strftime("%Y%m%d")
 def create_log_file():
     """ Creates a log file for the current session. """
     
-    with open(f'vision/logs/{date}/booksight_{timestamp}.log', 'w') as file:
+    with open(f'booksight/logs/booksight_{timestamp}.log', 'w') as file:
         file.write(f"Booksight Log - {timestamp}\n\n")
 
 def log_print(message):
