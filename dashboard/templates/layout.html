@@ -6,18 +6,47 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <title>{% block title %}{% endblock %}</title>
     </head>
     <body>
-        <div class="navbar">
-            <a href="">About</a>
-            <a href="">Contact</a>
-            <a href="{% url 'index' %}">
-                <div class="nav-owl-div">
-                    <img id="nav-owl-img" src="{% static 'dashboard/images/owl.png' %}">
-                </div>
-            </a>
-        </div>
+        <nav class="navbar navbar-light bg-light navbar-fixed-top">
+            <div class="container-fluid">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li id="owl-logo-nav-item">
+                            <a href="{% url 'index' %}">
+                                <div class="owl-logo-container">
+                                    <img id="owl-logo-img-light" src="{% static 'dashboard/images/owl-light-2.png' %}" alt="Owl Logo">
+                                    <img id="owl-logo-img" src="{% static 'dashboard/images/owl.png' %}" alt="Owl Logo" style="opacity:0">
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+            </div>
+        </nav>
+        
         {% block body %}{% endblock %}
+
+        <footer id="footer" class="container-fluid text-center">
+            <p><a href="https://github.com/MyPetLobster/booksight">GitHub</p>
+        </footer>
+
+        <script>
+            const lightOwlLogo = document.getElementById('owl-logo-img-light');
+            const darkOwlLogo = document.getElementById('owl-logo-img');
+            const owlLogoNavItem = document.getElementById('owl-logo-nav-item');
+
+            owlLogoNavItem.addEventListener('mouseover', () => {
+                lightOwlLogo.style.opacity = 0;
+                darkOwlLogo.style.opacity = 1;
+            });
+
+            owlLogoNavItem.addEventListener('mouseout', () => {
+                lightOwlLogo.style.opacity = 1;
+                darkOwlLogo.style.opacity = 0;
+            });
+        </script>
     </body>
 </html>

@@ -1,60 +1,97 @@
-html, body {
-    width: 100vw;
-    margin: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
+/* GENERAL STYLES */
 a {
+    color: rgb(236,236,236) !important;
     text-decoration: none;
-    color: black;
+    background-color: transparent;
+    transition: 250ms;
+}
+a:hover {
+    color: black !important;
+    text-decoration: none !important;
 }
 
 
-
-
+/* NAVBAR STYLES */
 .navbar {
+    margin-bottom: 0;
+    border-radius: 0 !important;
+    height: 60px;
+}
+.nav {
+    display: flex;
+    align-items: center;
+}
+
+.container-fluid .navbar-nav > li > a:hover, .container-fluid .navbar-nav > li > a:focus {
+    background-color: white;
+    color: black !important;
+    font-weight: bold;
+}
+
+#owl-logo-nav-item {
+    margin-right: 10px;
+    background-color: white;
+    border: none;
+}
+
+.owl-logo-container {
+    height: 40px;
+}
+
+#owl-logo-img,
+#owl-logo-img-light {
+    height: 75%;
     position: absolute;
     top: 0;
-    left: 0;
-
-
-    height: 75px;
-    width: 100vw;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 20px;
-    padding: 0 20px;
-    background-color: #f8f9fa;
-}
-
-.nav-owl-div {
-    height: 45px;
-}
-#nav-owl-img {
-    height: 100%;
-    object-fit: cover;
+    right: 0;
+    margin: 5px;
+    object-fit: contain;
+    transition: 250ms;
 }
 
 
+/* FOOTER STYLES */
+#footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+}
 
-.page-container {
+
+/* CAROUSEL STYLES */
+.carousel-inner img {
+    width: 100%; /* Set width to 100% */
+    margin: auto;
+    min-height:200px;
+}
+
+/* Hide the carousel text when the screen is less than 600 pixels wide */
+@media (max-width: 600px) {
+    .carousel-caption {
+        display: none; 
+    }
+}
+
+
+
+
+
+/* INDEX PAGE STYLES */
+.idx-content {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     height: 100vh;
     width: 100%;
-    justify-content: center;
-    align-items: center;
 }
-
 .landing-logo-div {
     width: 400px;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    transition: 250ms;
     display: flex;
     flex-direction: column;
     justify-content: center;
