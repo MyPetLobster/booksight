@@ -1,0 +1,29 @@
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.landing-logo-div {
+  width: 400px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: 250ms;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#logo-eyes {
+  max-width: 60%;
+}
+
+#logo-text {
+  max-width: 100%;
+}/*# sourceMappingURL=style_sass.css.map */

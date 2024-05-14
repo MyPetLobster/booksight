@@ -3,13 +3,43 @@
 
 {% block title %}Booksight{% endblock %}
 {% block body %}
-    <h1>Booksight</h1>
-    <p>Welcome to Booksight.</p>
+    <div class="page-container">
+        <div class="landing-logo-div">
+            <img id="logo-eyes" src="{% static 'dashboard/images/eyes-only.png' %}" alt="Booksight Logo Owl Eyes">
+            <img id="logo-text" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
+        </div>
+    </div>
+    <script>
+        const logoEyes = document.getElementById('logo-eyes');
+        const logoText = document.getElementById('logo-text');
+        logoEyes.addEventListener('mouseover', () => {
+            logoText.style.maxWidth = "110%";
+            logoEyes.style.maxWidth = "70%";
+        })
+        logoEyes.addEventListener('mouseout', () => {
+            logoText.style.maxWidth = "100%";
+            logoEyes.style.maxWidth = "60%";
+        })
+        logoText.addEventListener('mouseover', () => {
+            logoText.style.maxWidth = "110%";
+            logoEyes.style.maxWidth = "70%";
+        })
+        logoText.addEventListener('mouseout', () => {
+            logoText.style.maxWidth = "100%";
+            logoEyes.style.maxWidth = "60%";
+        })
+    </script>
+{% endblock %}
 
-    <form action="{% url 'index' %}" method="post" enctype="multipart/form-data">
+
+
+
+
+
+
+    <!-- <form action="{% url 'index' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <label for="uploaded-image">Upload Photo</label>
         <input type="file" id="uploaded-image" name="uploaded-image">
         <input type="submit" value="Submit">
-    </form>
-{% endblock %}
+    </form> --
