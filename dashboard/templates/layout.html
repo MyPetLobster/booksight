@@ -14,16 +14,16 @@
     <body>
         <nav class="navbar navbar-light bg-light navbar-fixed-top">
             <div class="container-fluid">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li id="owl-logo-nav-item">
-                            <a href="{% url 'index' %}">
-                                <div class="owl-logo-container">
-                                    <img id="owl-logo-img-light" src="{% static 'dashboard/images/owl-light-2.png' %}" alt="Owl Logo">
-                                    <img id="owl-logo-img" src="{% static 'dashboard/images/owl.png' %}" alt="Owl Logo" style="opacity:0">
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li id="owl-logo-nav-item">
+                        <a id="logo-link" href="#">
+                            <div class="owl-logo-container">
+                                <img id="owl-logo-img-light" src="{% static 'dashboard/images/owl-light-2.png' %}" alt="Owl Logo">
+                                <img id="owl-logo-img" src="{% static 'dashboard/images/owl.png' %}" alt="Owl Logo" style="opacity:0">
+                            </div>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </nav>
         
@@ -34,6 +34,15 @@
         </footer>
 
         <script>
+            const logoLink = document.getElementById('logo-link');
+            const pageIdentifier = document.querySelector('.page-identifier').textContent;
+
+            if (pageIdentifier === 'index') {
+                logoLink.href = "{% url 'about' %}";
+            } else if (pageIdentifier === 'about') {
+                logoLink.href = "{% url 'index' %}";
+            }
+
             const lightOwlLogo = document.getElementById('owl-logo-img-light');
             const darkOwlLogo = document.getElementById('owl-logo-img');
             const owlLogoNavItem = document.getElementById('owl-logo-nav-item');

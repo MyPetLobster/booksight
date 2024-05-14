@@ -17,3 +17,8 @@ def index(request):
     return render(request, 'index.html', {
         'scans': [scan.serialize() for scan in Scan.objects.all()]
     })
+
+
+
+def about(request):
+    return render(request, 'about.html')
