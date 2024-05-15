@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 import shutil
+import threading
 
 from .models import Scan
 from vision.vision import vision as vision_app
@@ -25,16 +26,17 @@ def vision(request):
         new_scan.uploaded_image = image
         new_scan.save()
 
-        # Create separate thread to run vision function
-        # vision_thread = Thread(target=vision, args=(new_scan.uploaded_image.path,))
-        # vision_thread.start()
-        
-        # Scan image dir -- "vision/images/scan_images/" 
         # Copy user uploaded image to scan_images directory
         shutil.copy(new_scan.uploaded_image.path, f'vision/images/scan_images/{new_scan.id}.jpg')
         new_path = f'vision/images/scan_images/{new_scan.id}.jpg'
+
         # Run vision function
-        vision_app(new_path)
+        # vision_app(new_path)
+
+        # Create separate thread to run vision function
+        thread = threading.Thread(target=vision_app, args=(new_path,))
+        thread.setDaemon(True)
+        thread.start()
 
         return render(request, 'vision.html', {
             'scan': new_scan.serialize()
