@@ -6,6 +6,7 @@ import vision.detect_spines as ds
 import vision.detect_text as dt
 import vision.exporter as export
 import vision.matcher as match
+from vision.matcher import AI_OPTION, GPT_MODEL, GPT_TEMP, GEMINI_MODEL
 import vision.utility as util
 from vision.utility import log_print 
 
@@ -15,11 +16,20 @@ from vision.classes import Spine, Book
 
 def vision(image_path):
 
-    print(f"Image path: {image_path}\n")
-    
     # Create log file and empty directories
     util.create_log_file()
     util.empty_directories()
+
+    log_print("\n\n\n************************************************\n")
+    log_print("\nWelcome to Booksight!\n")
+    log_print("\nBeginning the Vision process.\n")
+    log_print("\nAI Settings:\n")
+    if AI_OPTION == "gpt":
+        log_print(f"AI Model: {GPT_MODEL}\n")
+        log_print(f"AI Temp: {GPT_TEMP}\n\n\n")
+    elif AI_OPTION == "gemini":
+        log_print(f"AI Model: {GEMINI_MODEL}\n\n\n")
+
 
     start = time.time()
 
@@ -153,41 +163,48 @@ def match_spines_to_books(spines):
         possible_isbns = spine.possible_matches
         total_potential_isbns += len(possible_isbns)
         potential_matches = {}
+        book_created = False  # Flag to check if a book has been created
 
         for isbn in possible_isbns:
             confidence, color_filter, px_to_inches, second_pass, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass)
 
-            if confidence == 5:
+            if confidence == 34:
                 log_print(f"\nSorry, we were unable to identify the specific edition of {spine.title}.\n The spine was undetected by torchvision and identified with AI model during OCR cleanup.\n")
                 log_print("No dimensions or color to match. General information only for this book.\n")
                 book = match.create_book_object(isbn, 0)
                 books.append(book)
                 log_print(f"Book object for {spine.title}: {book}\n")
                 log_print("\n************************************************************\n\n")
+                book_created = True  # Set the flag to True
                 break
             if confidence >= 0.2:
                 potential_matches[isbn] = confidence
                 log_print(f"\n{spine.title} identified with ISBN: {isbn}\n")
                 log_print(f"Identification confidence: {confidence}\n")
-            
-            
+        
+        if book_created:
+            continue  # Skip to the next spine if a book has been created
+
         if len(potential_matches) == 0:
             second_pass = True
             for isbn in possible_isbns:
                 confidence, color_filter, px_to_inches, second_pass, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass)
-                if confidence == 5:
+                if confidence == 34:
                     log_print(f"\nSorry, we were unable to identify the specific edition of {spine.title}.\n The spine was undetected by torchvision and identified with AI model during OCR cleanup.\n")
                     log_print("No dimensions or color to match. General information only for this book.\n")
                     book = match.create_book_object(isbn, 0)
                     books.append(book)
                     log_print(f"Book object for {spine.title}: {book}\n")
                     log_print("\n************************************************************\n\n")
+                    book_created = True  # Set the flag to True
                     break
                 if confidence >= 0.0:
                     potential_matches[isbn] = confidence
                     log_print(f"\n{spine.title} identified with ISBN: {isbn}\n")
                     log_print(f"Identification confidence: {confidence}\n")
 
+        if book_created:
+            continue  # Skip to the next spine if a book has been created
 
         if len(potential_matches) == 0 and second_pass:
             log_print(f"\nWe're sorry! '{spine.title}' could not be identified. Book object created with only detected title and authors.\n")

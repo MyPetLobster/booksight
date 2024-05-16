@@ -7,14 +7,17 @@ date = time.strftime("%Y%m%d")
 
 def create_log_file():
     """ Creates a log file for the current session. """
+   # Create new log dir for each day formatted like 'booksight/logs/240515/booksight_{timestamp}.log'
+    if not os.path.exists(f'booksight/logs/{date}'):
+        os.makedirs(f'booksight/logs/{date}')
+    with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'w') as file:
+        file.write(f"Booksight log file for {timestamp}\n") 
     
-    with open(f'booksight/logs/booksight_{timestamp}.log', 'w') as file:
-        file.write(f"Booksight Log - {timestamp}\n\n")
 
 def log_print(message):
     """ Prints a message and logs it to a text file. """
     
-    with open(f'vision/logs/booksight_{timestamp}.log', 'a') as file:
+    with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'a') as file:
         file.write(f"{message}\n")
     print(message)
 
@@ -22,7 +25,7 @@ def log_print(message):
 
 # Delete all files temp files
 def empty_directories():
-    directories = ["vision/images/detection_temp/debug_images", "vision/images/detection_temp/spines", "vision/images/detection_temp/downloaded_images", "vision/exports/csv", "vision/exports/json"]
+    directories = ["vision/images/detection_temp/debug_images", "vision/images/detection_temp/spines", "vision/images/detection_temp/downloaded_images"]
     for directory in directories:
         empty_directory(directory)
 

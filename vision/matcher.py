@@ -16,10 +16,10 @@ import vision.gemini as gemini
 
 
 # Choose between 'gpt' and 'gemini'
-AI_OPTION = "gemini"
+AI_OPTION = "gpt"
 
-# OpenAI config. Valid GPT models for Booksight (as of 2024-05-04): gpt-4-turbo, gpt-4, gpt-3.5-turbo
-GPT_MODEL = "gpt-3.5-turbo"
+# OpenAI config. Valid GPT models for Booksight (as of 2024-05-15): gpt-4o, gpt-4-turbo, gpt-4, gpt-3.5-turbo
+GPT_MODEL = "gpt-4o"
 GPT_TEMP = 0.3
 
 # Gemini config. Valid Gemini models for Booksight (as of 2024-05-04): gemini-pro (alias for gemini-1.0-pro)
@@ -52,7 +52,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
             log_print("Booksight only supports English books at this time.\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
         else:
-            confidence = 5
+            confidence = 34
             return confidence, color_filter, px_to_inches, second_pass, isbn
     
     set_local_img = False
@@ -316,12 +316,38 @@ def identify_with_AI(prompt):
 
     return response
 
-correct_output = """{
+
+### AI Prompt Message Formatting ###
+example_input_01 = """Individual Spine OCR Text:
+Book_0: ['uiz', 'Mcbij', 'JUNJI ITO', 'JUNII ITO', 'UZUMAkI', 'UZUMAKL'],
+Book_1: ['o} Aistont', 'Ului', 'History', 'ROME', 'o-~ Q m', 'BFARD', 'BEA RD', 'MA RY', 'Wumulii', 'MARY', '0 ~ Q x', '0i Ancieni'],
+Book_2: ['HA R U K /', ' 0 R W E 6 |A N', 'W 0 0 D', 'N 0 R W E 6 |a M', 'W 0 0 d', 'haruki Murakami', 'M U R a K a M /'],
+Book_3: ['STOrM', 'AVA', 'SEBASTIaI JuIGeR', 'New Tork', 'AUTHOR OF', 'AVAL', 'Auimor Of', 'NEW YORK', 'Sioat', 'TIMES', 'IME PtaftGT', 'The PERFECT', '1 WAR ipe SEBASTIAI JUHGER', 'D] WAR iI', 'BESTSELLER', 'TNIES'],
+Book_4: ['SYR?', 'Rure)', 'LER', 'THE LAUGHIng MONSTERS 8', 'DENIS JOHNSON', 'IER', 'DENIS', 'THE LAUGHING MONSTERS', 'JDANSOM'],
+
+Full Image OCR Text:
+['0, HKtONT', 'BEARD', 'DEMIS', 'Ha R U k / M U Ra Ka M [', 'WaEJ', 'W 0 0 |', 'UZUMAkL', 'WAR i', 'Jtorm', 'Toinegiam', 'LAUGHING MONSTERS', 'WAR', 'Joci', "Laughing WOnsteRs Qo IeXIS H8XSIX'", 'SEBASTIaI JUIGER 644', 'BYARD', 'Authon Or', 'M0 0 d', 'M 0 R W E 6 |a M', 'THE', 'MEW Tort', 'JDHMSOM', 'Maiuii muiaiami', 'O >', 'DeSTSELLEA', 'ROMF', 'SEBASTIAH JUNGER 64', 'Mennnnt']
+"""
+
+correct_output_01 = """{
             "Book_0": {"author": "Junji Ito", "title": "Uzumaki"},
             "Book_1": {"author": "Mary Beard", "title": "SPQR"},
             "Book_2": {"author": "Haruki Murakami", "title": "Norwegian Wood"},
             "Book_3": {"author": "Sebastian Junger", "title": "War"},
             "Book_4": {"author": "Denis Johnson", "title": "The Laughing Monsters"}}"""
+
+
+example_input_02 = """Individual Spine OCR Text:
+Book_0: ['TIMES', 'of the', 'BESTSELLER', 'MONKEY GOD', 'PRESTON', 'douGLAS', 'MONKEY GOD 38', 'The', '0aa', 'centanl', 'NEW YORK', 'Dun', 'cunaat', 'Ujo', 'OaaND', 'Ovo', 'LOST CITY'],
+Book_1: ['JUNGER', 'SEBASTIAN JUNGER', 'THE', 'PERFECT', 'STO RM', 'SEBASTIAN'],
+
+Full Image OCR Text:
+['MCRID', 'CARL', 'WORLD', 'THE PERTECT STORM', 'LOST CITY   MONKEY GOD', 'DOUCLAS', 'Housr', 'RiesTOH', 'SEBASTLAX JUNGER', 'DEMON-HAUNIED', "THE PERFECT' STORM", 'SAGAN', 'DLMOMIAUNIID', 'LOST CITY ? MONKEY GOD ]3 %#']"""
+
+correct_output_02 = """{
+            "Book_0": {"author": "Douglas Preston", "title": "The Lost City of the Monkey God"},
+            "Book_1": {"author": "Sebastian Junger", "title": "The Perfect Storm"}}
+            "Book_2": {"author": "Carl Sagan", "title": "Demon-Haunted World"}}"""
 
 def format_AI_input(spines, full_img_text):
     """
@@ -351,7 +377,7 @@ def format_AI_input(spines, full_img_text):
         The text from those books will not be included in the individual spine OCR text, but may be present in the full image OCR text. It is
         very important to cross-reference the individual spine text with the full image text to ensure all books are accounted for. If you receive
         OCR text for only two spines, but the full image text contains three book titles, you must identify the third book using the full image text
-        and include that book in your response.
+        and include that book in your response. (see example 2 below for a demonstration of this scenario.)
 
         Use every resource at your disposal to decipher the text and correctly identify all book titles and authors. Accuracy is critical. 
 
@@ -368,18 +394,26 @@ def format_AI_input(spines, full_img_text):
         - Your response is being decoded directly with Python's json.loads() function. Make sure your response is in the correct format without
         any additional characters or formatting. Do not even label the response as JSON. Just provide the JSON-formatted string.
 
-        - Here is an example of input and correct output, delimited by three backticks: 
-        ```EXAMPLE INPUT: {spine_img_text}
+        - Here are two examples of input and correct output, delimited by three backticks: 
+        ```EXAMPLE INPUT 01: '''{example_input_01}'''
 
 
-        CORRECT OUTPUT FOR EXAMPLE: {correct_output}
+        CORRECT OUTPUT FOR EXAMPLE 01: '''{correct_output_01}'''
         ```
         
-        Here is the input text you will be working with, delimited by three backticks: 
+        ```EXAMPLE INPUT 02: '''{example_input_02}'''
+
+
+        CORRECT OUTPUT FOR EXAMPLE 02: '''{correct_output_02}'''  
+        ```
+
+        * Read all instructions a second time before beginning. *
+
+        Here is the real input text you will be working with, delimited by three backticks: 
         ```{spine_img_text}```
 
         Check your response. If you enter your response directly into Pythons json.loads() function, will there be any errors? Don't add any 
-        additional text in your response whatsoever. Just the JSON object formatted as a string.
+        additional text in your response whatsoever. Just the JSON object formatted as a string. Do not include any back ticks or quotation marks.
         """
     
     return prompt

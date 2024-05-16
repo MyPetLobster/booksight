@@ -49,7 +49,11 @@ def export_to_csv(books):
                 'Confidence': book.confidence
             })
     
-    util.log_print(f"\nBooks exported to CSV: {csv_file}\n")
+    util.log_print(f"\nBooks exported to CSV: {csv_file}\n\n")
+
+    with open(csv_file, mode='r') as file:
+        util.log_print(file.read())
+        util.log_print("\n\n")
 
 
 def export_to_json(books):
@@ -72,5 +76,9 @@ def export_to_json(books):
     with open(json_file, 'w') as file:
         json.dump([book.__dict__ for book in books], file, indent=4)
     
-    util.log_print(f"\nBooks exported to JSON: {json_file}\n")
+    util.log_print(f"\nBooks exported to JSON: {json_file}\n\n")
+
+    with open(json_file, mode='r') as file:
+        util.log_print(file.read())
+        util.log_print("\n\n")
 
