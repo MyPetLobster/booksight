@@ -1,9 +1,11 @@
+from django.conf import settings
+from django.core.mail import EmailMessage
+
 import time
 import csv
 import json
 
 import vision.utility as util
-
 
 
 def export_to_csv(books):
@@ -82,3 +84,18 @@ def export_to_json(books):
         util.log_print(file.read())
         util.log_print("\n\n")
 
+
+def email_file(file_path, user_email):
+    """
+    This function sends an email with the specified file as an attachment.
+    
+    Args:
+        file_path (str): The path to the file to be attached.
+    """
+    subject = 'Booksight Exported File'
+    message = 'Thank you for using Booksight! Your exported file is attached.'
+    email = EmailMessage(subject, message, settings.EMAIL_HOST_USER, [user_email])
+    email.attach_file(file_path)
+    email.send()
+    
+    util.log_print(f"Email sent to: {user_email}\n")
