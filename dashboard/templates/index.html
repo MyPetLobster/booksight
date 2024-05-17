@@ -9,13 +9,39 @@
             <img id="logo-eyes" src="{% static 'dashboard/images/eyes-only.png' %}" alt="Booksight Logo Owl Eyes">
             <img id="logo-text" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
         </div>
-        <div class="floating-form"  style="opacity:0">
-            <form id="upload-img-form" action="{% url 'vision' %}" method="post" enctype="multipart/form-data">
+        <div class="upload-form-div"  style="opacity:0">
+            <form class="floating-form" id="upload-img-form" action="{% url 'vision' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <input type="file" id="uploaded-image" name="uploaded-image">
+                <div class="form-div">
+                    <h3>Upload an image of your bookcase</h2>
+                    <p>For best results, check out our <a href="#">tips</a> page</p>
+                </div>
+
+                <div class="form-div">
+                    <label for="user-email">Email Address</label>
+                    <input type="email" id="user-email" name="user-email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-div">
+                    <label for="format-selection">Book List Format</label>
+                    <select name="format-selection" id="format-selection" required>
+                        <option value="" disabled selected>Select a format</option>
+                        <option value="csv">CSV</option>
+                        <option value="json">JSON</option>
+                        <option value="xml">XML</option>
+                        <option value="txt">IDK what any of those letters mean. Just give me the damn list.</option>
+                        <option value="all">I want it all!!!</option> 
+                    </select>
+                </div>
+            </br>
+                <div class="form-div">
+                    <label id="uploaded-image-label" for="uploaded-image">Upload Image</label>
+                    <input type="file" id="uploaded-image" name="uploaded-image">
+                </div>
+
                 <div class="btn-box">
-                    <button type="button">Cancel</button>
                     <input type="submit" value="Submit">
+                    <button type="button">Cancel</button>
                 </div>
             </form> 
         </div>
@@ -43,7 +69,7 @@
             logoEyes.style.maxWidth = "60%";
         })
 
-        const floatingForm = document.querySelector('.floating-form');
+        const floatingForm = document.querySelector('.upload-form-div');
         const landingLogoDiv = document.querySelector('.landing-logo-div');
         landingLogoDiv.addEventListener('click', () => {
             floatingForm.style.opacity = 1;

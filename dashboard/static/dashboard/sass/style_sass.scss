@@ -136,8 +136,42 @@ a:hover {
     transition: 400ms;
 }
 
-.floating-form {
+.upload-form-div {
     z-index: -1;
+}
+.floating-form {
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 20px 20px 20px;
+    border: 1px solid black;
+    border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+
+    p, h3 {
+        text-align: center;
+
+        a {
+            color: rgb(63, 106, 137) !important;
+        }
+    }
+}
+
+.form-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    label, input, select {
+        width: 70%;
+    }
+    #uploaded-image, #uploaded-image-label {
+        width: 100%;
+    }
+    #uploaded-image-label {
+        text-align: center;
+    }
 }
 
 #uploaded-image {

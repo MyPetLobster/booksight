@@ -1,10 +1,93 @@
-.page-container {
+/* GENERAL STYLES */
+a {
+  color: rgb(236, 236, 236) !important;
+  text-decoration: none;
+  background-color: transparent;
+  transition: 250ms;
+}
+
+a:hover {
+  color: black !important;
+  text-decoration: none !important;
+}
+
+.btn-box {
+  margin: 10px;
   display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100%;
   justify-content: center;
   align-items: center;
+  gap: 10px;
+  height: 100%;
+}
+
+/* NAVBAR STYLES */
+.navbar {
+  margin-bottom: 0;
+  border-radius: 0 !important;
+  height: 60px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+}
+
+.container-fluid .navbar-nav > li > a:hover, .container-fluid .navbar-nav > li > a:focus {
+  background-color: white;
+  color: black !important;
+  font-weight: bold;
+}
+
+#owl-logo-nav-item {
+  margin-right: 10px;
+  background-color: white;
+  border: none;
+}
+
+.owl-logo-container {
+  height: 40px;
+}
+
+#owl-logo-img,
+#owl-logo-img-light {
+  height: 75%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 5px;
+  object-fit: contain;
+  transition: 250ms;
+}
+
+/* FOOTER STYLES */
+#footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 30px;
+}
+
+/* CAROUSEL STYLES */
+.carousel-inner img {
+  width: 100%; /* Set width to 100% */
+  margin: auto;
+  min-height: 200px;
+}
+
+/* Hide the carousel text when the screen is less than 600 pixels wide */
+@media (max-width: 600px) {
+  .carousel-caption {
+    display: none;
+  }
+}
+/* INDEX PAGE STYLES */
+.idx-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
 }
 
 .landing-logo-div {
@@ -13,17 +96,68 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  transition: 250ms;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
+.landing-logo-div *:hover {
+  cursor: pointer;
+}
+
+.landing-logo-div-vision {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+.landing-logo-div-vision #logo-eyes-vision {
+  max-width: 20%;
+  transition: 400ms;
+}
+.landing-logo-div-vision #logo-text-vision {
+  max-width: 40%;
+  transition: 400ms;
+}
 
 #logo-eyes {
   max-width: 60%;
+  transition: 400ms;
 }
 
 #logo-text {
   max-width: 100%;
+  transition: 400ms;
+}
+
+.upload-form-div {
+  z-index: -1;
+}
+
+.floating-form {
+  border: 1px solid black;
+}
+
+#uploaded-image {
+  position: relative;
+  left: 38px;
+  margin-bottom: 16px;
+}
+
+#proc-upload-img {
+  border-radius: 12px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+.vision-para-div * {
+  text-align: center;
+}
+
+.vision-link {
+  color: rgb(120, 157, 183) !important;
+}
+
+.vision-link:hover {
+  color: black !important;
 }/*# sourceMappingURL=style_sass.css.map */
