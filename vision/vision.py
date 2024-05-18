@@ -14,7 +14,7 @@ from vision.utility import log_print
 from vision.classes import Spine, Book
 
 
-def vision(image_path):
+def vision(image_path, email_address, output_format):
 
     # Create log file and empty directories
     util.create_log_file()
@@ -130,8 +130,17 @@ def vision(image_path):
     # Export identified books to CSV and JSON
     log_print("\nExporting identified books to CSV and JSON...\n")
 
-    export.export_to_csv(books)
-    export.export_to_json(books)
+    csv_file = export.export_to_csv(books)
+    json_file = export.export_to_json(books)
+
+    if email_address:
+        log_print("\nSending email with exports...\n")
+        
+        if output_format == "csv":
+            export.email_file(csv_file, email_address)
+        elif output_format == "json":
+            export.email_file(json_file, email_address)
+            
 
     log_print("\nAll processes complete. Thank you for using Booksight.\n")
 

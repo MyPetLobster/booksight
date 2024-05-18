@@ -57,6 +57,8 @@ def export_to_csv(books):
         util.log_print(file.read())
         util.log_print("\n\n")
 
+    return csv_file
+
 
 def export_to_json(books):
     """
@@ -83,6 +85,8 @@ def export_to_json(books):
     with open(json_file, mode='r') as file:
         util.log_print(file.read())
         util.log_print("\n\n")
+
+    return json_file
 
 
 def email_file(file_path, user_email):
