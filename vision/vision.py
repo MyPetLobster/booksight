@@ -14,7 +14,7 @@ from vision.utility import log_print
 from vision.classes import Spine, Book
 
 
-def vision(image_path, email_address, output_format):
+def vision(image_path, email_address, output_formats):
 
     # Create log file and empty directories
     util.create_log_file()
@@ -133,26 +133,36 @@ def vision(image_path, email_address, output_format):
     csv_file = export.export_to_csv(books)
     json_file = export.export_to_json(books)
     xml_file = export.export_to_xml(books)
-    txt_file = export.export_to_txt(books)
+    txt_file = export.export_to_text(books)
 
     if email_address:
-        log_print("\nSending email with exports...\n")
         
-        if output_format == "csv":
-            export.email_file([csv_file], email_address)
-        elif output_format == "json":
-            export.email_file([json_file], email_address)
-        elif output_format == "xml":
-            export.email_file([xml_file], email_address)
-        elif output_format == "txt":
-            export.email_file([txt_file], email_address)
-        elif output_format == "all":
-            export.email_file([csv_file, json_file, xml_file, txt_file], email_address)
+        
+        if output_formats == None:
+            output_files = [csv_file, json_file, xml_file, txt_file]
+        else:
+            output_files = []
+            if "csv" in output_formats:
+                output_files.append(csv_file)
+            if "json" in output_formats:
+                output_files.append(json_file)
+            if "xml" in output_formats:
+                output_files.append(xml_file)
+            if "txt" in output_formats:
+                output_files.append(txt_file)
+
+        log_print("\nOutput files selected for email:\n")
+        for file in output_files:
+            log_print(file)
+            log_print("\n")
+        log_print("\nSending email with exports...\n")
+        export.email_file(output_files, email_address)
 
 
 
 
     log_print("\nAll processes complete. Thank you for using Booksight.\n")
+    log_print("\n************************************************\n\n")
 
 
 

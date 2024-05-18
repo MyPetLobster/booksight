@@ -17,7 +17,11 @@ def vision(request):
     if request.method == 'POST':
         image = request.FILES.get('uploaded-image')
         email = request.POST.get('user-email')
-        format = request.POST.get('format')
+        formats = request.POST.getlist('format')
+
+        print(f'Email: {email}')
+        print(f'Formats: {formats}')
+        print(f'Image: {image}')
 
         if not image:
             return render(request, 'index.html', {
@@ -36,7 +40,7 @@ def vision(request):
         # vision_app(new_path)
 
         # Create separate thread to run vision function
-        thread = threading.Thread(target=vision_app, args=(new_path, email, format))
+        thread = threading.Thread(target=vision_app, args=(new_path, email, formats))
         thread.setDaemon(True)
         thread.start()
 
