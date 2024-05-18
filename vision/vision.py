@@ -132,15 +132,25 @@ def vision(image_path, email_address, output_format):
 
     csv_file = export.export_to_csv(books)
     json_file = export.export_to_json(books)
+    xml_file = export.export_to_xml(books)
+    txt_file = export.export_to_txt(books)
 
     if email_address:
         log_print("\nSending email with exports...\n")
         
         if output_format == "csv":
-            export.email_file(csv_file, email_address)
+            export.email_file([csv_file], email_address)
         elif output_format == "json":
-            export.email_file(json_file, email_address)
-            
+            export.email_file([json_file], email_address)
+        elif output_format == "xml":
+            export.email_file([xml_file], email_address)
+        elif output_format == "txt":
+            export.email_file([txt_file], email_address)
+        elif output_format == "all":
+            export.email_file([csv_file, json_file, xml_file, txt_file], email_address)
+
+
+
 
     log_print("\nAll processes complete. Thank you for using Booksight.\n")
 

@@ -18,25 +18,40 @@
                 </div>
 
                 <div class="form-div">
-                    <label for="user-email">Email Address</label>
+                    <h4>Email Address</h4>
                     <input type="email" id="user-email" name="user-email" placeholder="Enter your email" required>
                 </div>
 
                 <div class="form-div">
-                    <label for="format">Book List Format</label>
-                    <select name="format" id="format" required>
-                        <option value="" disabled selected>Select a format</option>
-                        <option value="csv">CSV</option>
-                        <option value="json">JSON</option>
-                        <option value="xml">XML</option>
-                        <option value="txt">IDK what any of those letters mean. Just give me the damn list.</option>
-                        <option value="all">I want it all!!!</option> 
-                    </select>
+                    <h4>Book List Format</h4>
+                    <!-- How can I redo this select option using checkboxes so users can select multiple? Answer below copilot -->
+                    <div class="checkboxes">
+                        <div class="checkbox-option">
+                            <label for="csv">CSV</label>
+                            <input type="checkbox" id="csv" name="format" value="csv">
+                        </div>
+                        <div class="checkbox-option">
+                            <label for="json">JSON</label>
+                            <input type="checkbox" id="json" name="format" value="json">
+                        </div>
+                        <div class="checkbox-option">
+                            <label for="xml">XML</label>
+                            <input type="checkbox" id="xml" name="format" value="xml">
+                        </div>
+                        <div class="checkbox-option">
+                            <label for="txt">IDK..TXT?</label>
+                            <input type="checkbox" id="txt" name="format" value="txt">
+                        </div>
+                        <div class="checkbox-option">
+                            <label for="all">I want it all!!!</label>
+                            <input type="checkbox" id="all" name="format" value="all">
+                        </div>
+                    </div>
                 </div>
-            </br>
-                <div class="form-div">
-                    <label id="uploaded-image-label" for="uploaded-image">Upload Image</label>
-                    <input type="file" id="uploaded-image" name="uploaded-image">
+ 
+                <div class="form-div upload-div">
+                    <input type="file" name="uploaded-imaged" id="uploaded-image" style="display:none;"/>
+                    <label for="uploaded-image">Upload Image</label>
                 </div>
 
                 <div class="btn-box">
@@ -50,6 +65,59 @@
 
 
     <script>
+        const selectAll = document.getElementById('all');
+        const csv = document.getElementById('csv');
+        const json = document.getElementById('json');
+        const xml = document.getElementById('xml');
+        const txt = document.getElementById('txt');
+
+        selectAll.addEventListener('change', () => {
+            if (selectAll.checked) {
+                csv.checked = true;
+                json.checked = true;
+                xml.checked = true;
+                txt.checked = true;
+            } else {
+                csv.checked = false;
+                json.checked = false;
+                xml.checked = false;
+                txt.checked = false;
+            }
+        })
+
+        csv.addEventListener('change', () => {
+            if (csv.checked && json.checked && xml.checked && txt.checked) {
+                selectAll.checked = true;
+            } else {
+                selectAll.checked = false;
+            }
+        })
+
+        json.addEventListener('change', () => {
+            if (csv.checked && json.checked && xml.checked && txt.checked) {
+                selectAll.checked = true;
+            } else {
+                selectAll.checked = false;
+            }
+        })
+
+        xml.addEventListener('change', () => {
+            if (csv.checked && json.checked && xml.checked && txt.checked) {
+                selectAll.checked = true;
+            } else {
+                selectAll.checked = false;
+            }
+        })
+
+        txt.addEventListener('change', () => {
+            if (csv.checked && json.checked && xml.checked && txt.checked) {
+                selectAll.checked = true;
+            } else {
+                selectAll.checked = false;
+            }
+        })
+
+
         const logoEyes = document.getElementById('logo-eyes');
         const logoText = document.getElementById('logo-text');
         logoEyes.addEventListener('mouseover', () => {
