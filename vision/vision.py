@@ -37,6 +37,7 @@ def vision(image_path, email_address, output_formats):
     # Detect book spines and create individual spine jpegs
     log_print("\nDetecting book spines in the image...\n")
     log_print(f"Image path: {image_path}\n")
+
     spine_images, spine_count = ds.crop_spines(image_path)
     if spine_images == None:
         log_print("\nNo valid books detected. Exiting program.\n")
@@ -163,6 +164,8 @@ def vision(image_path, email_address, output_formats):
 
     log_print("\nAll processes complete. Thank you for using Booksight.\n")
     log_print("\n************************************************\n\n")
+    
+    return
 
 
 

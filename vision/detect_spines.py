@@ -197,10 +197,10 @@ def draw_boxes(img, prediction):
         log_print("\nNo valid books detected. Exiting...\n")
         return None
 
+    plt.savefig("vision/images/detection_temp/spines/full_detected.jpeg")
+
     log_print(f"Number of verified books: {book_count}\n")
     log_print("Image with bounding boxes saved as 'vision/images/detection_temp/spines/full_detected.jpeg'\n")
-
-    plt.savefig("vision/images/detection_temp/spines/full_detected.jpeg")
 
     return valid_books
 
