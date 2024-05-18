@@ -38,10 +38,14 @@ def get_isbns_openlibrary(title, author):
     Returns:
         list: A list of ISBNs associated with the book
     """
-
     # Query the Open Library API
     response = requests.get(f"https://openlibrary.org/search.json?title={title}&author={author}&limit=5")
 
+    # If no results are found or API is down, return an empty list
+    if response.status_code != 200:
+        log_print(f"Error: {response.status_code}")
+        return []
+    
     result_count = response.json()["numFound"]
     if result_count == 0:
         return []
@@ -72,6 +76,11 @@ def get_isbns_google_books(title, author):
     # Query the Google Books API
     response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}+inauthor:{author}&maxResults=5&key={api_key}")
 
+    # If no results are found or API is down, return an empty list
+    if response.status_code != 200:
+        log_print(f"Error: {response.status_code}")
+        return []
+    
     if response.json().get("totalItems", 0) == 0:
         return []
     
@@ -102,11 +111,11 @@ def get_isbn_info(isbn):
     time.sleep(1) # Prevent rate limiting
 
     h = {'Authorization': ISBNDB_API_KEY}
-    resp = requests.get(f"https://api2.isbndb.com/book/{isbn}", headers=h)
+    response = requests.get(f"https://api2.isbndb.com/book/{isbn}", headers=h)
     
-    if resp.status_code == 200:
+    if response.status_code == 200:
         # Get the 'Height' and 'Width' of the book
-        book_info = resp.json()
+        book_info = response.json()
 
         log_print(f"\nData for {isbn}:\n\n{book_info}\n")
 
@@ -123,7 +132,7 @@ def get_isbn_info(isbn):
             "isbn": book_info["book"]["isbn"] if "isbn" in book_info["book"] else None,
         }
     else:
-        log_print(f"Error: {resp.status_code}")
+        log_print(f"Error: {response.status_code}")
         return None
 
 # Book Info:
