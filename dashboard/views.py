@@ -68,3 +68,7 @@ def vision(request):
 
 def about(request):
     return render(request, 'about.html')
+
+
+def tips(request):
+    return render(request, 'tips.html')
