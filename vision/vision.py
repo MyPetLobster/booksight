@@ -16,10 +16,6 @@ from vision.classes import Spine, Book
 
 def vision(image_path, email_address, output_formats):
 
-    # Create log file and empty directories
-    util.create_log_file()
-    util.empty_directories()
-
     log_print("\n\n\n************************************************\n")
     log_print("\nWelcome to Booksight!\n")
     log_print("\nBeginning the Vision process.\n")

@@ -5,6 +5,8 @@ import threading
 
 from .models import Scan
 from vision.vision import vision as vision_app
+import vision.utility as util
+from vision.utility import log_print
 
 
 def index(request):
@@ -15,13 +17,22 @@ def index(request):
 
 def vision(request):
     if request.method == 'POST':
+        # Empty temp dirs
+        util.empty_directory('media/uploaded_images')
+        util.empty_directories()
+
+        # Create log file for new session
+        util.create_log_file()
+        
+
         image = request.FILES.get('uploaded-image')
         email = request.POST.get('user-email')
         formats = request.POST.getlist('format')
 
-        print(f'Email: {email}')
-        print(f'Formats: {formats}')
-        print(f'Image: {image}')
+        log_print('\nForm Submitted, new scan request details:\n')
+        log_print(f'Email: {email}')
+        log_print(f'Formats: {formats}')
+        log_print(f'Image: {image}')
 
         if not image:
             return render(request, 'index.html', {
@@ -36,10 +47,7 @@ def vision(request):
         shutil.copy(new_scan.uploaded_image.path, f'vision/images/scan_images/{new_scan.id}.jpg')
         new_path = f'vision/images/scan_images/{new_scan.id}.jpg'
 
-        # Run vision function
-        # vision_app(new_path)
-
-        # Create separate thread to run vision function
+        # Create separate thread to run Vision app
         thread = threading.Thread(target=vision_app, args=(new_path, email, formats))
         thread.setDaemon(True)
         thread.start()

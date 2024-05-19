@@ -2,14 +2,20 @@ import os
 import shutil
 import time
 
+from rich import print as rprint
+
 timestamp = time.strftime("%Y%m%d-%H%M%S")
 date = time.strftime("%Y%m%d")
+
 
 def create_log_file():
     """ Creates a log file for the current session. """
    # Create new log dir for each day formatted like 'booksight/logs/240515/booksight_{timestamp}.log'
     if not os.path.exists(f'booksight/logs/{date}'):
+        print(f"Creating new log directory for {date}")
         os.makedirs(f'booksight/logs/{date}')
+
+    print(f"Creating new log file for {timestamp} ****")
     with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'w') as file:
         file.write(f"Booksight log file for {timestamp}\n") 
     
@@ -19,7 +25,7 @@ def log_print(message):
     
     with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'a') as file:
         file.write(f"{message}\n")
-    print(message)
+    rprint(message)
 
 
 

@@ -121,6 +121,7 @@ def get_isbn_info(isbn):
 
         height, width = get_dimensions(book_info)
         language, cover = get_language_and_cover(book_info)
+
         return {
             "title": book_info["book"]["title"] if "title" in book_info["book"] else None,
             "height": height, 
@@ -179,8 +180,15 @@ def get_dimensions(book_info):
 
 
 def get_language_and_cover(book_info):
-    language = book_info["book"]["language"]
-    cover = book_info["book"]["image"]
+    if "language" not in book_info["book"] or book_info["book"]["language"] == "":
+        language = "Unknown"
+    else:
+        language = book_info["book"]["language"]
+
+    if "image" not in book_info["book"] or book_info["book"]["image"] == "":
+        cover = "Unavailable"
+    else:
+        cover = book_info["book"]["image"]
 
     return language, cover
 
