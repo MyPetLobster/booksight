@@ -7,7 +7,7 @@ from io import BytesIO
 
 import vision.analyze_spine as asp
 import vision.db_requests as dbr
-import vision.utility as util
+from vision.token_counter import count_tokens
 from vision.utility import log_print
 from vision.classes import Spine, Book
 
@@ -298,6 +298,9 @@ def identify_with_AI(prompt):
     Returns:
         str: The response from the AI model.
     """
+    prompt_tokens = count_tokens(prompt, GPT_MODEL)
+    log_print(f"\nPrompt tokens: {prompt_tokens}\n")
+
     if AI_OPTION == "gpt":
         gpt_start = time.time()
         log_print(f"Beginning identification with {GPT_MODEL} set to a temperature of {GPT_TEMP}...\n ")
@@ -314,6 +317,9 @@ def identify_with_AI(prompt):
         log_print("Invalid AI option. Please choose 'gpt' or 'gemini'.\n")
         response = None
 
+    response_tokens = count_tokens(response, GPT_MODEL)
+    log_print(f"\nResponse tokens: {response_tokens}\n")
+    
     return response
 
 
