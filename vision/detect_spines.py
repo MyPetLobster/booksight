@@ -8,7 +8,7 @@ import torch
 from torchvision import models, transforms
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
-from vision.utility import log_print
+from .utility import log_print
 
 
 # Load a pre-trained Faster R-CNN model

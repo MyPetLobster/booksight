@@ -1,16 +1,13 @@
 import time
 
-import vision.analyze_spine as asp
-import vision.detect_spines as ds
-import vision.detect_text as dt
-import vision.exporter as export
-import vision.matcher as match
-from vision.matcher import AI_OPTION, GPT_MODEL, GPT_TEMP, GEMINI_MODEL
-import vision.utility as util
-from vision.utility import log_print 
-
-
-from vision.classes import Spine, Book
+from . import analyze_spine as asp
+from . import detect_spines as ds
+from . import detect_text as dt
+from . import exporter as export
+from . import matcher as match
+from .utility import log_print 
+from .classes import Spine, Book
+from .matcher import AI_OPTION, GPT_MODEL, GPT_TEMP, GEMINI_MODEL
 
 
 def vision(image_path, email_address, output_formats):

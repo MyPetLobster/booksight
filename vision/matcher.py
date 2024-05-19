@@ -5,14 +5,15 @@ import time
 from PIL import Image
 from io import BytesIO
 
-import vision.analyze_spine as asp
-import vision.db_requests as dbr
-from vision.token_counter import count_tokens
-from vision.utility import log_print
-from vision.classes import Spine, Book
+from . import analyze_spine as asp
+from . import db_requests as dbr
+from .classes import Spine, Book
+from .token_counter import count_tokens
+from .utility import log_print
 
-import vision.gpt as gpt
-import vision.gemini as gemini
+
+from . import gpt as gpt
+from . import gemini as gemini
 
 
 # Choose between 'gpt' and 'gemini'
@@ -319,7 +320,7 @@ def identify_with_AI(prompt):
 
     response_tokens = count_tokens(response, GPT_MODEL)
     log_print(f"\nResponse tokens: {response_tokens}\n")
-    
+
     return response
 
 

@@ -4,7 +4,7 @@ import cv2 as cv
 import numpy as np
 import easyocr as ocr
 
-from vision.utility import log_print
+from .utility import log_print
 
 def detect_text(image_path):
     """

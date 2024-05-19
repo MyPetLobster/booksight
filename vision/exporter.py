@@ -5,7 +5,7 @@ import time
 import csv
 import json
 
-import vision.utility as util
+from . import utility as util
 
 
 def export_to_csv(books):
