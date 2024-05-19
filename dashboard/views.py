@@ -1,7 +1,9 @@
 from django.shortcuts import render
 
+import os
 import shutil
 import threading
+import time
 
 from .models import Scan
 from vision.vision import vision as vision_app
@@ -52,8 +54,10 @@ def vision(request):
         thread.setDaemon(True)
         thread.start()
 
+        new_scan_uploaded_image = new_scan.uploaded_image.url
+
         return render(request, 'vision.html', {
-            'scan': new_scan.serialize()
+            'image_path': new_scan_uploaded_image
         })
 
     else: # GET request
