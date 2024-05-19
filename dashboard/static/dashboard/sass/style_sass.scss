@@ -4,7 +4,9 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: "Dosis", sans-serif;
 }
+
 a {
     color: rgb(236,236,236) !important;
     text-decoration: none;
@@ -142,16 +144,18 @@ a:hover {
     transition: 400ms;
 }
 
+
+/* UPLOAD FORM STYLES */
 .upload-form-div {
     z-index: -1;
 }
 .floating-form {
-    width: 350px;
+    width: 450px;
     display: flex;
     flex-direction: column;
     gap: 16px;
+    background-color: rgb(242, 242, 242);
     padding: 10px 20px 20px 20px;
-    border: 1px solid black;
     border-radius: 12px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 
@@ -159,7 +163,11 @@ a:hover {
         text-align: center;
 
         a {
+            color: rgb(134, 167, 191) !important;
+        }
+        a:hover {
             color: rgb(63, 106, 137) !important;
+            font-weight: 500;
         }
     }
 }
@@ -187,6 +195,12 @@ a:hover {
     justify-content: center;
 
 }
+.form-title {
+    color: rgb(63, 106, 137)
+}
+.form-subtitle {
+    color: rgb(151, 159, 164)
+}
 
 .checkboxes {
     display: flex;
@@ -197,7 +211,7 @@ a:hover {
     label {
         margin-left: 20px;
         position: relative;
-        top: 8px;
+        top: 5px;
     }
 }
 .checkbox-option {
@@ -208,20 +222,79 @@ a:hover {
     justify-content: space-between;
     align-items: center;
     gap: 5px;
+    accent-color: rgb(63, 106, 137);
 }
-
 
 #uploaded-image {
     position: relative;
     left: 38px;
     margin-bottom: 16px;
 }
-
 #proc-upload-img {
     border-radius: 12px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
 
+
+.button {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 4px;
+    margin-top: 20px;
+    border-radius: 8px;
+    transition: 250ms;
+    border: none;
+    font-weight: 400;
+}
+.button:hover {
+    cursor: pointer;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    transform: scale(.9);
+    font-weight: 800;
+}
+#upload-image-button {
+    width: 60%;
+    background-color: rgb(63, 106, 137);
+    color: white;
+}
+#upload-image-button:hover {
+    background-color: rgb(36, 69, 94);
+    color: rgb(236,236,236)
+}
+#submit-button {
+    background-color: rgb(87, 132, 69);
+    color: white;
+}
+#submit-button:hover {
+    background-color: rgb(60, 105, 42);
+    color: rgb(236,236,236)
+}
+#cancel-button {
+    background-color: rgb(156, 69, 69);
+    color: white;
+}
+#cancel-button:hover {
+    background-color: rgb(129, 42, 42);
+    color: rgb(236,236,236)
+}
+
+#user-email {
+    width: 60%;
+    border-radius: 6px;
+    padding: 4px;
+    border: 1px solid rgb(134, 167, 191) ;
+    outline: 1px solid white;
+}
+#user-email:focus {
+    border: 2px solid rgb(63, 106, 137);
+}
+
+
+
+/* VISION PAGE STYLES */
 .vision-para-div * {
     text-align: center;
 }
