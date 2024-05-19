@@ -10,9 +10,7 @@ from vision.utility import log_print
 
 
 def index(request):
-    return render(request, 'index.html', {
-        'scans': [scan.serialize() for scan in Scan.objects.all()]
-    })
+    return render(request, 'index.html')
 
 
 def vision(request):
