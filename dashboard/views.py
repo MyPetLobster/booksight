@@ -1,9 +1,7 @@
 from django.shortcuts import render
 
-import os
 import shutil
 import threading
-import time
 
 from .models import Scan
 from vision.vision import vision as vision_app

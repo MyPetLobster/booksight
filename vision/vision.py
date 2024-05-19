@@ -1,7 +1,6 @@
 import time
 
 import vision.analyze_spine as asp
-import vision.db_requests as dbr
 import vision.detect_spines as ds
 import vision.detect_text as dt
 import vision.exporter as export

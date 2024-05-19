@@ -1,6 +1,4 @@
 import os
-import pathlib
-import textwrap
 from dotenv import load_dotenv
 
 import google.generativeai as genai
