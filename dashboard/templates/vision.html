@@ -13,6 +13,7 @@
             <div id="image-div">
                 <img class="proc-upload-img uploaded-image" id="uploaded-image-raw" src="{{ image_path }}" alt="Uploaded Image">
             </div>
+            <div id="progress-status"></div>
         </br>
         <div class="vision-para-div">
             <p>
@@ -29,6 +30,10 @@
     </div>
 
 <script>
+
+let stage_three_started = false;
+let stage_four_started = false;
+
 function checkStatus() {
     $.ajax ({
         url: "{% url 'vision_status' %}",
@@ -47,6 +52,9 @@ function checkStatus() {
                 // Hide the uploaded image
                 const uploaded_image_element = document.getElementById("uploaded-image-raw");
                 uploaded_image_element.style.display = "none";
+
+                // Update status
+                updateStatusStageTwo();
 
                 console.log(`Bounding box detected: ${data.bbox_image}`)
 
@@ -69,17 +77,96 @@ function checkStatus() {
                     text_image_element.className = "spine-grid-element";
                     spine_image_grid.appendChild(text_image_element);
                 }
+
+                // Update status
+                if (!stage_three_started) {
+                    updateStatusStageThree();
+                }
+            } else if (data.status == "ai-complete") {
+                // Update status
+                if (!stage_four_started) {
+                    updateStatusStageFour();
+                }
             } else if (data.status == "completed") {
                 clearInterval(statusInterval);
                 window.location.href = "{% url 'vision_complete' %}";
             } else {
-                setTimeout(checkStatus, 10000);
+                setTimeout(checkStatus, 5000);
             }
         }
     });
 }
 
-var statusInterval = setInterval(checkStatus, 10000);
+function updateStatus() {
+    // Change status every 1.5 seconds
+    var status = document.getElementById("progress-status");
+    const start_time = new Date().getTime();
+    var status_text = ["Loading image...", "Enhancing image...", "Saving enhanced image...", "Applying tensor transformation...", "Running object detection...", "Drawing bounding boxes and creating new spine images..."];
+
+    var i = 0;
+    var interval = setInterval(function() {
+        status.innerHTML = status_text[i];
+        i++;
+        if (i == status_text.length) {
+            clearInterval(interval);
+        }
+    }, 1000);
+}
+
+function updateStatusStageTwo() {
+    // Change status every 1.5 seconds
+    var status = document.getElementById("progress-status");
+    const start_time = new Date().getTime();
+    var status_text = ["Analyzing image and spine objects...", "Beginning text detection using EasyOCR...", "This process may take a minute...", "...or two...", "Almost there. I can feel it..."];
+
+    var i = 0;
+    var interval = setInterval(function() {
+        status.innerHTML = status_text[i];
+        i++;
+        if (i == status_text.length) {
+            clearInterval(interval);
+        }
+    }, 7000);
+}
+
+function updateStatusStageThree() {
+    stage_three_started = true;
+    var status = document.getElementById("progress-status");
+    status.innerHTML = "All image processing and OCR operations complete. Beginning book identification...";
+    var status_text = ["Preparing text for AI input and running AI model..."]
+    
+    var i = 0;
+    var interval = setInterval(function() {
+        status.innerHTML = status_text[i];
+        i++;
+        if (i == status_text.length) {
+            clearInterval(interval);
+        }
+    }, 3500);
+}
+
+function updateStatusStageFour() {
+    stage_four_started = true;
+    var status = document.getElementById("progress-status");
+    status.innerHTML = "AI model complete. Processing results...";
+    var status_text = ["Beginning book matching processes, using Google Books, ISBNdb, and Open Library APIs...", "This process may take several minutes...", "This process is probably gonna take a while...", "[awkward eye contact]...shouldn't be too much longer...", "🎶<em>elevator music</em>🎶", "Sooo...how's life treating you?", "Why did the data analyst go to the zoo?", "To see the pandas!", "Ok I've got nothing else...it'll be done soon I swear"];
+    
+    var i = 0;
+    var interval = setInterval(function() {
+        status.innerHTML = status_text[i];
+        i++;
+        if (i == status_text.length) {
+            clearInterval(interval);
+        }
+    }, 8000);
+
+}
+
+
+updateStatus();
+
+
+var statusInterval = setInterval(checkStatus, 5000);
 </script>
 
 {% endblock %}

@@ -243,8 +243,9 @@ a:hover {
 }
 
 #image-div {
-  margin: 20px;
-  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  padding: 15px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -262,7 +263,8 @@ a:hover {
   justify-content: center;
   align-items: center;
   margin-top: 20px;
-  padding: 20px;
+  margin-bottom: 0px;
+  padding: 10px;
   background-color: #f8f8f8;
   border-radius: 12px;
 }
@@ -353,6 +355,10 @@ a:hover {
 
 .vision-link:hover {
   color: black !important;
+}
+
+#stage_02, #stage_03, #stage_04, #stage_05, #stage_06 {
+  display: none;
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -88,6 +88,10 @@ def vision_status(request):
             'status': 'text-detected',
             'text_images': text_images,
         })
+    elif vision_status == 'ai-complete':
+        return JsonResponse({
+            'status': 'ai-complete',
+        })
     elif vision_status == 'completed':
         return JsonResponse({
             'status': 'completed',

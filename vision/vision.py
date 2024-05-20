@@ -131,8 +131,11 @@ def vision(image_path, email_address, output_formats, new_scan):
     ### Book Identification ###
     log_print("\nBegin book identification process...\n")
 
-    # Clean up text data and retrieve potential ISBNs for each spine
+    # Clean up text data using AI and retrieve potential ISBNs for each spine
     spines = match.id_possible_matches(spines, full_image_text_unique)
+
+    new_scan.scan_status = "ai-complete"
+    new_scan.save()
 
     log_print("\n***********************************************\n")
     log_print("\nAll Spine Objects:\n")
