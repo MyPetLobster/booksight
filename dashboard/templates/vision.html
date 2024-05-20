@@ -10,7 +10,11 @@
             <img id="logo-text-vision" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
         </div>
         </br>
-            <img id="proc-upload-img" src="{{ image_path }}" alt="Uploaded Image" style="max-width: 350px; max-height: 500px;">
+            <img class="proc-upload-img" id="uploaded-image-raw" src="{{ image_path }}" alt="Uploaded Image" style="max-width: 350px; max-height: 500px; display: block">
+            <img class="proc-upload-img" id=bbox-image" src="" alt="Bounding Box Image" style="max-width: 350px; max-height: 500px; display: none">
+            <div class="spine-image-grid" id="spine-image-grid" style="display: none">
+                <!-- <img class="proc-upload-img" id="spine-image-1" src="" alt="Spine Image 1" style="max-width: 350px; max-height: 500px; display: none"> -->
+            </div>
         </br>
         <div class="vision-para-div">
             <p>
@@ -24,8 +28,39 @@
                 <a class="vision-link" href="{% url 'index' %}">Return to the home page</a>
             </p>
         </div>
-
     </div>
+
+    <script>
+    function checkStatus() {
+        $.ajax ({
+            url: "{% url 'vision_status' %}",
+            type: "GET",
+            success: function(data) {
+                alert(data.status);
+                if (data.status == "bbox-detected") {
+                    alert("Bounding Box Detected");
+                    $("#bbox-image").attr("src", data.bbox_image);
+                    $("#bbox-image").css("display", "block");
+                } else if (data.status == "spine-detected") {
+                    $("#spine-image-grid").css("display", "block");
+                    for (var i = 0; i < data.spine_images.length; i++) {
+                        var spine_image = $("<img>").attr("src", data.spine_images[i]);
+                        spine_image.attr("class", "proc-upload-img");
+                        spine_image.attr("style", "max-width: 200px; max-height: 350px; display: block");
+                        $("#spine-image-grid").append(spine_image);
+                    }
+                } else if (data.status == "complete") {
+                    clearInterval(statusInterval);
+                    window.location.href = "{% url 'vision_complete' %}";
+                } else {
+                    setTimeout(checkStatus, 10000);
+                }
+            }
+        });
+    }
+
+    var statusInterval = setInterval(checkStatus, 10000);
+    </script>
 {% endblock %}
 
 

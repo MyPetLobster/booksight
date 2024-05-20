@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 
 import shutil
@@ -46,7 +47,7 @@ def vision(request):
         new_path = f'vision/images/scan_images/{new_scan.id}.jpg'
 
         # Create separate thread to run Vision app
-        thread = threading.Thread(target=vision_app, args=(new_path, email, formats))
+        thread = threading.Thread(target=vision_app, args=(request, new_path, email, formats))
         thread.setDaemon(True)
         thread.start()
 
@@ -68,3 +69,35 @@ def about(request):
 
 def tips(request):
     return render(request, 'tips.html')
+
+
+def vision_status(request):
+    vision_status = request.session.get('vision_status')
+
+    if vision_status == 'bbox-detected':
+        return HttpResponse({
+            'status': 'bbox-detected',
+            'bbox_image': 'vision/images/detection_temp/spines/full_detected.jpeg'
+        })
+    elif vision_status == 'text-detected':
+        text_images = request.session.get('text_images')
+        return HttpResponse({
+            'status': 'text-detected',
+            'text_image': text_images,
+        })
+    elif vision_status == 'completed':
+        return HttpResponse({
+            'status': 'completed',
+        })
+    elif vision_status == 'running':
+        return HttpResponse({
+            'status': 'running',
+        })
+    else:
+        return HttpResponse({
+            'status': 'error',
+        })
+
+
+def vision_complete(request):
+    return render(request, 'vision_complete.html')

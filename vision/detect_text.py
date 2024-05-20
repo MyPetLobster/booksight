@@ -20,6 +20,8 @@ def detect_text(image_path):
     """
     reader = ocr.Reader(lang_list=['en'], gpu=True)
 
+    text_detection_image_paths = []
+
     def process_image(image, with_threshold, raw_processed):
         if not raw_processed:
             preprocessed_image = preprocess(image, with_threshold)
@@ -27,7 +29,10 @@ def detect_text(image_path):
             preprocessed_image = image
 
         result = reader.readtext(preprocessed_image, detail=1)
-        draw_bounding_boxes(preprocessed_image, result, "process_image")
+
+        img_path = draw_bounding_boxes(preprocessed_image, result, "process_image")
+        text_detection_image_paths.append(img_path)
+
         return [text for bbox, text, _ in result if len(text) > 2]
 
     original_image = cv.imread(image_path)
@@ -73,7 +78,8 @@ def detect_text(image_path):
     book_text_list = list(set(book_text_list))
 
     log_print(f"\nbook_text_list: {book_text_list}\n")
-    return book_text_list
+
+    return book_text_list, text_detection_image_paths
 
 
 def preprocess(image, threshold):
@@ -110,7 +116,7 @@ def draw_bounding_boxes(image, detections, function_name):
         detections (list): A list of tuples containing the bounding box coordinates, text, and confidence score.
 
     Returns:
-        None
+        path to the saved image
     """
     image_with_boxes = image.copy()
     
@@ -124,7 +130,7 @@ def draw_bounding_boxes(image, detections, function_name):
     
     timestamp = time.strftime("%Y%m%d-%H%M%S")
     cv.imwrite(f"vision/images/detection_temp/debug_images/text_detection_{timestamp}_{function_name}.jpeg", image_with_boxes)
-
+    return f"vision/images/detection_temp/debug_images/text_detection_{timestamp}_{function_name}.jpeg"
 
 def adjust_brightness(image):
     """

@@ -1,5 +1,9 @@
 import time
 
+from django.contrib.sessions.models import Session
+
+
+
 from . import analyze_spine as asp
 from . import detect_spines as ds
 from . import detect_text as dt
@@ -10,7 +14,9 @@ from .classes import Spine, Book
 from .matcher import AI_OPTION, GPT_MODEL, GPT_TEMP, GEMINI_MODEL
 
 
-def vision(image_path, email_address, output_formats):
+def vision(request, image_path, email_address, output_formats):
+
+    request.session['vision_status'] = "running"
 
     log_print("\n\n\n************************************************\n")
     log_print("\nWelcome to Booksight!\n")
@@ -33,6 +39,7 @@ def vision(image_path, email_address, output_formats):
     spine_images, spine_count = ds.crop_spines(image_path)
     if spine_images == None:
         log_print("\nNo valid books detected. Exiting program.\n")
+        request.session['vision_status'] = "failed"
         return
    
     spine_detection_end = time.time()
@@ -42,6 +49,7 @@ def vision(image_path, email_address, output_formats):
         log_print("\nNo books detected. Exiting program.\n")
         return
     elif 0 < spine_count < 20:
+        request.session['vision_status'] = "bbox-detected"
         log_print("\nAnalyzing images and creating Spine objects. This may take several minutes...\n\n")
     else:
         log_print("\nAnalyzing images and creating Spine objects. This image contains a lot of books. Go stretch your legs. This may take a while...\n")
@@ -77,7 +85,11 @@ def vision(image_path, email_address, output_formats):
     log_print("\nLarge images may take a while to process.\n")
 
     full_scan_start = time.time()
-    full_image_text = dt.detect_text(image_path)
+    full_image_text, text_detected_image_paths = dt.detect_text(image_path)
+
+    request.session['vision_status'] = "text-detected"
+    request.session['text_images'] = text_detected_image_paths
+
     full_image_text = [text for text in full_image_text if len(text) > 2]
     
     full_image_text_unique = [text for text in full_image_text if text not in all_spine_text] 
@@ -153,6 +165,7 @@ def vision(image_path, email_address, output_formats):
 
 
 
+    request.session['vision_status'] = "completed"
 
     log_print("\nAll processes complete. Thank you for using Booksight.\n")
     log_print("\n************************************************\n\n")
