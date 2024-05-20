@@ -1,3 +1,4 @@
+import os
 import time
 
 import cv2 as cv
@@ -5,6 +6,7 @@ import numpy as np
 import easyocr as ocr
 
 from .utility import log_print
+from booksight.settings import MEDIA_ROOT, MEDIA_URL
 
 def detect_text(image_path):
     """
@@ -22,15 +24,16 @@ def detect_text(image_path):
 
     text_detection_image_paths = []
 
-    def process_image(image, with_threshold, raw_processed):
-        if not raw_processed:
+    def process_image(image, with_threshold, to_preprocess):
+        log_print(f"\n\nto_preprocess: {to_preprocess}\nwith_threshold: {with_threshold}\n\n")
+        if to_preprocess:
             preprocessed_image = preprocess(image, with_threshold)
         else:
             preprocessed_image = image
 
         result = reader.readtext(preprocessed_image, detail=1)
 
-        img_path = draw_bounding_boxes(preprocessed_image, result, "process_image")
+        img_path = draw_bounding_boxes(preprocessed_image, result, image_path)
         text_detection_image_paths.append(img_path)
 
         return [text for bbox, text, _ in result if len(text) > 2]
@@ -101,12 +104,12 @@ def preprocess(image, threshold):
     img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     if threshold:
         _, img = cv.threshold(img, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
-    img = cv.GaussianBlur(img, (5, 5), 0)
+    
     
     return img
 
 
-def draw_bounding_boxes(image, detections, function_name):
+def draw_bounding_boxes(image, detections, image_path):
     """
     This function draws bounding boxes around the detected text in an image. It saves the image with the bounding boxes 
     in the 'vision/images/detection_temp' directory.
@@ -128,9 +131,22 @@ def draw_bounding_boxes(image, detections, function_name):
         cv.rectangle(image_with_boxes, top_left, bottom_right, (0, 255, 0), 5)
         cv.putText(image_with_boxes, text, top_left, cv.FONT_HERSHEY_COMPLEX_SMALL, 0.65, (255, 0, 0), 2)
     
+    # timestamp with milliseconds
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-    cv.imwrite(f"vision/images/detection_temp/debug_images/text_detection_{timestamp}_{function_name}.jpeg", image_with_boxes)
-    return f"vision/images/detection_temp/debug_images/text_detection_{timestamp}_{function_name}.jpeg"
+    filename = image_path.split("/")[-1].split(".")[0]
+    # If file already exists with same timestamp, add -1, -2, etc.
+    if os.path.exists(os.path.join(MEDIA_ROOT, f"detection_temp/debug_images/{filename}_text_detection_{timestamp}.jpeg")):
+        i = 1
+        while os.path.exists(os.path.join(MEDIA_ROOT, f"detection_temp/debug_images/{filename}_text_detection_{timestamp}-{i}.jpeg")):
+            i += 1
+        timestamp = f"{timestamp}-{i}"
+
+    # Save text detection images to media/detection_temp/debug_images    
+    text_detect_path = os.path.join(MEDIA_ROOT, f"detection_temp/debug_images/{filename}_text_detection_{timestamp}.jpeg")
+    cv.imwrite(text_detect_path, image_with_boxes)
+    text_detect_url = os.path.join(MEDIA_URL, f"detection_temp/debug_images/{filename}_text_detection_{timestamp}.jpeg")
+    return text_detect_url
+
 
 def adjust_brightness(image):
     """

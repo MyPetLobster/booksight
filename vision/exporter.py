@@ -201,7 +201,7 @@ def email_file(file_paths, user_email):
 
     email = EmailMessage(subject, message, settings.EMAIL_HOST_USER, [user_email])
 
-    bounding_box_image = 'vision/images/detection_temp/spines/full_detected.jpeg'
+    bounding_box_image = 'media/detection_temp/spines/full_detected.jpeg'
     email.attach_file(bounding_box_image)
     
     for file_path in file_paths:

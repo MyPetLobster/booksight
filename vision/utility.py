@@ -28,14 +28,6 @@ def log_print(message):
     rprint(message)
 
 
-
-# Delete all files temp files
-def empty_directories():
-    directories = ["vision/images/detection_temp/debug_images", "vision/images/detection_temp/spines", "vision/images/detection_temp/downloaded_images"]
-    for directory in directories:
-        empty_directory(directory)
-
-
 def empty_directory(directory): 
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)

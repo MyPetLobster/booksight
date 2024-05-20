@@ -91,7 +91,15 @@ a:hover {
     }
 }
 
-
+.vis-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 28px;
+    width: 100%;
+}
 
 
 
@@ -102,6 +110,7 @@ a:hover {
     align-items: center;
     justify-content: center;
     height: 100vh;
+    gap: 28px;
     width: 100%;
 }
 .landing-logo-div {
@@ -225,15 +234,56 @@ a:hover {
     accent-color: rgb(63, 106, 137);
 }
 
-#uploaded-image {
-    position: relative;
-    left: 38px;
-    margin-bottom: 16px;
-}
+
 .proc-upload-img {
     border-radius: 12px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
 }
+
+.uploaded-image,
+.bbox-image {
+    max-width: 500px;
+    max-height: 700px;
+    display: block;
+}
+
+#image-div {
+    margin: 20px;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: scroll;
+}
+
+.spine-image-grid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f8f8;  // Light gray background for better visibility
+    border-radius: 12px;
+}
+
+.spine-grid-element {
+    max-width: 150px;
+    max-height: 250px;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    background-color: #fff;  // White background for the images
+    padding: 10px;
+    margin: auto;
+}
+
 
 
 .button {

@@ -4,15 +4,14 @@
 {% block title %}Booksight{% endblock %}
 {% block body %}
     <div class="page-identifier" style="display:none">vision</div>
-    <div class="idx-content">
+    <div class="vis-content">
         <div class="landing-logo-div-vision">
             <img id="logo-eyes-vision" src="{% static 'dashboard/images/eyes-only.png' %}" alt="Booksight Logo Owl Eyes">
             <img id="logo-text-vision" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
         </div>
         </br>
             <div id="image-div">
-                <img class="proc-upload-img" id="uploaded-image-raw" src="{{ image_path }}" alt="Uploaded Image" style="max-width: 350px; max-height: 500px; display: block">
-                <div class="spine-image-grid" id="spine-image-grid"></div>
+                <img class="proc-upload-img uploaded-image" id="uploaded-image-raw" src="{{ image_path }}" alt="Uploaded Image">
             </div>
         </br>
         <div class="vision-para-div">
@@ -36,35 +35,39 @@ function checkStatus() {
         type: "GET",
         success: function(data) {
             console.log(data.status);
-            if (data.status == "bbox-detected" && document.getElementById("bbox-image") == null){
+            if (data.status == "bbox-detected" && document.getElementById("bbox-image") == null) {
                 // Create a new image element to display the bounding box image
                 const bbox_image_element = document.createElement("img");
                 bbox_image_element.id = "bbox-image";
                 bbox_image_element.src = data.bbox_image;
+                bbox_image_element.className = "proc-upload-img bbox-image";
                 bbox_image_element.style.display = "block";
-                bbox_image_element.style.maxWidth = "500px";
-                bbox_image_element.style.maxHeight = "700px";
                 document.getElementById("image-div").appendChild(bbox_image_element);
 
                 // Hide the uploaded image
                 const uploaded_image_element = document.getElementById("uploaded-image-raw");
                 uploaded_image_element.style.display = "none";
-                bbox_image_element.src = data.bbox_image;
-                bbox_image_element.style.display = "block";
 
                 console.log(`Bounding box detected: ${data.bbox_image}`)
 
-            } else if (data.status == "text-detected") {
+            } else if (data.status == "text-detected" && document.getElementById("spine-image-grid") == null) {
                 // Hide bbox image
                 const bbox_image_element = document.getElementById("bbox-image");
                 bbox_image_element.style.display = "none";
+                
+                // Create a new div within image-div to display the text detection images in a grid
+                const spine_image_grid = document.createElement("div");
+                spine_image_grid.id = "spine-image-grid";
+                spine_image_grid.classList.add("spine-image-grid");
+                document.getElementById("image-div").appendChild(spine_image_grid);
 
-                // Create a new image elements to display the text images
-                for (var i = 0; i < data.text_images.length; i++) {
-                    var spine_image = $("<img>").attr("src", data.text_images[i]);
-                    spine_image.attr("class", "proc-upload-img");
-                    spine_image.attr("style", "max-width: 200px; max-height: 350px; display: block");
-                    $("#spine-image-grid").append(spine_image);
+                // Create new image elements to display the text images
+                const text_images = data.text_images.split(",");
+                for (let i = 0; i < text_images.length; i++) {
+                    const text_image_element = document.createElement("img");
+                    text_image_element.src = text_images[i];
+                    text_image_element.className = "spine-grid-element";
+                    spine_image_grid.appendChild(text_image_element);
                 }
             } else if (data.status == "completed") {
                 clearInterval(statusInterval);
@@ -80,5 +83,3 @@ var statusInterval = setInterval(checkStatus, 10000);
 </script>
 
 {% endblock %}
-
-

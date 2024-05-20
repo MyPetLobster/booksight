@@ -18,7 +18,8 @@ def vision(request):
     if request.method == 'POST':
         # Empty temp dirs
         util.empty_directory('media/uploaded_images')
-        util.empty_directories()
+        util.empty_directory('media/detection_temp/debug_images')
+        util.empty_directory('media/detection_temp/spines')
 
         # Create log file for new session
         util.create_log_file()
@@ -82,10 +83,10 @@ def vision_status(request):
             'bbox_image': most_recent_scan.bbox_image
         })
     elif vision_status == 'text-detected':
-        text_images = most_recent_scan.text_images.split(',')
+        text_images = most_recent_scan.text_images
         return JsonResponse({
             'status': 'text-detected',
-            'text_image': text_images,
+            'text_images': text_images,
         })
     elif vision_status == 'completed':
         return JsonResponse({

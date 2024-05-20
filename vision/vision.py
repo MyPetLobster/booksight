@@ -1,3 +1,4 @@
+import os
 import time
 
 from django.contrib.sessions.models import Session
@@ -11,9 +12,14 @@ from . import matcher as match
 from .utility import log_print 
 from .classes import Spine, Book
 from .matcher import AI_OPTION, GPT_MODEL, GPT_TEMP, GEMINI_MODEL
+from dashboard.models import Scan
+
+from booksight.settings import MEDIA_URL
 
 
 def vision(image_path, email_address, output_formats, new_scan):
+    # Delete all scans except most recent
+    Scan.objects.exclude(id=new_scan.id).delete()
 
     new_scan.scan_status = "running"
     new_scan.save()
@@ -59,13 +65,15 @@ def vision(image_path, email_address, output_formats, new_scan):
 
     ### OCR Text Detection ###
     # Create Spine objects - Detect text, colors, and dimensions
+    all_text_image_paths = []
     spines = []
     i = 0
     for image in spine_images:
         log_print(f"Analyzing detected_spine_{i}. Extracting color data and dimensions.\n")
         avg_color, dominant_color, color_palette, height, width = asp.analyze_spine(image)
         log_print(f"Beginning OCR text detection on detected_spine_{i}...\n")
-        text = dt.detect_text(image)
+        text, idv_spine_text_img_paths = dt.detect_text(image)
+        all_text_image_paths = ",".join(idv_spine_text_img_paths)
         spine = Spine(image, avg_color, dominant_color, color_palette, height, width, text)
         spines.append(spine)
         log_print(f"Detected_spine_{i} analyzed and Spine object created.\n")
@@ -87,10 +95,22 @@ def vision(image_path, email_address, output_formats, new_scan):
     log_print("\nLarge images may take a while to process.\n")
 
     full_scan_start = time.time()
-    full_image_text, text_detected_image_paths = dt.detect_text(image_path)
+    full_image_text, text_image_paths = dt.detect_text(image_path)
+    all_text_image_paths = ",".join(text_image_paths)
+
+    log_print(f"\n\nAll text image paths: {all_text_image_paths}\n\n")
+
+    # get all images from media/detection_temp/debug_images and save paths to all_debug_images
+    all_debug_images = []
+    debug_images = os.listdir("media/detection_temp/debug_images")
+    for image in debug_images:
+        all_debug_image_paths = os.path.join(MEDIA_URL, f"detection_temp/debug_images/{image}")
+        all_debug_images.append(all_debug_image_paths)
+
+    all_debug_images = ",".join(all_debug_images)
 
     new_scan.scan_status = "text-detected"
-    new_scan.text_images = text_detected_image_paths
+    new_scan.text_images = all_debug_images
     new_scan.save()
 
     full_image_text = [text for text in full_image_text if len(text) > 2]
