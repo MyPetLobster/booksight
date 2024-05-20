@@ -32,6 +32,9 @@ class Book(models.Model):
 
 class Scan(models.Model):
     uploaded_image = models.ImageField(upload_to='uploaded_images/', default='', blank=True, null=True)
+    bbox_image = models.URLField(default='', blank=True, null=True)
+    text_images = models.TextField(default='', blank=True, null=True)
+    scan_status = models.CharField(max_length=200, default='uninitialized')
     object_creation_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -41,6 +44,8 @@ class Scan(models.Model):
         return {
             "id": self.id,
             "uploaded_image": self.uploaded_image.url,
+            "bbox_image": self.bbox_image.url,
+            "text_images": self.text_images,
             "object_creation_date": self.object_creation_date.strftime("%b %d %Y, %I:%M %p"),
         }
     

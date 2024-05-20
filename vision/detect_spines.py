@@ -8,7 +8,10 @@ import torch
 from torchvision import models, transforms
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
+from booksight.settings import MEDIA_ROOT, MEDIA_URL
 from .utility import log_print
+
+
 
 
 # Load a pre-trained Faster R-CNN model
@@ -26,7 +29,7 @@ transform = transforms.Compose([
 book_count = 0 
 
 
-def crop_spines(jpeg_file):
+def crop_spines(jpeg_file, new_scan):
     """
     This function detects book spines in an image and creates a new image for each spine.
 
@@ -38,10 +41,14 @@ def crop_spines(jpeg_file):
         int: The number of book spines detected.
     """
     # Detect book spines
-    log_print("\nCropping book spines (see vision/images/detection_temp/spines/ dir)...\n")
-    book_boxes = detect_spines(jpeg_file)
+    log_print("\nCropping book spines (see media/detection_temp/spines/ dir)...\n")
+    book_boxes, bbox_path = detect_spines(jpeg_file)
     if book_boxes == None:
         return None, None
+    
+    new_scan.bbox_image = bbox_path
+    new_scan.save()
+
     list_of_spine_images = []
 
     # Create a new image for each book spine and save in 'vision/spines' directory
@@ -50,12 +57,12 @@ def crop_spines(jpeg_file):
         # Convert tensor to list of integers
         x1, y1, x2, y2 = map(int, box.tolist())
         book_img = original_img.crop((x1, y1, x2, y2))
-        book_img.save(f"vision/images/detection_temp/spines/book_{i}.jpeg")
-        book_img_path = f"vision/images/detection_temp/spines/book_{i}.jpeg"
-        list_of_spine_images.append(book_img_path)
+        spine_path = os.path.join(MEDIA_ROOT, f"detection_temp/spines/spine_{i}.jpeg")
+        book_img.save(spine_path)
+        list_of_spine_images.append(spine_path)
 
     spine_count = len(list_of_spine_images)
-    log_print(f"Spine images saved in 'vision/images/detection_temp/spines/'\n")
+    log_print(f"Spine images saved in 'media/detection_temp/spines/'\n")
 
     return list_of_spine_images, spine_count
 
@@ -74,12 +81,12 @@ def detect_spines(jpeg_file):
     img_tensor = load_image(input_img)
     prediction = predict(model, img_tensor)
     img = Image.open(input_img)
-    valid_books = draw_boxes(img, prediction)
+    valid_books, bbox_path = draw_boxes(img, prediction)
 
     if valid_books == None:
         return None
 
-    return valid_books
+    return valid_books, bbox_path
 
 
 def load_image(input_path):
@@ -103,12 +110,13 @@ def load_image(input_path):
     img = adjust_brightness(img, brightness)
     img = img.filter(ImageFilter.EDGE_ENHANCE)
 
-    # Save enhanced image
-    if os.path.exists("vision/images/detection_temp/spines/enhanced_image.jpeg"):
-        os.remove("vision/images/detection_temp/spines/enhanced_image.jpeg")
-    img.save("vision/images/detection_temp/spines/enhanced_image.jpeg")
+    # Save enhanced image to media/detection_temp/spines
+    if os.path.exists("media/detection_temp/spines/enhanced_image.jpeg"):
+        os.remove("media/detection_temp/spines/enhanced_image.jpeg")
+    enhanced_image_path = os.path.join(MEDIA_ROOT, "detection_temp/spines/enhanced_image.jpeg")
+    img.save(enhanced_image_path)
 
-    log_print("\nEnhanced image saved as 'vision/images/detection_temp/spines/enhanced_image.jpeg'\n")
+    log_print("\nEnhanced image saved as 'media/detection_temp/spines/enhanced_image.jpeg'\n")
     log_print("\nApplying tensor transformation...\n")
 
     img_tensor = transform(img)
@@ -197,12 +205,14 @@ def draw_boxes(img, prediction):
         log_print("\nNo valid books detected. Exiting...\n")
         return None
 
-    plt.savefig("vision/images/detection_temp/spines/full_detected.jpeg")
+    bbox_image_path = os.path.join(MEDIA_ROOT, "detection_temp/spines/full_detected.jpeg")
+    plt.savefig(bbox_image_path)
+
 
     log_print(f"Number of verified books: {book_count}\n")
-    log_print("Image with bounding boxes saved as 'vision/images/detection_temp/spines/full_detected.jpeg'\n")
+    log_print("Image with bounding boxes saved as 'media/detection_temp/spines/full_detected.jpeg'\n")
 
-    return valid_books
+    return valid_books, os.path.join(MEDIA_URL, "detection_temp/spines/full_detected.jpeg")
 
 
 def calculate_brightness(image):

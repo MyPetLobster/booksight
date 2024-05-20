@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 
 import shutil
@@ -23,7 +23,6 @@ def vision(request):
         # Create log file for new session
         util.create_log_file()
         
-
         image = request.FILES.get('uploaded-image')
         email = request.POST.get('user-email')
         formats = request.POST.getlist('format')
@@ -47,7 +46,7 @@ def vision(request):
         new_path = f'vision/images/scan_images/{new_scan.id}.jpg'
 
         # Create separate thread to run Vision app
-        thread = threading.Thread(target=vision_app, args=(request, new_path, email, formats))
+        thread = threading.Thread(target=vision_app, args=(new_path, email, formats, new_scan))
         thread.setDaemon(True)
         thread.start()
 
@@ -72,29 +71,32 @@ def tips(request):
 
 
 def vision_status(request):
-    vision_status = request.session.get('vision_status')
-
+    # Get most recent scan
+    most_recent_scan = Scan.objects.first()
+    vision_status = most_recent_scan.scan_status
+    
+    log_print(f'\n\n+++++++++ Vision status: {vision_status}\n\n')
     if vision_status == 'bbox-detected':
-        return HttpResponse({
+        return JsonResponse({
             'status': 'bbox-detected',
-            'bbox_image': 'vision/images/detection_temp/spines/full_detected.jpeg'
+            'bbox_image': most_recent_scan.bbox_image
         })
     elif vision_status == 'text-detected':
-        text_images = request.session.get('text_images')
-        return HttpResponse({
+        text_images = most_recent_scan.text_images.split(',')
+        return JsonResponse({
             'status': 'text-detected',
             'text_image': text_images,
         })
     elif vision_status == 'completed':
-        return HttpResponse({
+        return JsonResponse({
             'status': 'completed',
         })
     elif vision_status == 'running':
-        return HttpResponse({
+        return JsonResponse({
             'status': 'running',
         })
     else:
-        return HttpResponse({
+        return JsonResponse({
             'status': 'error',
         })
 
