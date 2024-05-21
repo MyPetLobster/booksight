@@ -9,6 +9,7 @@ from . import detect_spines as ds
 from . import detect_text as dt
 from . import exporter as export
 from . import matcher as match
+from . import utility as util
 from .utility import log_print 
 from .classes import Spine, Book
 from .matcher import AI_OPTION, GPT_MODEL, GPT_TEMP, GEMINI_MODEL
@@ -187,7 +188,10 @@ def vision(image_path, email_address, output_formats, new_scan):
             log_print(file)
             log_print("\n")
         log_print("\nSending email with exports...\n")
-        export.email_file(output_files, email_address)
+
+        log_file_path = util.retrieve_last_log_file()
+        
+        export.email_file(output_files, email_address, log_file_path)
 
 
 

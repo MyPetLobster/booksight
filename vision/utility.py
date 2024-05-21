@@ -28,6 +28,16 @@ def log_print(message):
     rprint(message)
 
 
+def retrieve_last_log_file():
+    """ Returns the path to the most recent log file. """
+    
+    log_dir = f'booksight/logs/{date}'
+    log_files = os.listdir(log_dir)
+    log_files.sort(reverse=True)
+    
+    return os.path.join(log_dir, log_files[0])
+
+
 def empty_directory(directory): 
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
