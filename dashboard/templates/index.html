@@ -122,19 +122,27 @@
         const logoText = document.getElementById('logo-text');
         logoEyes.addEventListener('mouseover', () => {
             logoText.style.maxWidth = "110%";
+            logoText.style.opacity = 1;
             logoEyes.style.maxWidth = "70%";
+            logoEyes.style.opacity = 1;
         })
         logoEyes.addEventListener('mouseout', () => {
             logoText.style.maxWidth = "100%";
+            logoText.style.opacity = 0.15;
             logoEyes.style.maxWidth = "60%";
+            logoEyes.style.opacity = 0.15;
         })
         logoText.addEventListener('mouseover', () => {
             logoText.style.maxWidth = "110%";
+            logoText.style.opacity = 1;
             logoEyes.style.maxWidth = "70%";
+            logoEyes.style.opacity = 1;
         })
         logoText.addEventListener('mouseout', () => {
             logoText.style.maxWidth = "100%";
+            logoText.style.opacity = 0.15;
             logoEyes.style.maxWidth = "60%";
+            logoEyes.style.opacity = 0.15;
         })
 
         const floatingForm = document.querySelector('.upload-form-div');

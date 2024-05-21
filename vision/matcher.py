@@ -17,7 +17,7 @@ from . import gemini as gemini
 
 
 # Choose between 'gpt' and 'gemini'
-AI_OPTION = "gpt"
+AI_OPTION = "gemini"
 
 # OpenAI config. Valid GPT models for Booksight (as of 2024-05-15): gpt-4o, gpt-4-turbo, gpt-4, gpt-3.5-turbo
 GPT_MODEL = "gpt-4o"

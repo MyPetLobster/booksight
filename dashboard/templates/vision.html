@@ -4,16 +4,18 @@
 {% block title %}Booksight{% endblock %}
 {% block body %}
     <div class="page-identifier" style="display:none">vision</div>
+    <div id="full-size-image-div"></div>
     <div class="vis-content">
+
         <div class="landing-logo-div-vision">
             <img id="logo-eyes-vision" src="{% static 'dashboard/images/eyes-only.png' %}" alt="Booksight Logo Owl Eyes">
             <img id="logo-text-vision" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
         </div>
         </br>
+            <div id="progress-status"></div>
             <div id="image-div">
                 <img class="proc-upload-img uploaded-image" id="uploaded-image-raw" src="{{ image_path }}" alt="Uploaded Image">
             </div>
-            <div id="progress-status"></div>
         </br>
         <div class="vision-para-div">
             <p>
@@ -76,6 +78,31 @@ function checkStatus() {
                     text_image_element.src = text_images[i];
                     text_image_element.className = "spine-grid-element";
                     spine_image_grid.appendChild(text_image_element);
+
+                    // create full size image hidden until clicked
+                    const full_size_image = document.createElement("img");
+                    document.getElementById("full-size-image-div").appendChild(full_size_image);
+                    full_size_image.src = text_images[i];
+                    full_size_image.className = "full-size-image";
+                    full_size_image.style.display = "none";
+
+                    // add click event to show full size image
+                    text_image_element.addEventListener("click", function() {
+                        // if theres already a full size image, hide it
+                        const full_size_images = document.getElementsByClassName("full-size-image");
+                        for (let i = 0; i < full_size_images.length; i++) {
+                            full_size_images[i].style.display = "none";
+                        }
+
+                        full_size_image.style.display = "block";
+
+                        // add click event to hide full size image if anywhere on the page is clicked
+                        full_size_image.addEventListener("click", function() {
+                            full_size_image.style.display = "none";
+                        });
+
+                    });
+
                 }
 
                 // Update status

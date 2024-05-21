@@ -145,10 +145,12 @@ a:hover {
     }
 }
 #logo-eyes {
+    opacity: 0.15;
     max-width: 60%;
     transition: 400ms;
 }
 #logo-text {
+    opacity: 0.15;
     max-width: 100%;
     transition: 400ms;
 }
@@ -241,12 +243,45 @@ a:hover {
     margin-bottom: 20px;
 }
 
-.uploaded-image,
-.bbox-image {
-    max-width: 500px;
-    max-height: 700px;
+.uploaded-image {
+    max-width: 600px;
+    max-height: 600px;
     display: block;
 }
+.bbox-image {
+    max-width: 800px;
+    max-height: 800px;
+}
+
+
+#full-size-image-div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: 80vw;
+    max-height: 80vh;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    border-radius: 12px;
+    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
+}
+
+.full-size-image {
+    cursor: pointer;
+    max-width: 80vw;
+    max-height: 80vh;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    background-color: #fff;  // White background for the images
+    padding: 10px;
+    margin: auto;
+}
+
 
 #image-div {
     margin-top: 20px;
@@ -276,6 +311,7 @@ a:hover {
 }
 
 .spine-grid-element {
+    cursor: pointer;
     max-width: 150px;
     max-height: 250px;
     display: block;
@@ -284,6 +320,10 @@ a:hover {
     background-color: #fff;  // White background for the images
     padding: 10px;
     margin: auto;
+}
+.spine-grid-element:hover {
+    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.4);
+    transform: scale(1.05);
 }
 
 

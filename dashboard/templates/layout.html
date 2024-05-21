@@ -21,8 +21,7 @@
                     <li id="owl-logo-nav-item">
                         <a id="logo-link" href="#">
                             <div class="owl-logo-container">
-                                <img id="owl-logo-img-light" src="{% static 'dashboard/images/owl-light-2.png' %}" alt="Owl Logo">
-                                <img id="owl-logo-img" src="{% static 'dashboard/images/owl.png' %}" alt="Owl Logo" style="opacity:0">
+                                <img id="owl-logo-img" src="{% static 'dashboard/images/owl.png' %}" alt="Owl Logo" style="opacity:0.15">
                             </div>
                         </a>
                     </li>
@@ -58,18 +57,15 @@
                 footer.style.display = 'none';
             }
 
-            const lightOwlLogo = document.getElementById('owl-logo-img-light');
             const darkOwlLogo = document.getElementById('owl-logo-img');
             const owlLogoNavItem = document.getElementById('owl-logo-nav-item');
 
             owlLogoNavItem.addEventListener('mouseover', () => {
-                lightOwlLogo.style.opacity = 0;
                 darkOwlLogo.style.opacity = 1;
             });
 
             owlLogoNavItem.addEventListener('mouseout', () => {
-                lightOwlLogo.style.opacity = 1;
-                darkOwlLogo.style.opacity = 0;
+                darkOwlLogo.style.opacity = 0.15;
             });
         </script>
     </body>
