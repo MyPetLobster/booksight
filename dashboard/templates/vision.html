@@ -11,8 +11,13 @@
             <img id="logo-eyes-vision" src="{% static 'dashboard/images/eyes-only.png' %}" alt="Booksight Logo Owl Eyes">
             <img id="logo-text-vision" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
         </div>
-        </br>
-            <div id="progress-status"></div>
+            
+        <div class="terminal">
+            <pre id="progress-status"></pre>
+        </div>
+         
+
+            
             <div id="image-div">
                 <img class="proc-upload-img uploaded-image" id="uploaded-image-raw" src="{{ image_path }}" alt="Uploaded Image">
             </div>
@@ -132,7 +137,7 @@ function updateStatus() {
 
     var i = 0;
     var interval = setInterval(function() {
-        status.innerHTML = status_text[i];
+        status.innerHTML = `$ ${status_text[i]}`;
         i++;
         if (i == status_text.length) {
             clearInterval(interval);
@@ -148,7 +153,7 @@ function updateStatusStageTwo() {
 
     var i = 0;
     var interval = setInterval(function() {
-        status.innerHTML = status_text[i];
+        status.innerHTML = `$ ${status_text[i]}`;
         i++;
         if (i == status_text.length) {
             clearInterval(interval);
@@ -164,7 +169,7 @@ function updateStatusStageThree() {
     
     var i = 0;
     var interval = setInterval(function() {
-        status.innerHTML = status_text[i];
+        status.innerHTML = `$ ${status_text[i]}`;
         i++;
         if (i == status_text.length) {
             clearInterval(interval);
@@ -175,12 +180,12 @@ function updateStatusStageThree() {
 function updateStatusStageFour() {
     stage_four_started = true;
     var status = document.getElementById("progress-status");
-    status.innerHTML = "AI model complete. Processing results...";
-    var status_text = ["Beginning book matching processes, using Google Books, ISBNdb, and Open Library APIs...", "This process may take several minutes...", "This process is probably gonna take a while...", "[awkward eye contact]...shouldn't be too much longer...", "🎶<em>elevator music</em>🎶", "Sooo...how's life treating you?", "Why did the data analyst go to the zoo?", "To see the pandas!", "Ok I've got nothing else...it'll be done soon I swear"];
+    status.innerHTML = "$ AI model complete. Processing results...";
+    var status_text = ["Beginning book matching processes, using Google Books, ISBNdb, and Open Library APIs...", "This process may take several minutes...", "This process is probably gonna take a while...", "[awkward eye contact]...shouldn't be too much longer...", "🎶 elevator music 🎶", "Sooo...how's life treating you?", "Why did the data analyst go to the zoo?", "To see the pandas!", "Ok I've got nothing else...it'll be done soon I swear"];
     
     var i = 0;
     var interval = setInterval(function() {
-        status.innerHTML = status_text[i];
+        status.innerHTML = `$ ${status_text[i]}`;
         i++;
         if (i == status_text.length) {
             clearInterval(interval);
