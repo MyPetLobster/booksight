@@ -67,6 +67,15 @@
             owlLogoNavItem.addEventListener('mouseout', () => {
                 darkOwlLogo.style.opacity = 0.15;
             });
+
+            // hide footer if not scrolled to bottom
+            window.onscroll = function(ev) {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+                    footer.style.display = 'block';
+                } else {
+                    footer.style.display = 'none';
+                }
+            };
         </script>
     </body>
 </html>

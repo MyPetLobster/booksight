@@ -4,5 +4,44 @@
 {% block title %}About{% endblock %}
 {% block body %}
     <div class="page-identifier" style="display:none">tips</div>
+    <div class="tips-page-content">
+        <div class="landing-logo-div-vision">
+            <img id="logo-eyes-vision" src="{% static 'dashboard/images/eyes-only.png' %}" alt="Booksight Logo Owl Eyes">
+            <img id="logo-text-vision" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
+        </div>
+        <div class="tips-div top-tips-div">
+            <h2>Image Tips</h2>
+            <ul>
+                <li>Make sure the image you upload is clear and in focus.</li>
+                <li>Try to avoid glare or reflections on the page.</li>
+                <li>Well lit and even lighting will help improve the accuracy of the text extraction.</li>
+                <li>Make sure all book spines are straight. In other words, as close to 90 or 180 degrees as possible. (Leaning books may not be detected)</li>
+                <li>Make sure the image is not blurry or distorted.</li>
+            </ul>  
+        </div>
+
+        </br>
+
+        <div class="tips-div">
+            <h2>Common Issues</h2>
+            <ul>
+                <li>Beware, some books may go undetected or misidentified. If you are using Booksight to catalog your library, make sure to double check the results.</li>
+                <li>The most common misidentification occurs when a book has a hardcover and softcover edition and both have the same cover and similar height/width ratios.</li>
+                <li>
+                    During the AI text cleanup process, any books that went undetected in the initial spine identification will be added to your list, then only general
+                    information about that book will be included in your results. Books identified in this manner will have a "confidence" of 0. A confidence number will
+                    be included for each result.
+                </li>
+                <li>
+                    The speed of Booksight is currently limited by the rate limiting of one of the APIs we use to match books. To correctly identify any book we must check 
+                    all possible ISBNs for a book. Some books can have A TON of ISBNs, so this can take a while. We are working on several solutions to bypass this bottleneck.
+                </li>
+                <li>Booksight is a work in progress and will continue to improve over time. If you have any feedback or suggestions, please feel free to reach out to us.</li>
+            </ul>
+        </div>
+
+    </div>
     
-{% endblock %}
+{% endblock %} 
+
+<!-- Uniform lighting, Straight spines, Clear image,-->
