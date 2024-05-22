@@ -430,4 +430,30 @@ a:hover {
   margin-top: 20px;
 }
 
+/* ABOUT PAGE */
+.about-page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  padding: 20px;
+  margin-bottom: 40px;
+}
+
+.about-div {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 60%;
+  padding: 20px 40px;
+  background-color: #f8f8f8;
+  border-radius: 12px;
+  box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
+}
+
 /*# sourceMappingURL=style.css.map */
