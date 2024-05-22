@@ -4,9 +4,29 @@
 {% block title %}About{% endblock %}
 {% block body %}
     <div class="page-identifier" style="display:none">vision-complete</div>
-    <div class="page-content">
-        <p>
-            Your image has been processed. You should receive an email with the file you requested.
-        </p>
+    <div class="vision-complete-page-content">
+        <div class="complete-div">
+            <div class="landing-logo-div-vision">
+                <img id="logo-eyes-vision" src="{% static 'dashboard/images/eyes-only.png' %}" alt="Booksight Logo Owl Eyes">
+                <img id="logo-text-vision" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
+            </div>
+            <div class="complete-paras">
+                <p>
+                    Your image has been processed. You should receive an email with the file(s) you requested. Don't forget to double check the results to ensure their accuracy.
+                </p>
+                <p>
+                    There will be a log file attached to the email if you'd like to see the process in detail. If you have any questions or concerns, please contact us at <a class="vision-link" href="mailto:bookcasedatabase@gmail.com">BookcaseDatabase@gmail.com</a>.
+                </p>
+                <p>
+                    Thank you for using Booksight! 
+                </p>
+            </br>
+            </br>
+                <p>
+                    <a class="vision-link" href="{% url 'index' %}">Return to the home page</a>
+                </p>
+            </div>
+        </div>
+
     </div>
 {% endblock %}

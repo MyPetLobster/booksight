@@ -488,3 +488,29 @@ a:hover {
     border-radius: 12px;
     box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
 }
+
+
+
+/* VISION COMPLETE PAGE */
+
+.vision-complete-page-content {
+    height: 80vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 20px;
+    margin-bottom: 40px;
+}
+.complete-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
+}
+.complete-paras {
+    text-align: center;
+}
