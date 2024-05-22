@@ -38,10 +38,13 @@ def vision(image_path, email_address, output_formats, new_scan):
 
     start = time.time()
 
+    log_print("\n\n********************************************************************")
+    log_print("**************** PHASE ONE - BOOK SPINE IDENTIFICATION *****************")
+    log_print("************************************************************************\n\n")
+    
     ### Book Object Detection ###
     # Detect book spines and create individual spine jpegs
-    log_print("\n************************************************\n")
-    log_print("Beginning book spine detection in the image...\n")
+    log_print("Beginning book spine detection in the uploaded image...\n")
     log_print(f"Image path: {image_path}\n")
 
     spine_images, spine_count = ds.crop_spines(image_path, new_scan)
@@ -135,7 +138,7 @@ def vision(image_path, email_address, output_formats, new_scan):
 
     ### Book Identification ###
     log_print("\n\n********************************************************************")
-    log_print("************** PHASE TWO - BOOK IDENTIFICATION & MATCHING **************\n")
+    log_print("************** PHASE TWO - BOOK IDENTIFICATION & MATCHING **************")
     log_print("************************************************************************\n\n")
 
     log_print("\nBegin precise book identification process...\n")
@@ -170,7 +173,7 @@ def vision(image_path, email_address, output_formats, new_scan):
         log_print(f"{book}\n")
 
     log_print("\n\n********************************************************************")
-    log_print("**************************** VISION COMPLETE ***************************\n")
+    log_print("**************************** VISION COMPLETE ***************************")
     log_print("************************************************************************\n\n")
 
     total_books = len(books)

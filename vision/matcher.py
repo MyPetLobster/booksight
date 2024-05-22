@@ -303,7 +303,7 @@ def identify_with_AI(prompt):
         log_print(f"Prompt token count for {GPT_MODEL}: {prompt_tokens}\n")
     elif AI_OPTION == "gemini":
         prompt_tokens = count_tokens(prompt, GPT_MODEL)
-        log_print(f"You are using Gemini. Gemini token counting not yet implemented.\n")
+        log_print(f"You are using Gemini. Gemini token counting not yet implemented.")
         log_print(f"Prompt token count for {GPT_MODEL}: {prompt_tokens}\n")
 
     if AI_OPTION == "gpt":
@@ -326,7 +326,7 @@ def identify_with_AI(prompt):
     if AI_OPTION == "gpt":
         log_print(f"Response token count for {GPT_MODEL}: {response_tokens}\n")
     elif AI_OPTION == "gemini":
-        log_print(f"You are using Gemini. Gemini token counting not yet implemented.\n")
+        log_print(f"You are using Gemini. Gemini token counting not yet implemented.")
         log_print(f"Response token count for {GPT_MODEL}: {response_tokens}\n")
 
 
