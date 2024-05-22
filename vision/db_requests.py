@@ -20,7 +20,7 @@ def get_potential_isbns(title, author):
     
     all_isbns = openlibrary_isbns + google_isbns
     
-    log_print(f"\n{title} - {author}: {all_isbns}\n")
+    log_print(f"{title} - {author}: {all_isbns}\n")
 
     return all_isbns[:10]
 
@@ -54,7 +54,7 @@ def get_isbns_openlibrary(title, author):
     for result in response.json()["docs"]:
         isbns += result.get("isbn", [])
     
-    log_print(f"\n\nOpen Library ISBNs for {title} - {author}: {isbns}\n\n")
+    log_print(f"Open Library ISBNs for {title} - {author}: {isbns}\n")
     return isbns[:10]
 
 
@@ -77,7 +77,7 @@ def get_isbns_google_books(title, author):
 
     # If no results are found or API is down, return an empty list
     if response.status_code != 200:
-        log_print(f"Error: {response.status_code}")
+        log_print(f"\nError: {response.status_code}\n")
         return []
     
     if response.json().get("totalItems", 0) == 0:
@@ -92,7 +92,7 @@ def get_isbns_google_books(title, author):
                 for identifier in item["volumeInfo"]["industryIdentifiers"]:
                     if identifier["type"] == "ISBN_13" or identifier["type"] == "ISBN_10":
                         isbns.append(identifier["identifier"])
-    log_print(f"\n\nGoogle Books ISBNs for {title} - {author}: {isbns}\n\n")
+    log_print(f"Google Books ISBNs for {title} - {author}: {isbns}\n")
     return isbns[:10]
 
 
@@ -116,7 +116,7 @@ def get_isbn_info(isbn):
         # Get the 'Height' and 'Width' of the book
         book_info = response.json()
 
-        log_print(f"\nData for {isbn}:\n\n{book_info}\n")
+        log_print(f"Data for {isbn}:\n{book_info}\n")
 
         height, width = get_dimensions(book_info)
         language, cover = get_language_and_cover(book_info)
@@ -212,7 +212,7 @@ def get_all_data_isbndb(isbn):
         book_info = resp.json()
         return book_info
     else:
-        log_print(f"Error: {resp.status_code}")
+        log_print(f"\nError: {resp.status_code}")
         return None
     
 
@@ -233,7 +233,7 @@ def get_all_data_google(isbn):
         book_info = response.json()
         return book_info
     else:
-        log_print(f"Error: {response.status_code}")
+        log_print(f"\nError: {response.status_code}")
         return None
     
 
@@ -253,7 +253,7 @@ def get_all_data_openlibrary(isbn):
         book_info = response.json()
         return book_info
     else:
-        log_print(f"Error: {response.status_code}")
+        log_print(f"\nError: {response.status_code}")
         return None
     
 

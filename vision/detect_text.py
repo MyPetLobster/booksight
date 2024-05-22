@@ -25,7 +25,7 @@ def detect_text(image_path):
     text_detection_image_paths = []
 
     def process_image(image, with_threshold, to_preprocess):
-        log_print(f"\n\nto_preprocess: {to_preprocess}\nwith_threshold: {with_threshold}\n\n")
+        log_print(f"preprocess: {to_preprocess}\nthreshold: {with_threshold}\n")
         if to_preprocess:
             preprocessed_image = preprocess(image, with_threshold)
         else:
@@ -59,11 +59,11 @@ def detect_text(image_path):
 
     # Basic preprocessing with and without threshold
     full_preprocess = process_image(original_image, True, True)
-    log_print(f"Text detected (full preprocess): {full_preprocess}\n")
+    log_print(f"Text detected (full preprocess): {full_preprocess}")
     full_preprocess_90 = process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), True, True)
-    log_print(f"Text detected (full preprocess rotated 90 degrees): {full_preprocess_90}\n")
+    log_print(f"Text detected (full preprocess rotated 90 degrees): {full_preprocess_90}")
     no_threshold = process_image(original_image, False, True)
-    log_print(f"Text detected No Threshold: {no_threshold}\n")
+    log_print(f"Text detected No Threshold: {no_threshold}")
     no_threshold_90 = process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), False, True)
     log_print(f"Text detected Rotate 90 No Threshold: {no_threshold_90}\n")
 
@@ -77,10 +77,10 @@ def detect_text(image_path):
     log_print(f"\nCombined text list: {book_text_list}\n")
 
     # Remove duplicates and return the list of detected text
-    log_print("\nRemoving duplicates...\n")
+    log_print("Removing duplicates...\n")
     book_text_list = list(set(book_text_list))
 
-    log_print(f"\nbook_text_list: {book_text_list}\n")
+    log_print(f"Unique text list: {book_text_list}\n\n")
 
     return book_text_list, text_detection_image_paths
 

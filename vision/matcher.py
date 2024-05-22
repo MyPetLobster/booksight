@@ -254,9 +254,9 @@ def id_possible_matches(spines, full_img_text):
     Returns:
         list: A list of spine objects with updated data.
     """
-    log_print("\nPreparing text for AI input...\n")
+    log_print("Preparing text for AI input...\n")
     book_data_prompt = format_AI_input(spines, full_img_text)
-    log_print(f"\nAI Prompt and Raw Book Data:\n{book_data_prompt}\n")
+    log_print(f"AI Prompt and Raw Book Data:\n{book_data_prompt}\n")
 
     start_ai_process = time.time()
     book_data_basic = identify_with_AI(book_data_prompt)
@@ -266,8 +266,7 @@ def id_possible_matches(spines, full_img_text):
 
     log_print(f"\nAI processing complete. Time elapsed: {round(end_ai_process - start_ai_process, 2)} seconds.\n")
     log_print(f"Number of books identified: {book_count}\n")
-    log_print(f"\nBook Identification (Preliminary):\n\n{book_data_basic}\n")
-    log_print("\n\n*****************************************************************************************\n\n")
+    log_print(f"Book Identification (Preliminary):\n{book_data_basic}\n")
     log_print("\nRetrieving potential ISBN's from OpenLibrary and Google Books...\nUpdating Spine objects with title, author, and possible ISBNs...\n")
 
     spine_count = len(spines)
@@ -299,8 +298,13 @@ def identify_with_AI(prompt):
     Returns:
         str: The response from the AI model.
     """
-    prompt_tokens = count_tokens(prompt, GPT_MODEL)
-    log_print(f"\nPrompt tokens: {prompt_tokens}\n")
+    if AI_OPTION == "gpt":
+        prompt_tokens = count_tokens(prompt, GPT_MODEL)
+        log_print(f"Prompt token count for {GPT_MODEL}: {prompt_tokens}\n")
+    elif AI_OPTION == "gemini":
+        prompt_tokens = count_tokens(prompt, GPT_MODEL)
+        log_print(f"You are using Gemini. Gemini token counting not yet implemented.\n")
+        log_print(f"Prompt token count for {GPT_MODEL}: {prompt_tokens}\n")
 
     if AI_OPTION == "gpt":
         gpt_start = time.time()
@@ -319,7 +323,12 @@ def identify_with_AI(prompt):
         response = None
 
     response_tokens = count_tokens(response, GPT_MODEL)
-    log_print(f"\nResponse tokens: {response_tokens}\n")
+    if AI_OPTION == "gpt":
+        log_print(f"Response token count for {GPT_MODEL}: {response_tokens}\n")
+    elif AI_OPTION == "gemini":
+        log_print(f"You are using Gemini. Gemini token counting not yet implemented.\n")
+        log_print(f"Response token count for {GPT_MODEL}: {response_tokens}\n")
+
 
     return response
 
