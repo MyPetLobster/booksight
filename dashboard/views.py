@@ -76,7 +76,6 @@ def vision_status(request):
     most_recent_scan = Scan.objects.first()
     vision_status = most_recent_scan.scan_status
     
-    log_print(f'\n\n+++++++++ Vision status: {vision_status}\n\n')
     if vision_status == 'bbox-detected':
         return JsonResponse({
             'status': 'bbox-detected',

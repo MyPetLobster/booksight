@@ -313,6 +313,7 @@ a:hover {
   background-color: #fff;
   padding: 10px;
   margin: auto;
+  transition: 350ms;
 }
 
 .spine-grid-element:hover {
@@ -405,7 +406,7 @@ a:hover {
 .terminal {
   margin-top: 20px;
   height: 48px;
-  width: 666px;
+  min-width: 666px;
   border-radius: 12px;
   text-align: left;
   background-color: rgba(0, 0, 0, 0.7294117647);
