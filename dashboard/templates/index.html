@@ -58,7 +58,35 @@
                     <input class="button" id="submit-button" type="submit" value="Submit">
                     <button class="button" id="cancel-button" type="button">Cancel</button>
                 </div>
+                <button class="button" id="adv-options-button" type="button">Advanced Options</button>
+                <div id="adv-options-div" style="display:none">
+                    <h3 class="form-title" style="align-self:center">Advanced Options</h3>
+                </br>
+                    <div>
+                        <label for="ai-model">AI Model - </label>
+                        <select name="ai-model" id="ai-model">
+                            <option value="default">Default</option>
+                            <option value="gpt-3.5-turbo">GPT 3.5 Turbo</option>
+                            <option value="gpt-4o">GPT 4o</option>
+                            <option value="gemini">Google Gemini (default)</option>
+                        </select>
+                    </div>
+                </br>
+                    <div>
+                        <label for="ai-temp">AI Temperature - </label>
+                        <input type="number" name="ai-temp" id="ai-temp" min="0" max="1" step="0.1" value="0.3">
+                    </div>
+                </br>
+                    <div>
+                        <label for="torch-confidence">Torchvision confidence threshold - </label>
+                        <input type="number" name="torch-confidence" id="torch-confidence" min="0" max="1" step="0.1" value="0.79">
+                    </div>
+                </div>
+                <button class="button" id="adv-options-close" type="button" style="display:none">Close Advanced Options</button>
             </form> 
+
+
+
         </div>
     </div>
 
@@ -162,6 +190,20 @@
             landingLogoDiv.style.opacity = 1;
         })
         
+        const advOptionsButton = document.getElementById('adv-options-button');
+        const advOptionsDiv = document.getElementById('adv-options-div');
+        const advOptionsClose = document.getElementById('adv-options-close');
+
+        advOptionsButton.addEventListener('click', () => {
+            advOptionsDiv.style.display = 'flex';
+            advOptionsClose.style.display = 'block';
+            advOptionsButton.style.display = 'none';
+        })
+        advOptionsClose.addEventListener('click', () => {
+            advOptionsDiv.style.display = 'none';
+            advOptionsClose.style.display = 'none';
+            advOptionsButton.style.display = 'block';
+        })
         
 
         

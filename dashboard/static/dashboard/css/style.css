@@ -103,7 +103,7 @@ a:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 100%;
   gap: 28px;
   width: 100%;
 }
@@ -165,6 +165,7 @@ a:hover {
   padding: 10px 20px 20px 20px;
   border-radius: 12px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  margin: 60px;
 }
 .floating-form p, .floating-form h3 {
   text-align: center;
@@ -383,6 +384,19 @@ a:hover {
 
 #user-email:focus {
   border: 2px solid rgb(63, 106, 137);
+}
+
+#adv-options-button,
+#adv-options-close {
+  width: 150px;
+  align-self: center;
+}
+
+#adv-options-div {
+  width: 80%;
+  align-self: center;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 /* VISION PAGE STYLES */
