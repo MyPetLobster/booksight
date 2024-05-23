@@ -25,23 +25,21 @@ def vision(image_path, email_address, output_formats, new_scan):
     new_scan.scan_status = "running"
     new_scan.save()
 
-    log_print("\n\n\n************************************************\n")
+    log_print("\n\n************************************************\n")
     log_print("\nWelcome to Booksight!\n")
     log_print("\nBeginning the Vision process.\n")
     log_print("\nAI Settings:\n")
     if AI_OPTION == "gpt":
-        log_print(f"AI Model: {GPT_MODEL}\n")
-        log_print(f"AI Temp: {GPT_TEMP}\n\n")
+        log_print(f"    - AI Model: {GPT_MODEL}\n")
+        log_print(f"    - AI Temp: {GPT_TEMP}\n")
     elif AI_OPTION == "gemini":
-        log_print(f"AI Model: {GEMINI_MODEL}\n\n")
+        log_print(f"    - AI Model: {GEMINI_MODEL}\n")
 
 
     start = time.time()
 
-    log_print("\n\n********************************************************************")
-    log_print("**************** PHASE ONE - BOOK SPINE IDENTIFICATION *****************")
-    log_print("************************************************************************\n\n")
-    
+    log_print("\n\n**************** PHASE ONE - BOOK SPINE IDENTIFICATION *****************\n\n")
+
     ### Book Object Detection ###
     # Detect book spines and create individual spine jpegs
     log_print("Beginning book spine detection in the uploaded image...\n")
@@ -137,9 +135,7 @@ def vision(image_path, email_address, output_formats, new_scan):
 
 
     ### Book Identification ###
-    log_print("\n\n********************************************************************")
-    log_print("************** PHASE TWO - BOOK IDENTIFICATION & MATCHING **************")
-    log_print("************************************************************************\n\n")
+    log_print("\n\n************** PHASE TWO - BOOK IDENTIFICATION & MATCHING **************\n\n")
 
     log_print("\nBegin precise book identification process...\n")
     
@@ -172,9 +168,9 @@ def vision(image_path, email_address, output_formats, new_scan):
     for book in books:
         log_print(f"{book}\n")
 
-    log_print("\n\n********************************************************************")
-    log_print("**************************** VISION COMPLETE ***************************")
-    log_print("************************************************************************\n\n")
+  
+    log_print("\n\n**************************** VISION COMPLETE ***************************\n\n")
+    
 
     total_books = len(books)
     total_confident_books = len([book for book in books if book.confidence > 0])
