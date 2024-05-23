@@ -18,9 +18,6 @@ from .utility import log_print
 model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
 model.eval()
 
-# Confidence threshold for detected objects
-CONFIDENCE = 0.79
-
 # Define the image transformation
 transform = transforms.Compose([
     transforms.ToTensor(),
@@ -29,7 +26,7 @@ transform = transforms.Compose([
 book_count = 0 
 
 
-def crop_spines(jpeg_file, new_scan):
+def crop_spines(jpeg_file, new_scan, torch_confidence):
     """
     This function detects book spines in an image and creates a new image for each spine.
 
@@ -42,7 +39,7 @@ def crop_spines(jpeg_file, new_scan):
     """
     # Detect book spines
     log_print("\nCropping book spines (see media/detection_temp/spines/ dir)...\n")
-    book_boxes, bbox_path = detect_spines(jpeg_file)
+    book_boxes, bbox_path = detect_spines(jpeg_file, torch_confidence)
     if book_boxes == None:
         return None, None
     
@@ -67,7 +64,7 @@ def crop_spines(jpeg_file, new_scan):
     return list_of_spine_images, spine_count
 
 
-def detect_spines(jpeg_file):
+def detect_spines(jpeg_file, torch_confidence):
     """
     This function detects book spines in an image and draws bounding boxes around them.
 
@@ -81,7 +78,7 @@ def detect_spines(jpeg_file):
     img_tensor = load_image(input_img)
     prediction = predict(model, img_tensor)
     img = Image.open(input_img)
-    valid_books, bbox_path = draw_boxes(img, prediction)
+    valid_books, bbox_path = draw_boxes(img, prediction, torch_confidence)
 
     if valid_books == None:
         return None
@@ -141,7 +138,7 @@ def predict(model, img_tensor):
     return prediction
 
 
-def draw_boxes(img, prediction):
+def draw_boxes(img, prediction, torch_confidence):
     """
     This function draws bounding boxes around detected objects in an image. It also validates the detected books using 
     average book height and thickness.
@@ -165,7 +162,7 @@ def draw_boxes(img, prediction):
 
     # Check for each detected object, if it is a book and meets the confidence threshold
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
-        if score > CONFIDENCE and label == 84:  # Label 84 is 'book' in COCO
+        if score > torch_confidence and label == 84:  # Label 84 is 'book' in COCO
             total_book_height += element[3] - element[1]
             total_book_thickness += element[2] - element[0]
             log_print(f"Book_{book_count} Score: {score}")
@@ -187,7 +184,7 @@ def draw_boxes(img, prediction):
     # Remove outliers, draw bounding boxes
     log_print("\nValidating detected books and drawing bounding boxes...\n")
     for element, label, score in zip(prediction[0]['boxes'], prediction[0]['labels'], prediction[0]['scores']):
-        if score > CONFIDENCE and label == 84:  # Label 84 is 'book' in COCO
+        if score > torch_confidence and label == 84:  # Label 84 is 'book' in COCO
             box = element.detach().cpu().numpy()
             if box[3] - box[1] > average_book_height * 1.4 or box[3] - box[1] < average_book_height * 0.7:
                 continue

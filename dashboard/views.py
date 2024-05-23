@@ -15,6 +15,11 @@ def index(request):
 
 
 def vision(request):
+    # Clear all session data
+    # TODO is this necessary if values are being updated each time? I just read about
+    # how someone had issues with data accumulating and taking tons of memory overtime.
+    request.session.flush()
+
     if request.method == 'POST':
         # Empty temp dirs
         util.empty_directory('media/uploaded_images')
@@ -27,11 +32,22 @@ def vision(request):
         image = request.FILES.get('uploaded-image')
         email = request.POST.get('user-email')
         formats = request.POST.getlist('format')
+        ai_model = request.POST.get('ai-model')
+        ai_temp = float(request.POST.get('ai-temp'))
+        torch_confidence = float(request.POST.get('torch-confidence')) 
+
+        # Save settings in session storage
+        request.session['ai_model'] = ai_model
+        request.session['ai_temp'] = ai_temp
+        request.session['torch_confidence'] = torch_confidence
 
         log_print('\nForm Submitted, new scan request details:\n')
         log_print(f'Email: {email}')
         log_print(f'Formats: {formats}')
         log_print(f'Image: {image}')
+        log_print(f'AI Model: {ai_model}')
+        log_print(f'AI Temp: {ai_temp}')
+        log_print(f'Torch Confidence: {torch_confidence}')
 
         if not image:
             return render(request, 'index.html', {
@@ -47,7 +63,7 @@ def vision(request):
         new_path = f'vision/images/scan_images/{new_scan.id}.jpg'
 
         # Create separate thread to run Vision app
-        thread = threading.Thread(target=vision_app, args=(new_path, email, formats, new_scan))
+        thread = threading.Thread(target=vision_app, args=(request, new_path, email, formats, new_scan))
         thread.setDaemon(True)
         thread.start()
 

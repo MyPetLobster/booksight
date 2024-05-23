@@ -65,10 +65,9 @@
                     <div>
                         <label for="ai-model">AI Model - </label>
                         <select name="ai-model" id="ai-model">
-                            <option value="default">Default</option>
+                            <option value="gemini-pro" selected="selected">Gemini Pro (default)</option>
                             <option value="gpt-3.5-turbo">GPT 3.5 Turbo</option>
                             <option value="gpt-4o">GPT 4o</option>
-                            <option value="gemini">Google Gemini (default)</option>
                         </select>
                     </div>
                 </br>
@@ -79,8 +78,10 @@
                 </br>
                     <div>
                         <label for="torch-confidence">Torchvision confidence threshold - </label>
-                        <input type="number" name="torch-confidence" id="torch-confidence" min="0" max="1" step="0.1" value="0.79">
+                        <input type="number" name="torch-confidence" id="torch-confidence" min="0" max="1" step="0.01" value="0.79">
                     </div>
+                </br>
+                    <p>Warning: Adjusting these settings may greatly affect the accuracy of the results, use with caution.</p>
                 </div>
                 <button class="button" id="adv-options-close" type="button" style="display:none">Close Advanced Options</button>
             </form> 

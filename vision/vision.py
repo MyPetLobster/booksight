@@ -12,13 +12,12 @@ from . import matcher as match
 from . import utility as util
 from .utility import log_print 
 from .classes import Spine, Book
-from .matcher import AI_OPTION, GPT_MODEL, GPT_TEMP, GEMINI_MODEL
 from dashboard.models import Scan
 
 from booksight.settings import MEDIA_URL
 
 
-def vision(image_path, email_address, output_formats, new_scan):
+def vision(request, image_path, email_address, output_formats, new_scan):
     # Delete all scans except most recent
     Scan.objects.exclude(id=new_scan.id).delete()
 
@@ -28,13 +27,21 @@ def vision(image_path, email_address, output_formats, new_scan):
     log_print("\n\n************************************************\n")
     log_print("\nWelcome to Booksight!\n")
     log_print("\nBeginning the Vision process.\n")
-    log_print("\nAI Settings:\n")
-    if AI_OPTION == "gpt":
-        log_print(f"    - AI Model: {GPT_MODEL}\n")
-        log_print(f"    - AI Temp: {GPT_TEMP}\n")
-    elif AI_OPTION == "gemini":
-        log_print(f"    - AI Model: {GEMINI_MODEL}\n")
 
+
+    ai_model = request.session.get('ai_model')
+    ai_temp = request.session.get('ai_temp')
+    torch_confidence = request.session.get('torch_confidence')
+
+    log_print("\nAI Settings:\n")
+    if ai_model.startswith("gpt"):
+        log_print(f"    - AI Model: {ai_model}\n")
+        log_print(f"    - AI Temp: {ai_temp}\n")
+    elif ai_model.startswith("gemini"):
+        log_print(f"    - AI Model: {ai_model}\n")
+
+    log_print(f"    - Torchvision Confidence Threshold: {torch_confidence}\n")
+    
 
     start = time.time()
 
@@ -45,7 +52,7 @@ def vision(image_path, email_address, output_formats, new_scan):
     log_print("Beginning book spine detection in the uploaded image...\n")
     log_print(f"Image path: {image_path}\n")
 
-    spine_images, spine_count = ds.crop_spines(image_path, new_scan)
+    spine_images, spine_count = ds.crop_spines(image_path, new_scan, torch_confidence)
     if spine_images == None:
         log_print("\nNo valid books detected. Exiting program.\n")
         new_scan.scan_status = "failed"
@@ -141,7 +148,7 @@ def vision(image_path, email_address, output_formats, new_scan):
     
     # Clean up text data using AI and retrieve potential ISBNs for each spine
     log_print("Cleaning up text data and making preliminary title/author identification with AI model...\n")
-    spines = match.id_possible_matches(spines, full_image_text_unique)
+    spines = match.id_possible_matches(request, spines, full_image_text_unique)
     log_print("Text data cleanup and preliminary identification complete.\n")
     ai_end = time.time()
     log_print(f"Total time taken for AI processing and ISBN retrieval: {round(ai_end - ocr_end, 2)} seconds\n")
