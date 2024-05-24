@@ -58,10 +58,6 @@ def detect_text(image_path):
     log_print(f"Text detected (original rotated 90 degrees): {original_90}\n")
 
     # Basic preprocessing with and without threshold
-    full_preprocess = process_image(original_image, True, True)
-    log_print(f"Text detected (full preprocess): {full_preprocess}")
-    full_preprocess_90 = process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), True, True)
-    log_print(f"Text detected (full preprocess rotated 90 degrees): {full_preprocess_90}")
     no_threshold = process_image(original_image, False, True)
     log_print(f"Text detected No Threshold: {no_threshold}")
     no_threshold_90 = process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), False, True)
@@ -70,9 +66,8 @@ def detect_text(image_path):
 
     log_print("\n\nCompleted text detection. Combining results...\n")    
     book_text_list.extend(original_90)
-    book_text_list.extend(full_preprocess)
-    book_text_list.extend(full_preprocess_90)
     book_text_list.extend(no_threshold)
+    book_text_list.extend(no_threshold_90)
 
     log_print(f"\nCombined text list: {book_text_list}\n")
 

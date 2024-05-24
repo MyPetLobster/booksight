@@ -188,7 +188,7 @@ def draw_boxes(img, prediction, torch_confidence):
             box = element.detach().cpu().numpy()
             if box[3] - box[1] > average_book_height * 1.4 or box[3] - box[1] < average_book_height * 0.7:
                 continue
-            elif box[2] - box[0] > average_book_thickness * 2 or box[2] - box[0] < average_book_thickness * 0.3:
+            elif box[2] - box[0] > average_book_thickness * 1.8 or box[2] - box[0] < average_book_thickness * 0.2:
                 continue
             else: 
                 book_count += 1
