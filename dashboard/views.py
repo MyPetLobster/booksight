@@ -22,6 +22,7 @@ def vision(request):
 
     if request.method == 'POST':
         # Empty temp dirs
+        util.empty_export_dirs()
         util.empty_directory('media/uploaded_images')
         util.empty_directory('media/detection_temp/debug_images')
         util.empty_directory('media/detection_temp/spines')

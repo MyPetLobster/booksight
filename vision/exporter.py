@@ -7,6 +7,14 @@ import json
 
 from . import utility as util
 
+def empty_export_dirs():
+    """ This function deletes all except the 5 most recent exports in each export directory. """
+
+    export_directories = ['csv', 'json', 'xml', 'text']
+
+    for directory in export_directories:
+        util.empty_directory(f'vision/exports/{directory}', keep=5)
+
 
 def export_to_csv(books):
     """
