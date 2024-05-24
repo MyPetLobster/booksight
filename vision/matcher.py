@@ -251,6 +251,11 @@ def id_possible_matches(request, spines, full_img_text):
 
     start_ai_process = time.time()
     book_data_basic = identify_with_AI(request, book_data_prompt)
+
+    # AI loop two, proofreader
+    uploaded_image = request.session.get('uploaded_image')
+    book_data_basic = gpt_proofreader(book_data_basic, uploaded_image)
+
     book_dict = json.loads(book_data_basic)
     book_count = len(book_dict)
     end_ai_process = time.time()
@@ -278,6 +283,12 @@ def id_possible_matches(request, spines, full_img_text):
         
     return spines
 
+
+def gpt_proofreader(book_data_basic, uploaded_image):
+    """
+    Double check the json object output listing the identified books. Image if uploaded to GPT-4o model to reference
+    when checking the json output. The json output will be checked for errors and corrected if necessary.
+    """
 
 def identify_with_AI(request, prompt):
     """
@@ -335,14 +346,12 @@ Book_4: ['SYR?', 'Rure)', 'LER', 'THE LAUGHIng MONSTERS 8', 'DENIS JOHNSON', 'IE
 Full Image OCR Text:
 ['0, HKtONT', 'BEARD', 'DEMIS', 'Ha R U k / M U Ra Ka M [', 'WaEJ', 'W 0 0 |', 'UZUMAkL', 'WAR i', 'Jtorm', 'Toinegiam', 'LAUGHING MONSTERS', 'WAR', 'Joci', "Laughing WOnsteRs Qo IeXIS H8XSIX'", 'SEBASTIaI JUIGER 644', 'BYARD', 'Authon Or', 'M0 0 d', 'M 0 R W E 6 |a M', 'THE', 'MEW Tort', 'JDHMSOM', 'Maiuii muiaiami', 'O >', 'DeSTSELLEA', 'ROMF', 'SEBASTIAH JUNGER 64', 'Mennnnt']
 """
-
 correct_output_01 = """{
             "Book_0": {"author": "Junji Ito", "title": "Uzumaki"},
             "Book_1": {"author": "Mary Beard", "title": "SPQR"},
             "Book_2": {"author": "Haruki Murakami", "title": "Norwegian Wood"},
             "Book_3": {"author": "Sebastian Junger", "title": "War"},
             "Book_4": {"author": "Denis Johnson", "title": "The Laughing Monsters"}}"""
-
 
 example_input_02 = """Individual Spine OCR Text:
 Book_0: ['TIMES', 'of the', 'BESTSELLER', 'MONKEY GOD', 'PRESTON', 'douGLAS', 'MONKEY GOD 38', 'The', '0aa', 'centanl', 'NEW YORK', 'Dun', 'cunaat', 'Ujo', 'OaaND', 'Ovo', 'LOST CITY'],
@@ -355,6 +364,7 @@ correct_output_02 = """{
             "Book_0": {"author": "Douglas Preston", "title": "The Lost City of the Monkey God"},
             "Book_1": {"author": "Sebastian Junger", "title": "The Perfect Storm"}}
             "Book_2": {"author": "Carl Sagan", "title": "Demon-Haunted World"}}"""
+
 
 def format_AI_input(spines, full_img_text):
     """
@@ -403,7 +413,7 @@ def format_AI_input(spines, full_img_text):
 
         - If you are not 100% certain that a subtitle is 100% accurate, do not include it. Your response will be used to query external APIs for
         ISBN information, so it is important that the data you provide is as accurate as possible.
-        
+
         - Your response is being decoded directly with Python's json.loads() function. Make sure your response is in the correct format without
         any additional characters or formatting. Do not even label the response as JSON. Just provide the JSON-formatted string.
 
@@ -430,6 +440,8 @@ def format_AI_input(spines, full_img_text):
         """
     
     return prompt
+
+
 
 
 ### Book Identification and Metadata Retrieval. Create Book Object ###

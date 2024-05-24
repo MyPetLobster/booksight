@@ -30,6 +30,8 @@ def vision(request):
         util.create_log_file()
         
         image = request.FILES.get('uploaded-image')
+        request.session['uploaded_image'] = image
+        
         email = request.POST.get('user-email')
         formats = request.POST.getlist('format')
         ai_model = request.POST.get('ai-model')
