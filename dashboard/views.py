@@ -1,7 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-import shutil
 import threading
 
 from .models import Scan
@@ -67,7 +66,7 @@ def vision(request):
         thread.start()
 
         return render(request, 'vision.html', {
-            'image_path': upload_path,
+            'image_path': new_scan.uploaded_image.url,
         })
 
     else: # GET request

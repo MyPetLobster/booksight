@@ -48,3 +48,24 @@ def empty_directory(directory):
                 shutil.rmtree(file_path)
         except Exception as e:
             log_print(f"Failed to delete {file_path}. Reason: {e}")
+
+
+def empty_export_dirs():
+    """ This function deletes all except the 5 most recent exports in each export directory.
+     'vision/exports/csv', 'vision/exports/json', 'vision/exports/xml', 'vision/exports/text'"""
+
+    export_directories = ['csv', 'json', 'xml', 'text']
+
+    for directory in export_directories:
+        export_dir = f'vision/exports/{directory}'
+        files = os.listdir(export_dir)
+        files.sort()
+        for file in files[:-5]:
+            file_path = os.path.join(export_dir, file)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                log_print(f"Failed to delete {file_path}. Reason: {e}")

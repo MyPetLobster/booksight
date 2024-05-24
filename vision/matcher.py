@@ -398,6 +398,12 @@ def format_AI_input(spines, full_img_text):
 
         - If you cannot verify an author or title, respond with "" for the author or title. Just an empty string for that field.
 
+        - If a book has multiple authors, include both authors with no additional formatting. For example, if a book has two authors,
+        "Author 1" and "Author 2", you would include "Author 1 Author 2" in the author field.
+
+        - If you are not 100% certain that a subtitle is 100% accurate, do not include it. Your response will be used to query external APIs for
+        ISBN information, so it is important that the data you provide is as accurate as possible.
+        
         - Your response is being decoded directly with Python's json.loads() function. Make sure your response is in the correct format without
         any additional characters or formatting. Do not even label the response as JSON. Just provide the JSON-formatted string.
 
