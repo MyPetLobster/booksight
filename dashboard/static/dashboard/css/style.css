@@ -55,15 +55,14 @@ a:hover {
   height: 40px;
 }
 
-#owl-logo-img,
-#owl-logo-img-light {
+#owl-logo-img {
   height: 75%;
   position: absolute;
   top: 0;
   right: 0;
   margin: 5px;
   object-fit: contain;
-  transition: 250ms;
+  transition: 450ms;
 }
 
 /* FOOTER STYLES */
@@ -142,13 +141,13 @@ a:hover {
 #logo-eyes {
   opacity: 0.15;
   max-width: 60%;
-  transition: 400ms;
+  transition: 550ms;
 }
 
 #logo-text {
   opacity: 0.15;
   max-width: 100%;
-  transition: 400ms;
+  transition: 550ms;
 }
 
 /* UPLOAD FORM STYLES */
@@ -423,7 +422,7 @@ a:hover {
   min-width: 666px;
   border-radius: 12px;
   text-align: left;
-  background-color: rgba(0, 0, 0, 0.7294117647);
+  background-color: #f8f8f8;
   display: flex;
   align-items: center;
   padding: 2px 8px;
@@ -433,7 +432,7 @@ a:hover {
 #progress-status {
   background-color: rgba(0, 0, 0, 0);
   font-family: "Sometype Mono", monospace;
-  color: #f4f6f3;
+  color: #333333;
   border: none;
   outline: none;
   margin-bottom: 0px;

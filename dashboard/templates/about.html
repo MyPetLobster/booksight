@@ -13,19 +13,28 @@
             <h2>What is BookSight?</h2>
             <p>
                 Booksight is a web application that allows users to catalog their book collections by taking a picture of their bookshelf. 
-                The application uses computer vision to detect the spines of books in the image and extract the text from the spines.
+                The application uses computer vision to detect the spines of books in the image and extracts the text from the spines using 
+                the EasyOCR library.
             </p>
             <p>
-                To identify the precise edition of each book, the spines in your image are analyzed for average color, dominant color, height, width, and text.
-                The extracted text is then cleaned up using an AI model to remove any noise and improve the accuracy of the text. Ideally, at this point,
-                the program should have access to a "Spine" object representing each book in the image. These objects contain all of the extracted information.
+                To identify the precise edition of each book, the spines in your image are analyzed for average color, dominant color, height, 
+                width, and text. The extracted text is then cleaned up using an AI model to remove any noise and improve the accuracy of the 
+                text. The AI model also attempts to identify all of the titles and authors within the detected text. Ideally, at this point,
+                the program should have access to a "Spine" object representing each book in the image. These objects contain all of the 
+                extracted information.
             </p>
             <p>
-                All of this information is then used to identify all possible ISBNS. The ISBNs are then used to query book database APIs to get detailed information about each book.
-                The results are then exported to the format of your choosing. Currently, the application supports exporting to CSV, JSON, XML, and TXT.
+                All of this information is used to identify all possible ISBNS for each spine. The ISBNs are then used to query book database 
+                APIs to get detailed information about each potential match. The program loops through all potential ISBNS keeping track of 
+                a confidence score for each. The ISBN with the highest confidence score is then selected as the correct match and added to 
+                the list of results.
+
+                Finally, the results are exported to the format of your choosing and emailed to the address you enter when you upload your photo.
+                Currently, the application supports exporting to CSV, JSON, XML, and TXT.
             </p>
             <p>
-                Booksight is a work in progress and will continue to improve over time. If you have any feedback or suggestions, please feel free to reach out to us.
+                Booksight is a work in progress and will continue to improve over time. If you have any feedback or suggestions, please feel 
+                free to reach out to us.
             </p>
             <p>- Cory Suzuki</p>
         </div>

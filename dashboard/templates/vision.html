@@ -141,15 +141,15 @@ function updateStatus() {
         i++;
         if (i == status_text.length) {
             clearInterval(interval);
-        }
-    }, 1000);
+        } // random interval between 0.5 and 1.5 seconds
+    }, Math.floor(Math.random() * 1000) + 500);
 }
 
 function updateStatusStageTwo() {
     // Change status every 1.5 seconds
     var status = document.getElementById("progress-status");
     const start_time = new Date().getTime();
-    var status_text = ["Analyzing image and spine objects...", "Beginning text detection using EasyOCR...", "This process may take a minute...", "...or two...", "Almost there. I can feel it..."];
+    var status_text = ["Analyzing image and spine objects...", "Beginning text detection using EasyOCR...", "This process may take a few minutes..."];
 
     var i = 0;
     var interval = setInterval(function() {
@@ -157,8 +157,8 @@ function updateStatusStageTwo() {
         i++;
         if (i == status_text.length) {
             clearInterval(interval);
-        }
-    }, 7000);
+        } // random interval between 4 and 8 seconds
+    }, Math.floor(Math.random() * 4000) + 4000);
 }
 
 function updateStatusStageThree() {
@@ -180,8 +180,8 @@ function updateStatusStageThree() {
 function updateStatusStageFour() {
     stage_four_started = true;
     var status = document.getElementById("progress-status");
-    status.innerHTML = "$ AI model complete. Processing results...";
-    var status_text = ["Beginning book matching processes, using Google Books, ISBNdb, and Open Library APIs...", "This process may take several minutes...", "This process is probably gonna take a while...", "[awkward eye contact]...shouldn't be too much longer...", "🎶 elevator music 🎶", "Sooo...how's life treating you?", "Why did the data analyst go to the zoo?", "To see the pandas!", "Ok I've got nothing else...it'll be done soon I swear."];
+    status.innerHTML = "$ AI model response received. Processing results...";
+    var status_text = ["Beginning book matching processes...", "Retrieving potential ISBNs from Google Books and Open Library APIs...", "Beginning precise matching process using ISBNdb...", "This process may take a while...", "...", "[awkward eye contact] 👁️👄👁️ shouldn't be too much longer...", "...", "🎶 elevator music 🎶", "Sooo...oh, here's something! Why did the data analyst go to the zoo?", "To see the pandas!", "Ok I've got nothing else...it'll be done soon™  I swear."];
     
     var i = 0;
     var interval = setInterval(function() {
@@ -190,7 +190,7 @@ function updateStatusStageFour() {
         if (i == status_text.length) {
             clearInterval(interval);
         }
-    }, 8000);
+    }, Math.floor(Math.random() * 6000) + 6000);
 
 }
 
