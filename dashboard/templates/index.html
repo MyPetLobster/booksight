@@ -8,7 +8,9 @@
         <div class="landing-logo-div">
             <img id="logo-eyes" src="{% static 'dashboard/images/eyes-only.png' %}" alt="Booksight Logo Owl Eyes">
             <img id="logo-text" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
+            <p class="hidden-subtitle" style="opacity:0">For the details your eyes can't see</p>
         </div>
+
 
         <div class="upload-form-div"  style="opacity:0">
             <form class="floating-form" id="upload-img-form" action="{% url 'vision' %}" method="post" enctype="multipart/form-data">
@@ -149,29 +151,39 @@
 
         const logoEyes = document.getElementById('logo-eyes');
         const logoText = document.getElementById('logo-text');
+        const hiddenSubtitle = document.querySelector('.hidden-subtitle');
         logoEyes.addEventListener('mouseover', () => {
             logoText.style.maxWidth = "110%";
             logoText.style.opacity = 1;
             logoEyes.style.maxWidth = "70%";
             logoEyes.style.opacity = 1;
+            hiddenSubtitle.style.opacity = 1;
+            hiddenSubtitle.style.transition = "10s";
         })
         logoEyes.addEventListener('mouseout', () => {
             logoText.style.maxWidth = "100%";
             logoText.style.opacity = 0.15;
             logoEyes.style.maxWidth = "60%";
             logoEyes.style.opacity = 0.15;
+            hiddenSubtitle.style.opacity = 0;
+            hiddenSubtitle.style.transition = "2s";
+
         })
         logoText.addEventListener('mouseover', () => {
             logoText.style.maxWidth = "110%";
             logoText.style.opacity = 1;
             logoEyes.style.maxWidth = "70%";
             logoEyes.style.opacity = 1;
+            hiddenSubtitle.style.opacity = 1;
+            hiddenSubtitle.style.transition = "10s";
         })
         logoText.addEventListener('mouseout', () => {
             logoText.style.maxWidth = "100%";
             logoText.style.opacity = 0.15;
             logoEyes.style.maxWidth = "60%";
             logoEyes.style.opacity = 0.15;
+            hiddenSubtitle.style.opacity = 0;
+            hiddenSubtitle.style.transition = "2s";
         })
 
         const floatingForm = document.querySelector('.upload-form-div');
