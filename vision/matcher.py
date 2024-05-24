@@ -213,7 +213,7 @@ def download_image(url, isbn):
         str: The path to the downloaded image.
     """
     # Ensure the directory exists where the images will be saved
-    directory = "vision/images/detection_temp/downloaded_images"
+    directory = "media/detection_temp/downloaded_images"
     if not os.path.exists(directory):
         os.makedirs(directory)
 

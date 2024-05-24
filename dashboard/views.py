@@ -58,19 +58,15 @@ def vision(request):
         new_scan.uploaded_image = image
         new_scan.save()
 
-        # Copy user uploaded image to scan_images directory
-        shutil.copy(new_scan.uploaded_image.path, f'vision/images/scan_images/{new_scan.id}.jpg')
-        new_path = f'vision/images/scan_images/{new_scan.id}.jpg'
+        upload_path = new_scan.uploaded_image.path
 
         # Create separate thread to run Vision app
-        thread = threading.Thread(target=vision_app, args=(request, new_path, email, formats, new_scan))
+        thread = threading.Thread(target=vision_app, args=(request, upload_path, email, formats, new_scan))
         thread.setDaemon(True)
         thread.start()
 
-        new_scan_uploaded_image = new_scan.uploaded_image.url
-
         return render(request, 'vision.html', {
-            'image_path': new_scan_uploaded_image
+            'image_path': upload_path,
         })
 
     else: # GET request
