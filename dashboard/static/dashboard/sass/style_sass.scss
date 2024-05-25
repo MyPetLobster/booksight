@@ -1,5 +1,4 @@
 /* GENERAL STYLES */
-
 * {
     margin: 0;
     padding: 0;
@@ -19,14 +18,6 @@ a:hover {
 }
 
 
-.btn-box {
-    margin: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    height: 100%;
-}
 
 
 /* NAVBAR STYLES */
@@ -39,23 +30,19 @@ a:hover {
     display: flex;
     align-items: center;
 }
-
 .container-fluid .navbar-nav > li > a:hover, .container-fluid .navbar-nav > li > a:focus {
     background-color: white;
     color: black !important;
     font-weight: bold;
 }
-
 #owl-logo-nav-item {
     margin-right: 10px;
     background-color: white;
     border: none;
 }
-
 .owl-logo-container {
     height: 40px;
 }
-
 #owl-logo-img {
     height: 75%;
     position: absolute;
@@ -65,6 +52,14 @@ a:hover {
     object-fit: contain;
     transition: 450ms;
 }
+#to-page-nav-item {
+    font-size: 20px;
+    opacity: 0;
+    position: relative;
+    right: 40px;
+    transition: 450ms;
+}
+
 
 
 /* FOOTER STYLES */
@@ -73,32 +68,9 @@ a:hover {
     bottom: 0;
     width: 100%;
     height: 30px;
+    z-index: 9999;
 }
 
-
-/* CAROUSEL STYLES */
-.carousel-inner img {
-    width: 100%; /* Set width to 100% */
-    margin: auto;
-    min-height:200px;
-}
-
-/* Hide the carousel text when the screen is less than 600 pixels wide */
-@media (max-width: 600px) {
-    .carousel-caption {
-        display: none; 
-    }
-}
-
-.vis-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    gap: 28px;
-    width: 100%;
-}
 
 
 
@@ -161,6 +133,8 @@ a:hover {
 }
 
 
+
+
 /* UPLOAD FORM STYLES */
 .upload-form-div {
     z-index: -1;
@@ -178,7 +152,6 @@ a:hover {
 
     p, h3 {
         text-align: center;
-
         a {
             color: rgb(134, 167, 191) !important;
         }
@@ -188,7 +161,6 @@ a:hover {
         }
     }
 }
-
 .form-div {
     display: flex;
     flex-direction: column;
@@ -204,13 +176,11 @@ a:hover {
         text-align: center;
     }
 }
-
 .upload-div, .upload-div>label {
     margin-top: 10px;
     width: 100%;
     display: flex;
     justify-content: center;
-
 }
 .form-title {
     color: rgb(63, 106, 137)
@@ -218,7 +188,6 @@ a:hover {
 .form-subtitle {
     color: rgb(151, 159, 164)
 }
-
 .checkboxes {
     display: flex;
     flex-direction: column;
@@ -241,100 +210,14 @@ a:hover {
     gap: 5px;
     accent-color: rgb(63, 106, 137);
 }
-
-
-.proc-upload-img {
-    border-radius: 12px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
-}
-
-.uploaded-image {
-    max-width: 600px;
-    max-height: 600px;
-    display: block;
-}
-.bbox-image {
-    max-width: 800px;
-    max-height: 800px;
-}
-
-
-#full-size-image-div {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    max-width: 80vw;
-    max-height: 80vh;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.8);
+.btn-box {
+    margin: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 100;
-    border-radius: 12px;
-    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
+    gap: 10px;
+    height: 100%;
 }
-
-.full-size-image {
-    cursor: pointer;
-    max-width: 80vw;
-    max-height: 80vh;
-    display: block;
-    border-radius: 12px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-    background-color: #fff;  // White background for the images
-    padding: 10px;
-    margin: auto;
-}
-
-
-#image-div {
-    margin-top: 20px;
-    margin-bottom: 5px;
-    padding: 15px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    overflow-y: scroll;
-}
-
-.spine-image-grid {
-    width: 90%;
-    height: 90%;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-    margin-bottom: 0px;
-    padding: 10px;
-    background-color: #f8f8f8;  // Light gray background for better visibility
-    border-radius: 12px;
-}
-
-.spine-grid-element {
-    cursor: pointer;
-    max-width: 150px;
-    max-height: 250px;
-    display: block;
-    border-radius: 12px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-    background-color: #fff;  // White background for the images
-    padding: 10px;
-    margin: auto;
-    transition: 350ms;
-}
-.spine-grid-element:hover {
-    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.4);
-    transform: scale(1.05);
-}
-
-
-
 .button {
     width: 100%;
     display: flex;
@@ -406,10 +289,96 @@ a:hover {
 
 
 
-
-
-
 /* VISION PAGE STYLES */
+.vis-page-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 28px;
+    width: 100%;
+}
+.uploaded-image {
+    max-width: 600px;
+    max-height: 600px;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
+.bbox-image {
+    max-width: 800px;
+    max-height: 800px;
+}
+#full-size-image-div {
+    /* Expanded spine text image container */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: 80vw;
+    max-height: 80vh;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    border-radius: 12px;
+    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
+}
+.full-size-image {
+    cursor: pointer;
+    max-width: 80vw;
+    max-height: 80vh;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    background-color: #fff;  // White background for the images
+    padding: 10px;
+    margin: auto;
+}
+#image-div {
+    margin-top: 20px;
+    margin-bottom: 5px;
+    padding: 15px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: scroll;
+}
+.spine-image-grid {
+    width: 90%;
+    height: 90%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 0px;
+    padding: 10px;
+    background-color: #f8f8f8;  // Light gray background for better visibility
+    border-radius: 12px;
+}
+.spine-grid-element {
+    cursor: pointer;
+    max-width: 150px;
+    max-height: 250px;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    background-color: #fff;  // White background for the images
+    padding: 10px;
+    margin: auto;
+    transition: 350ms;
+}
+.spine-grid-element:hover {
+    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.4);
+    transform: scale(1.05);
+}
 .vision-para-div * {
     text-align: center;
     margin-bottom: 60px;
@@ -420,13 +389,9 @@ a:hover {
 .vision-link:hover {
     color: black !important;
 }
-
-
 #stage_02, #stage_03, #stage_04, #stage_05, #stage_06 {
     display: none;
 }
-
-
 .terminal {
     margin-top: 20px;
     height: 48px;
@@ -451,12 +416,7 @@ a:hover {
 
 
 
-
-
-
-
 /* TIPS PAGE */
-
 .tips-page-content {
     display: flex;
     flex-direction: column;
@@ -467,7 +427,6 @@ a:hover {
     padding: 20px;
     margin-bottom: 40px;
 }
-
 .tips-div {
     display: flex;
     flex-direction: column;
@@ -485,8 +444,9 @@ a:hover {
 }
 
 
-/* ABOUT PAGE */
 
+
+/* ABOUT PAGE */
 .about-page-content {
     display: flex;
     flex-direction: column;
@@ -513,8 +473,8 @@ a:hover {
 
 
 
-/* VISION COMPLETE PAGE */
 
+/* VISION COMPLETE PAGE */
 .vision-complete-page-content {
     height: 80vh;
     width: 100%;

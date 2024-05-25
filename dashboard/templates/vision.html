@@ -5,7 +5,7 @@
 {% block body %}
     <div class="page-identifier" style="display:none">vision</div>
     <div id="full-size-image-div"></div>
-    <div class="vis-content">
+    <div class="vision-page-content">
 
         <div class="landing-logo-div-vision">
             <img id="logo-eyes-vision" src="{% static 'dashboard/images/eyes-only.png' %}" alt="Booksight Logo Owl Eyes">
@@ -19,7 +19,7 @@
 
             
             <div id="image-div">
-                <img class="proc-upload-img uploaded-image" id="uploaded-image-raw" src="{{ image_path }}" alt="Uploaded Image">
+                <img class="uploaded-image" id="uploaded-image-raw" src="{{ image_path }}" alt="Uploaded Image">
             </div>
         </br>
         <div class="vision-para-div">
@@ -52,7 +52,7 @@ function checkStatus() {
                 const bbox_image_element = document.createElement("img");
                 bbox_image_element.id = "bbox-image";
                 bbox_image_element.src = data.bbox_image;
-                bbox_image_element.className = "proc-upload-img bbox-image";
+                bbox_image_element.className = "bbox-image";
                 bbox_image_element.style.display = "block";
                 document.getElementById("image-div").appendChild(bbox_image_element);
 

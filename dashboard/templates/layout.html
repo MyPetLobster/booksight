@@ -23,6 +23,7 @@
         <nav class="navbar navbar-light bg-light navbar-fixed-top">
             <div class="container-fluid">
                 <ul class="nav navbar-nav navbar-right">
+                    <li id="to-page-nav-item"></li>
                     <li id="owl-logo-nav-item">
                         <a id="logo-link" href="#">
                             <div class="owl-logo-container">
@@ -44,21 +45,26 @@
             const logoLink = document.getElementById('logo-link');
             const footer = document.getElementById('footer');
             const pageIdentifier = document.querySelector('.page-identifier').textContent;
+            const toPageNavItem = document.getElementById('to-page-nav-item');
 
             if (pageIdentifier === 'index') {
                 logoLink.href = "{% url 'about' %}";
+                toPageNavItem.innerHTML = 'About';
                 footer.style.display = 'block';
             } else if (pageIdentifier === 'about') {
                 logoLink.href = "{% url 'index' %}";
+                toPageNavItem.innerHTML = 'Home';
                 footer.style.display = 'block';
             } else if (pageIdentifier === 'tips') {
                 logoLink.href = "{% url 'index' %}";
+                toPageNavItem.innerHTML = 'Home';
                 footer.style.display = 'block';
             } else if (pageIdentifier === 'vision') {
                 logoLink.style.display = 'none';
                 footer.style.display = 'none';
             } else if (pageIdentifier === 'vision-complete') {
                 logoLink.href = "{% url 'index' %}";
+                toPageNavItem.innerHTML = 'Home';
                 footer.style.display = 'none';
             }
 
@@ -67,10 +73,12 @@
 
             owlLogoNavItem.addEventListener('mouseover', () => {
                 darkOwlLogo.style.opacity = 1;
+                toPageNavItem.style.opacity = 1;
             });
 
             owlLogoNavItem.addEventListener('mouseout', () => {
                 darkOwlLogo.style.opacity = 0.15;
+                toPageNavItem.style.opacity = 0;
             });
 
             // hide footer if not scrolled to bottom
