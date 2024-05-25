@@ -1,3 +1,17 @@
+/* VARIABLES */
+$primary-color: rgb(63, 106, 137);
+$primary-black: rgb(0, 0, 0);
+$primary-white: rgb(255, 255, 255);
+$secondary-color: rgb(134, 167, 191);
+$accent-color: rgb(236,236,236);
+$accent-color-light: rgb(242, 242, 242);
+$accent-color-lighter: rgb(248, 248, 248);
+$accent-color-dark: rgb(151, 159, 164);
+$accent-color-darker: rgb(36, 69, 94);
+
+
+
+
 /* GENERAL STYLES */
 * {
     margin: 0;
@@ -7,13 +21,13 @@
 }
 
 a {
-    color: rgb(236,236,236) !important;
+    color: $accent-color;
     text-decoration: none;
     background-color: transparent;
     transition: 250ms;
 }
 a:hover {
-    color: black !important;
+    color: $primary-black !important;
     text-decoration: none !important;
 }
 
@@ -31,13 +45,13 @@ a:hover {
     align-items: center;
 }
 .container-fluid .navbar-nav > li > a:hover, .container-fluid .navbar-nav > li > a:focus {
-    background-color: white;
-    color: black !important;
+    background-color: $primary-white;
+    color: $primary-black !important;
     font-weight: bold;
 }
 #owl-logo-nav-item {
     margin-right: 10px;
-    background-color: white;
+    background-color: $primary-white;
     border: none;
 }
 .owl-logo-container {
@@ -144,7 +158,7 @@ a:hover {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    background-color: rgb(242, 242, 242);
+    background-color: $accent-color-light;
     padding: 10px 20px 20px 20px;
     border-radius: 12px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
@@ -153,10 +167,10 @@ a:hover {
     p, h3 {
         text-align: center;
         a {
-            color: rgb(134, 167, 191) !important;
+            color: $secondary-color !important;
         }
         a:hover {
-            color: rgb(63, 106, 137) !important;
+            color: $primary-color !important;
             font-weight: 500;
         }
     }
@@ -183,10 +197,10 @@ a:hover {
     justify-content: center;
 }
 .form-title {
-    color: rgb(63, 106, 137)
+    color: $primary-color;
 }
 .form-subtitle {
-    color: rgb(151, 159, 164)
+    color: $accent-color-dark;
 }
 .checkboxes {
     display: flex;
@@ -208,7 +222,7 @@ a:hover {
     justify-content: space-between;
     align-items: center;
     gap: 5px;
-    accent-color: rgb(63, 106, 137);
+    accent-color: $primary-color;
 }
 .btn-box {
     margin: 10px;
@@ -239,39 +253,39 @@ a:hover {
 }
 #upload-image-button {
     width: 60%;
-    background-color: rgb(63, 106, 137);
-    color: white;
+    background-color: $primary-color;
+    color: $primary-white;
 }
 #upload-image-button:hover {
     background-color: rgb(36, 69, 94);
-    color: rgb(236,236,236)
+    color: $accent-color;
 }
 #submit-button {
     background-color: rgb(87, 132, 69);
-    color: white;
+    color: $primary-white;
 }
 #submit-button:hover {
     background-color: rgb(60, 105, 42);
-    color: rgb(236,236,236)
+    color: $accent-color;
 }
 #cancel-button {
     background-color: rgb(156, 69, 69);
-    color: white;
+    color: $primary-white;
 }
 #cancel-button:hover {
     background-color: rgb(129, 42, 42);
-    color: rgb(236,236,236)
+    color: $accent-color;
 }
 
 #user-email {
     width: 60%;
     border-radius: 6px;
     padding: 4px;
-    border: 1px solid rgb(134, 167, 191) ;
-    outline: 1px solid white;
+    border: 1px solid $secondary-color ;
+    outline: 1px solid $primary-white;
 }
 #user-email:focus {
-    border: 2px solid rgb(63, 106, 137);
+    border: 2px solid $primary-color;
 }
 
 #adv-options-button,
@@ -334,7 +348,7 @@ a:hover {
     display: block;
     border-radius: 12px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-    background-color: #fff;  // White background for the images
+    background-color: $primary-white; 
     padding: 10px;
     margin: auto;
 }
@@ -360,7 +374,7 @@ a:hover {
     margin-top: 20px;
     margin-bottom: 0px;
     padding: 10px;
-    background-color: #f8f8f8;  // Light gray background for better visibility
+    background-color: $accent-color-lighter;
     border-radius: 12px;
 }
 .spine-grid-element {
@@ -370,7 +384,7 @@ a:hover {
     display: block;
     border-radius: 12px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-    background-color: #fff;  // White background for the images
+    background-color: $primary-white;
     padding: 10px;
     margin: auto;
     transition: 350ms;
@@ -387,7 +401,7 @@ a:hover {
     color: rgb(120, 157, 183) !important;
 }
 .vision-link:hover {
-    color: black !important;
+    color: $primary-black !important;
 }
 #stage_02, #stage_03, #stage_04, #stage_05, #stage_06 {
     display: none;
@@ -398,7 +412,7 @@ a:hover {
     min-width: 666px;
     border-radius: 12px;
     text-align: left;
-    background-color: #f8f8f8;
+    background-color: $accent-color-lighter;
     display: flex;
     align-items: center;
     padding: 2px 8px;
@@ -435,7 +449,7 @@ a:hover {
     gap: 20px;
     width: 60%;
     padding: 20px 40px;
-    background-color: #f8f8f8;  // Light gray background for better visibility
+    background-color: $accent-color-lighter;  // Light gray background for better visibility
     border-radius: 12px;
     box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
 }
@@ -466,7 +480,7 @@ a:hover {
     gap: 20px;
     width: 60%;
     padding: 20px 40px;
-    background-color: #f8f8f8;  // Light gray background for better visibility
+    background-color: $accent-color-lighter;  // Light gray background for better visibility
     border-radius: 12px;
     box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
 }

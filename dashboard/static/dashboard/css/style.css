@@ -1,3 +1,4 @@
+/* VARIABLES */
 /* GENERAL STYLES */
 * {
   margin: 0;
@@ -7,14 +8,14 @@
 }
 
 a {
-  color: rgb(236, 236, 236) !important;
+  color: rgb(236, 236, 236);
   text-decoration: none;
   background-color: transparent;
   transition: 250ms;
 }
 
 a:hover {
-  color: black !important;
+  color: rgb(0, 0, 0) !important;
   text-decoration: none !important;
 }
 
@@ -31,14 +32,14 @@ a:hover {
 }
 
 .container-fluid .navbar-nav > li > a:hover, .container-fluid .navbar-nav > li > a:focus {
-  background-color: white;
-  color: black !important;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0) !important;
   font-weight: bold;
 }
 
 #owl-logo-nav-item {
   margin-right: 10px;
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   border: none;
 }
 
@@ -247,7 +248,7 @@ a:hover {
 #upload-image-button {
   width: 60%;
   background-color: rgb(63, 106, 137);
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 #upload-image-button:hover {
@@ -257,7 +258,7 @@ a:hover {
 
 #submit-button {
   background-color: rgb(87, 132, 69);
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 #submit-button:hover {
@@ -267,7 +268,7 @@ a:hover {
 
 #cancel-button {
   background-color: rgb(156, 69, 69);
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 #cancel-button:hover {
@@ -280,7 +281,7 @@ a:hover {
   border-radius: 6px;
   padding: 4px;
   border: 1px solid rgb(134, 167, 191);
-  outline: 1px solid white;
+  outline: 1px solid rgb(255, 255, 255);
 }
 
 #user-email:focus {
@@ -349,7 +350,7 @@ a:hover {
   display: block;
   border-radius: 12px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-  background-color: #fff;
+  background-color: rgb(255, 255, 255);
   padding: 10px;
   margin: auto;
 }
@@ -377,7 +378,7 @@ a:hover {
   margin-top: 20px;
   margin-bottom: 0px;
   padding: 10px;
-  background-color: #f8f8f8;
+  background-color: rgb(248, 248, 248);
   border-radius: 12px;
 }
 
@@ -388,7 +389,7 @@ a:hover {
   display: block;
   border-radius: 12px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-  background-color: #fff;
+  background-color: rgb(255, 255, 255);
   padding: 10px;
   margin: auto;
   transition: 350ms;
@@ -409,7 +410,7 @@ a:hover {
 }
 
 .vision-link:hover {
-  color: black !important;
+  color: rgb(0, 0, 0) !important;
 }
 
 #stage_02, #stage_03, #stage_04, #stage_05, #stage_06 {
@@ -422,7 +423,7 @@ a:hover {
   min-width: 666px;
   border-radius: 12px;
   text-align: left;
-  background-color: #f8f8f8;
+  background-color: rgb(248, 248, 248);
   display: flex;
   align-items: center;
   padding: 2px 8px;
@@ -458,7 +459,7 @@ a:hover {
   gap: 20px;
   width: 60%;
   padding: 20px 40px;
-  background-color: #f8f8f8;
+  background-color: rgb(248, 248, 248);
   border-radius: 12px;
   box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
 }
@@ -488,7 +489,7 @@ a:hover {
   gap: 20px;
   width: 60%;
   padding: 20px 40px;
-  background-color: #f8f8f8;
+  background-color: rgb(248, 248, 248);
   border-radius: 12px;
   box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
 }
