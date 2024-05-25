@@ -7,6 +7,7 @@ from io import BytesIO
 
 from . import analyze_spine as asp
 from . import db_requests as dbr
+from . import utility as util
 from .classes import Spine, Book
 from .token_counter import count_tokens
 from .utility import log_print
@@ -251,18 +252,23 @@ def id_possible_matches(request, spines, full_img_text):
 
     start_ai_process = time.time()
     book_data_basic = identify_with_AI(request, book_data_prompt)
+    book_dict = json.loads(book_data_basic)
+    log_print(f"Number of books identified: {len(book_dict)}\n")
+    log_print(f"Book Identification (Preliminary):\n{book_data_basic}\n")
 
     # AI loop two, proofreader
-    uploaded_image = request.session.get('uploaded_image')
-    book_data_basic = gpt_proofreader(book_data_basic, uploaded_image)
+    # log_print("\nRunning GPT-4o Proofreader...\n")
+    # uploaded_image = request.session.get('uploaded_image')
+    # book_data_basic = gpt_proofreader(book_data_basic, uploaded_image)
+    # book_dict = json.loads(book_data_basic)
+    # book_count = len(book_dict)
+    # log_print(f"Number of books identified (Proofread): {book_count}\n")
+    # log_print(f"Book Identification (Proofread):\n{book_data_basic}\n")
 
-    book_dict = json.loads(book_data_basic)
-    book_count = len(book_dict)
     end_ai_process = time.time()
 
     log_print(f"\nAI processing complete. Time elapsed: {round(end_ai_process - start_ai_process, 2)} seconds.\n")
-    log_print(f"Number of books identified: {book_count}\n")
-    log_print(f"Book Identification (Preliminary):\n{book_data_basic}\n")
+
     log_print("\nRetrieving potential ISBN's from OpenLibrary and Google Books...\nUpdating Spine objects with title, author, and possible ISBNs...\n")
 
     spine_count = len(spines)
@@ -289,6 +295,34 @@ def gpt_proofreader(book_data_basic, uploaded_image):
     Double check the json object output listing the identified books. Image if uploaded to GPT-4o model to reference
     when checking the json output. The json output will be checked for errors and corrected if necessary.
     """
+    ai_model = "gpt-4o"
+    ai_temp = 0.5
+    data_url = util.convert_img_to_data(uploaded_image)
+    proofreader_prompt = f"""You will receive a JSON-formatted string containing a list of books identified from OCR text.
+    The OCR text was identified from the spines of books from an uploaded image. Computer vision was used to detect the spines,
+    so some spines may be missing. The first stage of AI processing has already attempted to identify any missing spines. But there
+    may still be missing, duplicate, or misidentified books. Your task is to review the json output while referencing the uploaded
+    image to correct any errors. Your goal is to respond with a json-formatted string that includes the correct author and title for
+    each book in the image. If you see 5 books in the image, you should provide 5 author/title pairs, even if the AI output only lists
+    4 books. If you see a book in the image that is not listed in the AI output, you should add that book to your response. If you see
+    a book listed in the AI output that is not in the image, you should remove that book from your response. If you see a book listed
+    in the AI output that is misidentified, you should correct the author and title. If everything's accurate, just return the same string.
+    You get the idea.
+
+    - IMPORTANT: DO NOT include any other text in your response. Your response will be directly interpreted as JSON data.
+    
+    Here is the output from the previous step of AI processing, delimited by three asterisks: ***{book_data_basic}***
+    
+    Here is the image data that you will be referencing, delimited by three asterisks: ***{data_url}***
+    """
+    proofreader_prompt_tokens = count_tokens(proofreader_prompt, ai_model)
+    log_print(f"Prompt token count for {ai_model}: {proofreader_prompt_tokens}\n")
+    log_print(f"Beginning proofreading with {ai_model} set to a temperature of {ai_temp}...\n")
+    proofreader_response = gpt.run_gpt(proofreader_prompt, ai_model, ai_temp)
+    log_print(f"Proofreading complete.\n")
+
+    return proofreader_response
+
 
 def identify_with_AI(request, prompt):
     """

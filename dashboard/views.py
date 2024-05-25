@@ -30,8 +30,7 @@ def vision(request):
         util.create_log_file()
         
         image = request.FILES.get('uploaded-image')
-        request.session['uploaded_image'] = image
-        
+
         email = request.POST.get('user-email')
         formats = request.POST.getlist('format')
         ai_model = request.POST.get('ai-model')
@@ -61,6 +60,7 @@ def vision(request):
         new_scan.save()
 
         upload_path = new_scan.uploaded_image.path
+        request.session['uploaded_image'] = upload_path
 
         # Create separate thread to run Vision app
         thread = threading.Thread(target=vision_app, args=(request, upload_path, email, formats, new_scan))
@@ -68,7 +68,7 @@ def vision(request):
         thread.start()
 
         return render(request, 'vision.html', {
-            'image_path': new_scan.uploaded_image.url,
+            'image_path': new_scan.uploaded_image.url
         })
 
     else: # GET request

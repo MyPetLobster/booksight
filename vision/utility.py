@@ -1,7 +1,10 @@
+import base64
 import os
 import shutil
 import time
+from PIL import Image
 
+from mimetypes import guess_type
 from rich import print as rprint
 
 timestamp = time.strftime("%Y%m%d-%H%M%S")
@@ -69,3 +72,24 @@ def empty_export_dirs():
                     shutil.rmtree(file_path)
             except Exception as e:
                 log_print(f"Failed to delete {file_path}. Reason: {e}")
+
+
+def convert_img_to_data(image_path):
+    """ Converts an image file to base64 data. """
+
+    mime_type, _ = guess_type(image_path)
+
+    if mime_type is None:
+        mime_type = "image/jpeg"
+    with open(image_path, "rb") as image_file:
+        # Shrink image to max size of 500px
+        image = Image.open(image_file)
+        image.thumbnail((500, 500))
+
+        # save as new image (append _resized to filename)
+        image.save(f"{image_path}_resized", "JPEG")
+                   
+        with open(f"{image_path}_resized", "rb") as image_file:
+            image_data = base64.b64encode(image_file.read()).decode("utf-8")
+
+    return f"data:{mime_type};base64,{image_data}"
