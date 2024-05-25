@@ -253,7 +253,8 @@ def id_possible_matches(request, spines, full_img_text):
     start_ai_process = time.time()
     book_data_basic = identify_with_AI(request, book_data_prompt)
     book_dict = json.loads(book_data_basic)
-    log_print(f"Number of books identified: {len(book_dict)}\n")
+    book_count = len(book_dict)
+    log_print(f"Number of books identified: {book_count}\n")
     log_print(f"Book Identification (Preliminary):\n{book_data_basic}\n")
 
     # AI loop two, proofreader
