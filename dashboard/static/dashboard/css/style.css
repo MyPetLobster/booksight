@@ -523,6 +523,11 @@ a:hover {
   .landing-logo-div {
     max-width: 300px;
   }
+  .hidden-subtitle {
+    font-size: 16px;
+    transition: 6s;
+    padding-top: 10px;
+  }
   .floating-form {
     width: 90%;
   }
