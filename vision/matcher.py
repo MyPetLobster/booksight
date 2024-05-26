@@ -499,6 +499,7 @@ def create_book_object(isbn, confidence):
     # Initialize the book object
     book = Book()
 
+
     # Utilize data from Google Books as primary source
     if google_data and 'items' in google_data and google_data['items']:
         volume_info = google_data['items'][0]['volumeInfo']
@@ -549,5 +550,15 @@ def create_book_object(isbn, confidence):
     
     # Set the confidence
     book.confidence = confidence
+
+    if book.confidence == 0 or book.confidence == 34:
+        book.publisher = ""
+        book.date_published = ""
+        book.binding = ""
+        book.isbn13 = ""
+        book.isbn10 = ""
+        book.isbn = ""
+        book.pages = ""
+
 
     return book
