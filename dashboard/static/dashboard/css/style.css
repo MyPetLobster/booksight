@@ -77,24 +77,24 @@ a:hover {
 /* INDEX PAGE STYLES */
 .idx-content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   height: 100%;
   gap: 28px;
   width: 100%;
 }
 
 .landing-logo-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   width: 400px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 .landing-logo-div *:hover {
   cursor: pointer;
@@ -102,9 +102,9 @@ a:hover {
 
 .landing-logo-div-vision {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   margin-top: 20px;
 }
 .landing-logo-div-vision #logo-eyes-vision {
@@ -225,10 +225,10 @@ a:hover {
 }
 
 .button {
-  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   gap: 10px;
   padding: 4px;
   margin-top: 20px;
@@ -304,9 +304,9 @@ a:hover {
 /* VISION PAGE STYLES */
 .vision-page-content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   height: 100%;
   gap: 28px;
   width: 100%;
@@ -328,6 +328,9 @@ a:hover {
 
 #full-size-image-div {
   /* Expanded spine text image container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -335,9 +338,6 @@ a:hover {
   max-height: 80vh;
   transform: translate(-50%, -50%);
   background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   z-index: 100;
   border-radius: 12px;
   box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
@@ -356,14 +356,14 @@ a:hover {
 }
 
 #image-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   margin-top: 20px;
   margin-bottom: 5px;
   padding: 15px;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   overflow-y: scroll;
 }
 
@@ -442,9 +442,9 @@ a:hover {
 /* TIPS PAGE */
 .tips-page-content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   gap: 20px;
   width: 100%;
   padding: 20px;
@@ -453,9 +453,9 @@ a:hover {
 
 .tips-div {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   gap: 20px;
   width: 60%;
   padding: 20px 40px;
@@ -471,9 +471,9 @@ a:hover {
 /* ABOUT PAGE */
 .about-page-content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   gap: 20px;
   width: 100%;
   padding: 20px;
@@ -481,11 +481,11 @@ a:hover {
 }
 
 .about-div {
-  margin-top: 20px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 20px;
   gap: 20px;
   width: 60%;
   padding: 20px 40px;
@@ -496,12 +496,11 @@ a:hover {
 
 /* VISION COMPLETE PAGE */
 .vision-complete-page-content {
-  height: 80vh;
-  width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 80vh;
   width: 100%;
   padding: 20px;
   margin-bottom: 40px;
@@ -509,14 +508,56 @@ a:hover {
 
 .complete-div {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   gap: 60px;
 }
 
 .complete-paras {
   text-align: center;
+}
+
+/* MEDIA QUERIES */
+@media screen and (max-width: 768px) {
+  .landing-logo-div {
+    max-width: 300px;
+  }
+  .floating-form {
+    width: 90%;
+  }
+  .form-div label, .form-div input, .form-div select {
+    width: 90%;
+  }
+  .checkbox-option {
+    width: 90%;
+  }
+  .button {
+    width: 90%;
+  }
+  #user-email {
+    width: 90%;
+  }
+  #adv-options-button,
+  #adv-options-close {
+    width: 90%;
+  }
+  #adv-options-div {
+    width: 90%;
+  }
+  .spine-image-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  .spine-grid-element {
+    max-width: 100px;
+    max-height: 200px;
+  }
+  .vision-para-div * {
+    margin-bottom: 40px;
+  }
+  .terminal {
+    min-width: 90%;
+  }
 }
 
 /*# sourceMappingURL=style.css.map */
