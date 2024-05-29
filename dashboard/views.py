@@ -24,6 +24,7 @@ def vision(request):
         util.empty_export_dirs()
         util.empty_directory('media/uploaded_images')
         util.empty_directory('media/detection_temp/debug_images')
+        util.empty_directory('media/detection_temp/downloaded_images')
         util.empty_directory('media/detection_temp/spines')
 
         # Create log file for new session
