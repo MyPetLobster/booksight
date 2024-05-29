@@ -28,7 +28,7 @@ html, body {
 }
 
 a {
-    color: $accent-color !important;
+    color: $accent-color;
     text-decoration: none;
     background-color: transparent;
     transition: 250ms;
@@ -58,7 +58,7 @@ a:hover {
 }
 #owl-logo-nav-item {
     margin-right: 10px;
-    background-color: $primary-white;
+    background-color: rgba(0, 0, 0, 0) !important;
     border: none;
 }
 .owl-logo-container {
@@ -80,6 +80,7 @@ a:hover {
     right: 40px;
     transition: 450ms;
 }
+
 
 
 
@@ -525,8 +526,6 @@ a:hover {
     }
 
 
-
-
     .button {
         width: 90%;
     }
@@ -557,6 +556,12 @@ a:hover {
     .uploaded-image {
         max-width: 200px;
         max-height: 200px;
+    }
+
+
+    /* ABOUT & TIPS MOBILE */
+    .about-div, .tips-div {
+        width: 90%;
     }
 }
 

@@ -25,7 +25,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li id="to-page-nav-item"></li>
                     <li id="owl-logo-nav-item">
-                        <a id="logo-link" href="#">
+                        <a id="logo-link">
                             <div class="owl-logo-container">
                                 <img id="owl-logo-img" src="{% static 'dashboard/images/owl.png' %}" alt="Owl Logo" style="opacity:0.15">
                             </div>
@@ -46,6 +46,18 @@
             const footer = document.getElementById('footer');
             const pageIdentifier = document.querySelector('.page-identifier').textContent;
             const toPageNavItem = document.getElementById('to-page-nav-item');
+            const owlLogoNavItem = document.getElementById('owl-logo-nav-item');
+
+            document.addEventListener('scroll', () => {
+                //if user is not at the top of the page, hide owllogonavitem
+                if (window.scrollY > 0) {
+                    owlLogoNavItem.style.transition = '2s';
+                    owlLogoNavItem.style.opacity = 0;
+                } else {
+                    owlLogoNavItem.style.transition = '2s';
+                    owlLogoNavItem.style.opacity = 1;
+                }
+            });
 
             if (pageIdentifier === 'index') {
                 logoLink.href = "{% url 'about' %}";
@@ -69,7 +81,6 @@
             }
 
             const darkOwlLogo = document.getElementById('owl-logo-img');
-            const owlLogoNavItem = document.getElementById('owl-logo-nav-item');
 
             owlLogoNavItem.addEventListener('mouseover', () => {
                 if (screen.width > 600) {
