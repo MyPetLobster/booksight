@@ -72,8 +72,10 @@
             const owlLogoNavItem = document.getElementById('owl-logo-nav-item');
 
             owlLogoNavItem.addEventListener('mouseover', () => {
-                darkOwlLogo.style.opacity = 1;
-                toPageNavItem.style.opacity = 1;
+                if (screen.width > 600) {
+                    darkOwlLogo.style.opacity = 1;
+                    toPageNavItem.style.opacity = 1;
+                }
             });
 
             owlLogoNavItem.addEventListener('mouseout', () => {
