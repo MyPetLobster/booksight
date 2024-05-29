@@ -210,6 +210,9 @@
                 hiddenSubtitle.style.transition = "2s";
                 hiddenSubtitle.style.opacity = 1;
 
+                const footer = document.getElementById('footer');
+                footer.style.opacity = 0;
+
                 const owlLogoNavItem = document.getElementById('owl-logo-nav-item');
                 if (owlLogoNavItem) {
                     owlLogoNavItem.style.transition = "2s";
@@ -236,6 +239,15 @@
                 floatingForm.style.zIndex = -1;
                 landingLogoDiv.style.transition = "2s";
                 landingLogoDiv.style.opacity = 1;
+                logoEyes.style.transition = "2s";
+                logoEyes.style.opacity = 0.15;
+                logoText.style.transition = "2s";
+                logoText.style.opacity = 0.15;
+            
+                window.scrollTo(0, 0);
+                
+                const footer = document.getElementById('footer');
+                footer.style.opacity = 1;
                 const owlLogoNavItem = document.getElementById('owl-logo-nav-item');
                 if (owlLogoNavItem) {
                     owlLogoNavItem.style.transition = "2s";
