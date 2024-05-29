@@ -17,6 +17,9 @@ $accent-color-darker: rgb(36, 69, 94);
 
 
 /* GENERAL STYLES */
+html, body {
+    overflow-x: hidden;
+}
 * {
     margin: 0;
     padding: 0;
@@ -206,22 +209,27 @@ a:hover {
     align-items: flex-start;
     justify-content: center;
     gap: 10px;
-    label {
-        margin-left: 20px;
-        position: relative;
-        top: 5px;
-    }
 }
 .checkbox-option {
-    height: 30px;
-    width: 250px;
+    height: 25px;
+    width: 150px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
-    gap: 5px;
+}
+.checkbox-label {
+    margin-left: 20px;
+    position: relative;
+    top: 5px;
+    font-family: "Sometype Mono", monospace; 
+}
+.checkbox-box {
+    margin-right: 20px !important;
+    width: 25px !important;
     accent-color: $primary-color;
 }
+
+
 .btn-box {
     margin: 10px;
     display: flex;
@@ -490,6 +498,13 @@ a:hover {
 }
 
 
+
+
+
+
+
+
+
 /* MEDIA QUERIES */
 
 @media screen and (max-width: 768px) {
@@ -501,22 +516,17 @@ a:hover {
         transition: 6s;
         padding-top: 10px;
     }
-
-
-
-
-
     .floating-form {
-        width: 90%;
-    }
-    .form-div {
-        label, input, select {
-            width: 90%;
+        margin-top: 100px;
+        width: 70%;
+        h3 {
+            font-size: 20px;
         }
     }
-    .checkbox-option {
-        width: 90%;
-    }
+
+
+
+
     .button {
         width: 90%;
     }
@@ -543,4 +553,10 @@ a:hover {
     .terminal {
         min-width: 90%;
     }
+
+    .uploaded-image {
+        max-width: 200px;
+        max-height: 200px;
+    }
 }
+

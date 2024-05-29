@@ -1,5 +1,9 @@
 /* VARIABLES */
 /* GENERAL STYLES */
+html, body {
+  overflow-x: hidden;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -198,20 +202,25 @@ a:hover {
   justify-content: center;
   gap: 10px;
 }
-.checkboxes label {
+
+.checkbox-option {
+  height: 25px;
+  width: 150px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.checkbox-label {
   margin-left: 20px;
   position: relative;
   top: 5px;
+  font-family: "Sometype Mono", monospace;
 }
 
-.checkbox-option {
-  height: 30px;
-  width: 250px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 5px;
+.checkbox-box {
+  margin-right: 20px !important;
+  width: 25px !important;
   accent-color: rgb(63, 106, 137);
 }
 
@@ -529,13 +538,11 @@ a:hover {
     padding-top: 10px;
   }
   .floating-form {
-    width: 90%;
+    margin-top: 100px;
+    width: 70%;
   }
-  .form-div label, .form-div input, .form-div select {
-    width: 90%;
-  }
-  .checkbox-option {
-    width: 90%;
+  .floating-form h3 {
+    font-size: 20px;
   }
   .button {
     width: 90%;
@@ -562,6 +569,10 @@ a:hover {
   }
   .terminal {
     min-width: 90%;
+  }
+  .uploaded-image {
+    max-width: 200px;
+    max-height: 200px;
   }
 }
 

@@ -29,24 +29,24 @@
                     <h4>Export Formats</h4>
                     <div class="checkboxes">
                         <div class="checkbox-option">
-                            <label for="csv">CSV</label>
-                            <input type="checkbox" id="csv" name="format" value="csv">
+                            <label class="checkbox-label" for="csv">CSV&nbsp;</label>
+                            <input class="checkbox-box" type="checkbox" id="csv" name="format" value="csv">
                         </div>
                         <div class="checkbox-option">
-                            <label for="json">JSON</label>
-                            <input type="checkbox" id="json" name="format" value="json">
+                            <label class="checkbox-label" for="json">JSON</label>
+                            <input class="checkbox-box" type="checkbox" id="json" name="format" value="json">
                         </div>
                         <div class="checkbox-option">
-                            <label for="xml">XML</label>
-                            <input type="checkbox" id="xml" name="format" value="xml">
+                            <label class="checkbox-label" for="xml">XML&nbsp;</label>
+                            <input class="checkbox-box" type="checkbox" id="xml" name="format" value="xml">
                         </div>
                         <div class="checkbox-option">
-                            <label for="txt">IDK..TXT?</label>
-                            <input type="checkbox" id="txt" name="format" value="txt">
+                            <label class="checkbox-label" for="txt">TXT&nbsp;</label>
+                            <input class="checkbox-box" type="checkbox" id="txt" name="format" value="txt">
                         </div>
                         <div class="checkbox-option">
-                            <label for="all">I want it all!!!</label>
-                            <input type="checkbox" id="all" name="all-no-pass" value="all">
+                            <label class="checkbox-label" for="all">ALL&nbsp;</label>
+                            <input class="checkbox-box" type="checkbox" id="all" name="all-no-pass" value="all">
                         </div>
                     </div>
                 </div>
@@ -200,21 +200,6 @@
                 floatingForm.style.zIndex = 999;
                 landingLogoDiv.style.opacity = 0;
             })
-            cancelBtn.addEventListener('click', () => {
-                floatingForm.style.opacity = 0;
-                floatingForm.style.zIndex = -1;
-                landingLogoDiv.style.opacity = 1;
-            })
-            advOptionsButton.addEventListener('click', () => {
-                advOptionsDiv.style.display = 'flex';
-                advOptionsClose.style.display = 'block';
-                advOptionsButton.style.display = 'none';
-            })
-            advOptionsClose.addEventListener('click', () => {
-                advOptionsDiv.style.display = 'none';
-                advOptionsClose.style.display = 'none';
-                advOptionsButton.style.display = 'block';
-            })     
         } else {
             landingLogoDiv.addEventListener('click', () => {
                 // slowly display the subtitle text, darken the logo and text, then display the form and hide the logo/text. 4s total
@@ -235,8 +220,24 @@
                     floatingForm.style.zIndex = 999;
                     landingLogoDiv.style.opacity = 0;
                 }, 2000)
-        })
-    }
+            })
+        }
+
+            cancelBtn.addEventListener('click', () => {
+                floatingForm.style.opacity = 0;
+                floatingForm.style.zIndex = -1;
+                landingLogoDiv.style.opacity = 1;
+            })
+            advOptionsButton.addEventListener('click', () => {
+                advOptionsDiv.style.display = 'flex';
+                advOptionsClose.style.display = 'block';
+                advOptionsButton.style.display = 'none';
+            })
+            advOptionsClose.addEventListener('click', () => {
+                advOptionsDiv.style.display = 'none';
+                advOptionsClose.style.display = 'none';
+                advOptionsButton.style.display = 'block';
+            })     
 
         
 
