@@ -28,7 +28,7 @@ html, body {
 }
 
 a {
-    color: $accent-color;
+    color: $accent-color !important;
     text-decoration: none;
     background-color: transparent;
     transition: 250ms;
@@ -363,6 +363,12 @@ a:hover {
     width: 100%;
     overflow-y: scroll;
 }
+#bbox-image {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
 .spine-image-grid {
     width: 90%;
     height: 90%;
@@ -546,11 +552,20 @@ a:hover {
         max-width: 100px;
         max-height: 200px;
     }
+    .vision-para-div {
+        width: 90%;
+    }
     .vision-para-div * {
         margin-bottom: 40px;
     }
     .terminal {
         min-width: 90%;
+        max-width: 90%;
+        height: 25px;
+        border-radius: 4px;
+    }
+    #progress-status {
+        font-size: 10px;
     }
 
     .uploaded-image {
