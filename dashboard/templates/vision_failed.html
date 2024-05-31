@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Vision Failed{% endblock %}
+{% block body %}
+    <div class="page-identifier" style="display:none">vision-failed</div>
+    <div class="vision-complete-page-content">
+        <div class="complete-div">
+            <div class="landing-logo-div-vision">
+                <img id="logo-eyes-vision" src="{% static 'dashboard/images/eyes-only.png' %}" alt="Booksight Logo Owl Eyes">
+                <img id="logo-text-vision" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
+            </div>
+            <div class="complete-paras">
+                <p>
+                    Your image could not be processed. Please try again later.
+                </p>
+            </br>
+            </br>
+                <p>
+                    <a class="vision-link" href="{% url 'index' %}">Return to the home page</a>
+                </p>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

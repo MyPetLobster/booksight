@@ -122,6 +122,9 @@ function checkStatus() {
             } else if (data.status == "completed") {
                 clearInterval(statusInterval);
                 window.location.href = "{% url 'vision_complete' %}";
+            } else if (data.status == "error") {
+                clearInterval(statusInterval);
+                window.location.href = "{% url 'vision_failed' %}";
             } else {
                 setTimeout(checkStatus, 5000);
             }

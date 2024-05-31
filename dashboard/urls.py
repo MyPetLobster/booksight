@@ -11,4 +11,5 @@ urlpatterns = [
     path('tips/', views.tips, name='tips'),
     path('vision_status/', views.vision_status, name='vision_status'),
     path('vision_complete/', views.vision_complete, name='vision_complete'),
+    path('vision_failed/', views.vision_failed, name='vision_failed')
 ]

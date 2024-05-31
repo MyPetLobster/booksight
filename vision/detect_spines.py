@@ -81,7 +81,14 @@ def detect_spines(jpeg_file, torch_confidence):
     valid_books, bbox_path = draw_boxes(img, prediction, torch_confidence)
 
     if valid_books == None:
-        return None
+        img = Image.open(input_img)
+        img = img.rotate(90)
+        img_tensor = load_image(input_img)
+        prediction = predict(model, img_tensor)
+        valid_books, bbox_path = draw_boxes(img, prediction, torch_confidence)
+  
+    if valid_books == None:
+        return None, None
 
     return valid_books, bbox_path
 
@@ -170,7 +177,7 @@ def draw_boxes(img, prediction, torch_confidence):
 
     if book_count == 0:
         log_print("\nNo books detected. Exiting...\n")
-        return None
+        return None, None
     
     average_book_height = total_book_height / book_count
     average_book_thickness = total_book_thickness / book_count

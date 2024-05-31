@@ -114,6 +114,8 @@ def vision_status(request):
         return JsonResponse({
             'status': 'running',
         })
+    elif vision_status == 'failed': 
+        return render(request, 'vision_failed.html')
     else:
         return JsonResponse({
             'status': 'error',
@@ -122,3 +124,7 @@ def vision_status(request):
 
 def vision_complete(request):
     return render(request, 'vision_complete.html')
+
+
+def vision_failed(request):
+    return render(request, 'vision_failed.html')
