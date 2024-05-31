@@ -10,10 +10,9 @@
   <p align="center">
     A web application that identifies the specific ISBNs of all books in a given image.
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="#">View Youtube Demo</a>
     ·
     <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
@@ -102,12 +101,26 @@ Languages, frameworks, and libraries used in the project.
 * [![OpenAI][OpenAI.shield]][OpenAI.url]
 * [![Google Gemini API][Google.shield]][Google.url]
 
+#### Other Python Libraries Used (see requirements.txt for full list)
+* EasyOCR
+* Matplotlib
+* Numpy
+* OpenCV
+* Pillow
+* Requests
+* Rich
+* Scikit-learn
+* Tiktoken
+* Torch
+* Torchvision
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
+## Project logic, flow and structure
 
-<!-- GETTING STARTED -->
+
+
 ## Getting Started
 
 To get a local copy up and running follow these steps.
@@ -129,72 +142,66 @@ BookSight is built with Django, so you'll need to have Python installed on your 
    ```sh
    git clone
     ```
+2. Create a virtual environment and activate it
+   ```sh
+   python -m venv .venv
+   python .venv/bin/activate
+   ```
+
+3. Install the required packages
+   ```sh
+    pip install -r requirements.txt
+    ```
+4. Create a .env file in the root directory and add the following variables
+    ```sh
+    export GOOGLE_BOOKS_API_KEY = "your-google-books-api-key"
+    export ISBNDB_API_KEY = "your-isbndb-api-key"
+    export OPENAI_API_KEY = "your-openai-api-key"
+    export GMAIL_PASSWORD = "your-gmail-password"
+    export GMAIL_USERNAME = "your-gmail-username"
+    ```
+    **Note:** The GMAIL_USERNAME and GMAIL_PASSWORD are used to send emails to users when their book identification process is complete.
+    Feel free to modify the email settings to use the email service of your choice. If you use google, you will need to setup an app password for your gmail account.
+
+    **Note:** ISBNdb has a monthly fee and a strict rate limit. This is the biggest bottleneck in the project. I'm currently looking for a better alternative.
+
+    **Note:** At the time of this writing (5/31/2024), Google's Generative AI API does not require an API key.
+
+    **Note:** OpenAI's API requires an API key. You can get one [here](https://beta.openai.com/signup/). The latest model used in the project is GPT-4o. 
+
+5. Run the server
+    ```sh
+    python manage.py runserver
+    ```
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
-<!-- USAGE EXAMPLES -->
 ## Usage
 
-<Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.>
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
-
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
+### Web Application
+1. Use the form on the landing page to upload an image of a bookshelf/bookcase, enter your email address, and choose the export format.
+2. Submit the form.
+3. Sit back and relax while the application identifies all the books in the image. You will receive an email when the process is complete.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
-<!-- CONTRIBUTING -->
-## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- LICENSE -->
-## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+### Terminal Application
+1. Run the terminal application
+    ```sh
+    python vision.py
+    ```
+2. Follow the prompts to upload an image of a bookshelf/bookcase and choose the export format/destination.
+3. Watch the magic happen by following the progress logs in the terminal. 
 
 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Cory Suzuki - bookcasedatabase@gmail.com
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/MyPetLobster/booksight](https://github.com/MyPetLobster/booksight)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -203,16 +210,8 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
-
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
 * [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
