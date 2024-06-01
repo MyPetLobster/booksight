@@ -29,18 +29,8 @@ def vision(request, image_path, new_scan):
 
     email_address = request.session.get('email')
     output_formats = request.session.get('formats')
-    ai_model = request.session.get('ai_model')
-    ai_temp = request.session.get('ai_temp')
     torch_confidence = request.session.get('torch_confidence')
-
-    log_print("\nAI and Computer Vision Settings:\n")
-    if ai_model.startswith("gpt"):
-        log_print(f"    - AI Model: {ai_model}\n    - AI Temp: {ai_temp}\n")
-    elif ai_model.startswith("gemini"):
-        log_print(f"    - AI Model: {ai_model}\n")
-    log_print(f"    - Torchvision Confidence Threshold: {torch_confidence}\n")
     
-
     start = time.time()
 
     log_print("\n\n**************** PHASE ONE - BOOK SPINE IDENTIFICATION *****************\n\n")
