@@ -17,7 +17,7 @@ from dashboard.models import Scan
 from booksight.settings import MEDIA_URL
 
 
-def vision(request, image_path, email_address, output_formats, new_scan):
+def vision(request, image_path, new_scan):
     # Delete all scans except most recent
     Scan.objects.exclude(id=new_scan.id).delete()
 
@@ -28,21 +28,21 @@ def vision(request, image_path, email_address, output_formats, new_scan):
     log_print("\nWelcome to Booksight!\n")
     log_print("\nBeginning the Vision process.\n")
 
-
+    email_address = request.session.get('email')
+    output_formats = request.session.get('formats')
     ai_model = request.session.get('ai_model')
     ai_temp = request.session.get('ai_temp')
     torch_confidence = request.session.get('torch_confidence')
 
-    log_print("\nAI Settings:\n")
+    log_print("\nAI and Computer Vision Settings:\n")
     if ai_model.startswith("gpt"):
         log_print(f"    - AI Model: {ai_model}\n")
         log_print(f"    - AI Temp: {ai_temp}\n")
     elif ai_model.startswith("gemini"):
         log_print(f"    - AI Model: {ai_model}\n")
-
     log_print(f"    - Torchvision Confidence Threshold: {torch_confidence}\n")
     
-
+    
     start = time.time()
 
     log_print("\n\n**************** PHASE ONE - BOOK SPINE IDENTIFICATION *****************\n\n")
@@ -198,6 +198,8 @@ def vision(request, image_path, email_address, output_formats, new_scan):
     json_file = export.export_to_json(books)
     xml_file = export.export_to_xml(books)
     txt_file = export.export_to_text(books)
+    
+
 
     if email_address:
         

@@ -39,9 +39,12 @@ def vision(request):
         torch_confidence = float(request.POST.get('torch-confidence')) 
 
         # Save settings in session storage
+        request.session['email'] = email
+        request.session['formats'] = formats
         request.session['ai_model'] = ai_model
         request.session['ai_temp'] = ai_temp
         request.session['torch_confidence'] = torch_confidence
+
 
         log_print('\nForm Submitted, new scan request details:\n')
         log_print(f'Email: {email}')
@@ -64,7 +67,7 @@ def vision(request):
         request.session['uploaded_image'] = upload_path
 
         # Create separate thread to run Vision app
-        thread = threading.Thread(target=vision_app, args=(request, upload_path, email, formats, new_scan))
+        thread = threading.Thread(target=vision_app, args=(request, upload_path, new_scan))
         thread.setDaemon(True)
         thread.start()
 
