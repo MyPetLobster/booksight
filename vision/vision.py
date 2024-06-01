@@ -24,8 +24,7 @@ def vision(request, image_path, new_scan):
     new_scan.scan_status = "running"
     new_scan.save()
 
-    log_print("\n\n************************************************\n")
-    log_print("Welcome to Booksight!\n\nBeginning the Vision process.\n")
+    log_print("Welcome to Booksight!\n\nBeginning the Vision process.")
 
     email_address = request.session.get('email')
     output_formats = request.session.get('formats')
@@ -33,14 +32,15 @@ def vision(request, image_path, new_scan):
     
     start = time.time()
 
-    log_print("\n\n**************** PHASE ONE - BOOK SPINE IDENTIFICATION *****************\n\n")
+    log_print("\n\n\n**************** PHASE ONE - BOOK SPINE IDENTIFICATION *****************\n\n\n")
 
     ### Book Object Detection ###
     # Detect book spines and create individual spine jpegs
     log_print("Beginning book spine detection in the uploaded image...\n")
     log_print(f"Image path: {image_path}\n")
-
+    log_print("Cropping book spines (see media/detection_temp/spines/ dir)...\n")
     spine_images, spine_count = ds.crop_spines(image_path, new_scan, torch_confidence)
+    log_print(f"Spine images saved in 'media/detection_temp/spines/'\n")
 
     if spine_images == None or spine_count == None:
         log_print("\nNo valid books detected. Exiting program.\n")
@@ -53,16 +53,12 @@ def vision(request, image_path, new_scan):
    
     spine_detection_end = time.time()
     log_print(f"Spine detection complete. Time taken: {round(spine_detection_end - start, 2)} seconds\n")
-    log_print("\n************************************************\n")
 
     if spine_count < 10:
         log_print("\nAnalyzing images and creating Spine objects. This may take several minutes...\n\n")
     else:
         log_print("\nAnalyzing images and creating Spine objects. This image contains a lot of books. Go stretch your legs. This may take a while...\n")
 
-
-    ### OCR Text Detection ###
-    # Create Spine objects - Detect text, colors, and dimensions
     spines = []
     i = 0
     for image in spine_images:
@@ -81,14 +77,12 @@ def vision(request, image_path, new_scan):
     spine_object_count = len(spines)
 
     log_print(f"\n{spine_object_count} 'Spine' objects created.\nTime taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
-    log_print("************************************************\n")
 
     all_spine_text = []
     for spine in spines:
         all_spine_text += spine.text 
 
     log_print(f"All text detected from all spines:\n\n{all_spine_text}\n")
-    log_print("************************************************\n")
     log_print("\nScanning full image for additional text.\nLarge images may take a while to process...\n")
 
     full_scan_start = time.time()
@@ -96,9 +90,7 @@ def vision(request, image_path, new_scan):
     full_scan_end = time.time()
 
     log_print(f"Full image scan complete.\nTime taken: {round(full_scan_end - full_scan_start, 2)} seconds\n")
-    log_print("************************************************\n")
 
-    # get all images from media/detection_temp/debug_images and save paths to all_debug_images
     all_debug_images = []
     debug_images = os.listdir("media/detection_temp/debug_images")
     for image in debug_images:
@@ -137,12 +129,10 @@ def vision(request, image_path, new_scan):
     new_scan.scan_status = "ai-complete"
     new_scan.save()
 
-    log_print("\n***********************************************\n")
     log_print("\nAll updated Spine objects:\n")
     for spine in spines:
         log_print(spine)
         log_print("\n")
-    log_print("\n***********************************************\n")
 
 
     ### Book Matching ###
@@ -190,8 +180,8 @@ def vision(request, image_path, new_scan):
 
 def match_spines_to_books(spines):
     """
-    This function matches Spine objects to Book objects by comparing the text detected on the spines to potential ISBNs
-    retrieved from Open Library and Google Books APIs. The function returns a list of Book objects.
+    This function matches Spine objects to Book objects by comparing the dimensions and color data from the detected spines to the
+    data retrieved from Open Library and Google Books APIs. The function returns a list of Book objects.
 
     Args:
         spines (list): A list of Spine objects.
@@ -209,30 +199,34 @@ def match_spines_to_books(spines):
     color_filter = (1, 1, 1)
     px_to_inches = 1
 
+    def confidence_check(confidence, spine, isbn, threshold):
+        if confidence == 34:
+            log_print(f"\nSorry, we were unable to identify the specific edition of {spine.title}.\n The spine was undetected by torchvision and identified with AI model during OCR cleanup.\n")
+            log_print("No dimensions or color to match. General information only for this book.\n")
+            book = match.create_book_object(isbn, 0)
+            books.append(book)
+            log_print(f"Book object for {spine.title}: {book}\n")
+            return True
+        elif confidence > threshold:
+            potential_matches[isbn] = confidence
+            log_print(f"\n{spine.title} identified with ISBN: {isbn}")
+            log_print(f"Identification confidence: {confidence}\n")
+
+        return False
+    
     for spine in spines:
         second_pass = False
         possible_isbns = spine.possible_matches
         total_potential_isbns += len(possible_isbns)
         potential_matches = {}
-        book_created = False  # Flag to check if a book has been created
+        book_created = False  
 
         for isbn in possible_isbns:
             confidence, color_filter, px_to_inches, second_pass, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass)
-
-            if confidence == 34:
-                log_print(f"\nSorry, we were unable to identify the specific edition of {spine.title}.\n The spine was undetected by torchvision and identified with AI model during OCR cleanup.\n")
-                log_print("No dimensions or color to match. General information only for this book.\n")
-                book = match.create_book_object(isbn, 0)
-                books.append(book)
-                log_print(f"Book object for {spine.title}: {book}\n")
-                log_print("\n************************************************************\n\n")
-                book_created = True  # Set the flag to True
+            book_created = confidence_check(confidence, spine, isbn, 0.2)
+            if book_created:
                 break
-            if confidence >= 0.2:
-                potential_matches[isbn] = confidence
-                log_print(f"\n{spine.title} identified with ISBN: {isbn}\n")
-                log_print(f"Identification confidence: {confidence}\n")
-        
+
         if book_created:
             continue  # Skip to the next spine if a book has been created
 
@@ -240,32 +234,21 @@ def match_spines_to_books(spines):
             second_pass = True
             for isbn in possible_isbns:
                 confidence, color_filter, px_to_inches, second_pass, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass)
-                if confidence == 34:
-                    log_print(f"\nSorry, we were unable to identify the specific edition of {spine.title}.\n The spine was undetected by torchvision and identified with AI model during OCR cleanup.\n")
-                    log_print("No dimensions or color to match. General information only for this book.\n")
-                    book = match.create_book_object(isbn, 0)
-                    books.append(book)
-                    log_print(f"Book object for {spine.title}: {book}\n")
-                    log_print("\n************************************************************\n\n")
-                    book_created = True  # Set the flag to True
+                book_created = confidence_check(confidence, spine, isbn, 0.0)
+                if book_created:
                     break
-                if confidence >= 0.0:
-                    potential_matches[isbn] = confidence
-                    log_print(f"\n{spine.title} identified with ISBN: {isbn}\n")
-                    log_print(f"Identification confidence: {confidence}\n")
 
         if book_created:
-            continue  # Skip to the next spine if a book has been created
+            continue
 
         if len(potential_matches) == 0 and second_pass:
-            log_print(f"\nWe're sorry! '{spine.title}' could not be identified. Book object created with only detected title and authors.\n")
+            log_print(f"\nWe're sorry! '{spine.title}' could not be identified. Book object created using only detected title and authors.\n")
             book = Book()
             book.title = spine.title
             book.authors = spine.author
             book.confidence = 0
             books.append(book)
             log_print(f"\nBook object for {spine.title}: {book}\n")
-            log_print("\n************************************************************\n\n")
         else:
             best_match = max(potential_matches, key=potential_matches.get)
             log_print(f"\n{spine.title} identified with ISBN: {best_match}\n")
@@ -273,13 +256,12 @@ def match_spines_to_books(spines):
             book = match.create_book_object(best_match, potential_matches[best_match])
             books.append(book)
             log_print(f"\nBook object for {spine.title}: {book}\n")
-            log_print("\n************************************************************\n\n")
 
     end_spine_match = time.time()
-    log_print(f"\nSpine matching complete. Time taken: {round(end_spine_match - start_spine_match, 2)} seconds\n")
-    log_print(f"\nTotal spines checked: {total_spines}\n")
-    log_print(f"\nTime taken per spine: {round((end_spine_match - start_spine_match) / total_spines, 2)} seconds\n")
-    log_print(f"\nTotal potential ISBNs checked: {total_potential_isbns}\n")
+    log_print(f"Spine matching complete. Time taken: {round(end_spine_match - start_spine_match, 2)} seconds")
+    log_print(f"Total spines checked: {total_spines}")
+    log_print(f"Time taken per spine: {round((end_spine_match - start_spine_match) / total_spines, 2)} seconds")
+    log_print(f"Total potential ISBNs checked: {total_potential_isbns}")
     log_print(f"Time taken per potential ISBN: {round((end_spine_match - start_spine_match) / total_potential_isbns, 2)} seconds\n")
 
     return books

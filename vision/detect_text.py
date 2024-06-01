@@ -65,7 +65,7 @@ def detect_text(image_path):
     log_print(f"Text detected Rotate 90 No Threshold: {no_threshold_90}\n")
 
 
-    log_print("\n\nCompleted text detection. Combining results...\n")    
+    log_print("\nCompleted text detection. Combining results...\n")    
     book_text_list.extend(original_90)
     book_text_list.extend(no_threshold)
     book_text_list.extend(no_threshold_90)

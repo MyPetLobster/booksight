@@ -37,8 +37,6 @@ def crop_spines(jpeg_file, new_scan, torch_confidence):
         list: A list of paths to the cropped book spine images.
         int: The number of book spines detected.
     """
-    # Detect book spines
-    log_print("\nCropping book spines (see media/detection_temp/spines/ dir)...\n")
     book_boxes, bbox_path = detect_spines(jpeg_file, torch_confidence)
     if book_boxes == None:
         return None, None
@@ -59,7 +57,7 @@ def crop_spines(jpeg_file, new_scan, torch_confidence):
         list_of_spine_images.append(spine_path)
 
     spine_count = len(list_of_spine_images)
-    log_print(f"Spine images saved in 'media/detection_temp/spines/'\n")
+
 
     return list_of_spine_images, spine_count
 
