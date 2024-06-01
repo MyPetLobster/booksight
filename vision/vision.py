@@ -25,7 +25,7 @@ def vision(request, image_path, new_scan):
     new_scan.save()
 
     log_print("\n\n************************************************\n")
-    log_print("Welcome to Booksight!\nBeginning the Vision process.\n")
+    log_print("Welcome to Booksight!\n\nBeginning the Vision process.\n")
 
     email_address = request.session.get('email')
     output_formats = request.session.get('formats')
@@ -51,6 +51,7 @@ def vision(request, image_path, new_scan):
     log_print(f"Image path: {image_path}\n")
 
     spine_images, spine_count = ds.crop_spines(image_path, new_scan, torch_confidence)
+
     if spine_images == None or spine_count == None:
         log_print("\nNo valid books detected. Exiting program.\n")
         new_scan.scan_status = "failed"
@@ -78,6 +79,7 @@ def vision(request, image_path, new_scan):
         log_print(f"Analyzing detected_spine_{i}. Extracting color data and dimensions.\n")
         avg_color, dominant_color, color_palette, height, width = asp.analyze_spine(image)
         log_print(f"Color and dimension data extracted from detected_spine_{i}.\n")
+
         log_print(f"\nBeginning OCR text detection on detected_spine_{i}...\n")
         text = dt.detect_text(image)
         spine = Spine(image, avg_color, dominant_color, color_palette, height, width, text)
@@ -87,19 +89,17 @@ def vision(request, image_path, new_scan):
         i += 1
     spine_object_end = time.time()
     spine_object_count = len(spines)
-    log_print(f"\n{spine_object_count} 'Spine' objects created.\nTime taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
 
+    log_print(f"\n{spine_object_count} 'Spine' objects created.\nTime taken: {round(spine_object_end - spine_detection_end, 2)} seconds\n")
     log_print("************************************************\n")
-    # Get all scanned text from each Spine
+
     all_spine_text = []
     for spine in spines:
         all_spine_text += spine.text 
 
     log_print(f"All text detected from all spines:\n\n{all_spine_text}\n")
-
     log_print("************************************************\n")
-    log_print("\nScanning full image for additional text...\n")
-    log_print("\nLarge images may take a while to process.\n")
+    log_print("\nScanning full image for additional text.\nLarge images may take a while to process...\n")
 
     full_scan_start = time.time()
     full_image_text = dt.detect_text(image_path)
@@ -122,12 +122,12 @@ def vision(request, image_path, new_scan):
     new_scan.text_images = all_debug_images
     new_scan.save()
 
+    # Remove any text with less than 2 characters
     full_image_text = [text for text in full_image_text if len(text) > 2]
-    
-    full_image_text_unique = [text for text in full_image_text if text not in all_spine_text] 
+    full_image_text = [text for text in full_image_text if text not in all_spine_text] 
 
 
-    log_print(f"\nAll additional unique text detected from full image:\n\n{full_image_text_unique}\n")
+    log_print(f"\nAll additional unique text detected from full image:\n\n{full_image_text}\n")
     log_print("\nAll image processing and OCR operations complete.\n")
     ocr_end = time.time()
     log_print(f"Total time taken for image processing and OCR: {round(ocr_end - start, 2)} seconds\n")
@@ -135,12 +135,11 @@ def vision(request, image_path, new_scan):
 
     ### Book Identification ###
     log_print("\n\n************** PHASE TWO - BOOK IDENTIFICATION & MATCHING **************\n\n")
-
     log_print("\nBegin precise book identification process...\n")
     
     # Clean up text data using AI and retrieve potential ISBNs for each spine
     log_print("Cleaning up text data and making preliminary title/author identification with AI model...\n")
-    spines = match.id_possible_matches(request, spines, full_image_text_unique)
+    spines = match.id_possible_matches(request, spines, full_image_text)
     log_print("Text data cleanup and preliminary identification complete.\n")
     ai_end = time.time()
     log_print(f"Total time taken for AI processing and ISBN retrieval: {round(ai_end - ocr_end, 2)} seconds\n")
@@ -159,74 +158,44 @@ def vision(request, image_path, new_scan):
     ### Book Matching ###
     log_print("\nBegin precise book identification process.\nThis may take a while...\n")
     books = match_spines_to_books(spines)
-    log_print("\nBook identification process complete.\n")
     match_end = time.time()
-    log_print(f"Total time taken for book identification: {round(match_end - ai_end, 2)} seconds\n")
+    log_print(f"\nBook identification process complete.\n\nTotal time taken for book identification: {round(match_end - ai_end, 2)} seconds\n")
 
     log_print("\nAll identified books:\n")
     for book in books:
         log_print(f"{book}\n")
 
-  
     log_print("\n\n**************************** VISION COMPLETE ***************************\n\n")
     
-
     total_books = len(books)
     total_confident_books = len([book for book in books if book.confidence > 0])
     end_time = time.time()
     total_time = end_time - start
     time_per_book = total_time / total_books
 
-    log_print(f"Total books identified: {total_books}\n")
-    log_print(f"Total books with precise identification: {total_confident_books}\n")
-    log_print(f"Time taken per book: {round(time_per_book, 2)} seconds\n")
-    log_print(f"Total time taken to complete Booksight Vision process: {round(time.time() - start, 2)} seconds\n\n")
+    log_print(f"Total books identified: {total_books}")
+    log_print(f"Total books with precise identification: {total_confident_books}")
+    log_print(f"Time taken per book: {round(time_per_book, 2)} seconds")
+    log_print(f"Total time taken to complete Booksight Vision process: {round(time.time() - start, 2)} seconds\n")
 
 
-    # Export identified books to CSV and JSON
-    log_print("Exporting identified books to CSV, JSON, XML, and TXT\n")
+    log_print("\n\n**************** PHASE THREE - EXPORTING RESULTS *****************\n\n")
 
-    csv_file = export.export_to_csv(books)
-    json_file = export.export_to_json(books)
-    xml_file = export.export_to_xml(books)
-    txt_file = export.export_to_text(books)
-    
+    log_file_path = util.retrieve_last_log_file()
+    sent = export.export_books(books, output_formats, email_address, log_file_path)
 
+    if sent:
+        new_scan.scan_status = "completed"
+        new_scan.save()
+        log_print("\nExport complete. Results sent to user.\n")
+    else:
+        new_scan.scan_status = "failed"
+        new_scan.save()
+        log_print("\nExport failed. Results not sent to user.\n")
 
-    if email_address:
-        
-        if output_formats == None:
-            output_files = [csv_file, json_file, xml_file, txt_file]
-        else:
-            output_files = []
-            if "csv" in output_formats:
-                output_files.append(csv_file)
-            if "json" in output_formats:
-                output_files.append(json_file)
-            if "xml" in output_formats:
-                output_files.append(xml_file)
-            if "txt" in output_formats:
-                output_files.append(txt_file)
-
-        log_print("\nOutput files selected for email:\n")
-        for file in output_files:
-            log_print(file)
-            log_print("\n")
-        log_print("\nSending email with exports...\n")
-
-        log_file_path = util.retrieve_last_log_file()
-        
-        export.email_file(output_files, email_address, log_file_path)
-
-
-
-    new_scan.scan_status = "completed"
-    new_scan.save()
-
-    log_print("\n\nAll processes complete. Thank you for using Booksight.\n")
+    log_print("\nAll processes complete. Thank you for using Booksight.\n\n")
     
     return
-
 
 
 def match_spines_to_books(spines):

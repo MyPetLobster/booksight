@@ -8,6 +8,40 @@ import json
 from . import utility as util
 
 
+def export_books(books, formats, user_email, log_file_path):
+    """
+    This function exports the list of Book objects to the specified formats.
+    
+    Args:
+        books (list): A list of Book objects.
+        formats (list): A list of file formats to export to.
+        user_email (str): The email address to send the exported files to.
+        log_file_path (str): The path to the log file.
+    """
+    
+    exported_files = []
+    
+    if 'csv' in formats:
+        csv_file = export_to_csv(books)
+        exported_files.append(csv_file)
+    
+    if 'json' in formats:
+        json_file = export_to_json(books)
+        exported_files.append(json_file)
+    
+    if 'xml' in formats:
+        xml_file = export_to_xml(books)
+        exported_files.append(xml_file)
+    
+    if 'text' in formats:
+        text_file = export_to_text(books)
+        exported_files.append(text_file)
+    
+    email_file(exported_files, user_email, log_file_path)
+
+    return True
+
+
 def export_to_csv(books):
     """
     This function takes a list of Book objects and exports them to a CSV file.

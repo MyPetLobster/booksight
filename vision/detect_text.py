@@ -31,9 +31,13 @@ def detect_text(image_path):
 
         result = reader.readtext(preprocessed_image, detail=1)
 
-        img_path = draw_bounding_boxes(preprocessed_image, result, image_path)
-
-        return [text for bbox, text, _ in result if len(text) > 2]
+        bboxes_drawn = draw_bounding_boxes(preprocessed_image, result, image_path)
+        if bboxes_drawn:
+            log_print(f"Bounding boxes drawn for image: {image_path}\n")
+            return [text for bbox, text, _ in result if len(text) > 2]
+        else:
+            log_print(f"Bounding boxes not drawn for image: {image_path}\n")
+            return []
 
     original_image = cv.imread(image_path)
 
@@ -136,8 +140,9 @@ def draw_bounding_boxes(image, detections, image_path):
     # Save text detection images to media/detection_temp/debug_images    
     text_detect_path = os.path.join(MEDIA_ROOT, f"detection_temp/debug_images/{filename}_text_detection_{timestamp}.jpeg")
     cv.imwrite(text_detect_path, image_with_boxes)
-    text_detect_url = os.path.join(MEDIA_URL, f"detection_temp/debug_images/{filename}_text_detection_{timestamp}.jpeg")
-    return text_detect_url
+
+    if os.path.exists(text_detect_path):
+        return True
 
 
 def adjust_brightness(image):
