@@ -25,8 +25,7 @@ def vision(request, image_path, new_scan):
     new_scan.save()
 
     log_print("\n\n************************************************\n")
-    log_print("\nWelcome to Booksight!\n")
-    log_print("\nBeginning the Vision process.\n")
+    log_print("Welcome to Booksight!\nBeginning the Vision process.\n")
 
     email_address = request.session.get('email')
     output_formats = request.session.get('formats')
@@ -36,13 +35,12 @@ def vision(request, image_path, new_scan):
 
     log_print("\nAI and Computer Vision Settings:\n")
     if ai_model.startswith("gpt"):
-        log_print(f"    - AI Model: {ai_model}\n")
-        log_print(f"    - AI Temp: {ai_temp}\n")
+        log_print(f"    - AI Model: {ai_model}\n    - AI Temp: {ai_temp}\n")
     elif ai_model.startswith("gemini"):
         log_print(f"    - AI Model: {ai_model}\n")
     log_print(f"    - Torchvision Confidence Threshold: {torch_confidence}\n")
     
-    
+
     start = time.time()
 
     log_print("\n\n**************** PHASE ONE - BOOK SPINE IDENTIFICATION *****************\n\n")
@@ -53,21 +51,20 @@ def vision(request, image_path, new_scan):
     log_print(f"Image path: {image_path}\n")
 
     spine_images, spine_count = ds.crop_spines(image_path, new_scan, torch_confidence)
-    if spine_images == None:
+    if spine_images == None or spine_count == None:
         log_print("\nNo valid books detected. Exiting program.\n")
         new_scan.scan_status = "failed"
         new_scan.save()
         return
+    else:
+        new_scan.scan_status = "bbox-detected"
+        new_scan.save()
    
     spine_detection_end = time.time()
     log_print(f"Spine detection complete. Time taken: {round(spine_detection_end - start, 2)} seconds\n")
     log_print("\n************************************************\n")
-    if spine_count == 0:
-        log_print("\nNo books detected. Exiting program.\n")
-        return
-    elif 0 < spine_count < 20:
-        new_scan.scan_status = "bbox-detected"
-        new_scan.save()
+
+    if spine_count < 10:
         log_print("\nAnalyzing images and creating Spine objects. This may take several minutes...\n\n")
     else:
         log_print("\nAnalyzing images and creating Spine objects. This image contains a lot of books. Go stretch your legs. This may take a while...\n")
@@ -75,8 +72,6 @@ def vision(request, image_path, new_scan):
 
     ### OCR Text Detection ###
     # Create Spine objects - Detect text, colors, and dimensions
-    # TODO - Am I actually using all_text_image_paths?
-    all_text_image_paths = []
     spines = []
     i = 0
     for image in spine_images:
@@ -84,8 +79,7 @@ def vision(request, image_path, new_scan):
         avg_color, dominant_color, color_palette, height, width = asp.analyze_spine(image)
         log_print(f"Color and dimension data extracted from detected_spine_{i}.\n")
         log_print(f"\nBeginning OCR text detection on detected_spine_{i}...\n")
-        text, idv_spine_text_img_paths = dt.detect_text(image)
-        all_text_image_paths = ",".join(idv_spine_text_img_paths)
+        text = dt.detect_text(image)
         spine = Spine(image, avg_color, dominant_color, color_palette, height, width, text)
         spines.append(spine)
         log_print(f"Detected_spine_{i} analyzed and Spine object created.\n")
@@ -108,15 +102,12 @@ def vision(request, image_path, new_scan):
     log_print("\nLarge images may take a while to process.\n")
 
     full_scan_start = time.time()
-    full_image_text, text_image_paths = dt.detect_text(image_path)
+    full_image_text = dt.detect_text(image_path)
     full_scan_end = time.time()
-    all_text_image_paths = ",".join(text_image_paths)
 
     log_print(f"Full image scan complete.\nTime taken: {round(full_scan_end - full_scan_start, 2)} seconds\n")
     log_print("************************************************\n")
-    log_print(f"Debug - All text image paths: {all_text_image_paths}\n")
 
-    # TODO - is this the same as all_text_image_paths?
     # get all images from media/detection_temp/debug_images and save paths to all_debug_images
     all_debug_images = []
     debug_images = os.listdir("media/detection_temp/debug_images")
@@ -124,6 +115,7 @@ def vision(request, image_path, new_scan):
         all_debug_image_paths = os.path.join(MEDIA_URL, f"detection_temp/debug_images/{image}")
         all_debug_images.append(all_debug_image_paths)
 
+    # convert list of image paths to a string
     all_debug_images = ",".join(all_debug_images)
 
     new_scan.scan_status = "text-detected"

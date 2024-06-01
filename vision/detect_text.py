@@ -22,8 +22,6 @@ def detect_text(image_path):
     """
     reader = ocr.Reader(lang_list=['en'], gpu=True)
 
-    text_detection_image_paths = []
-
     def process_image(image, with_threshold, to_preprocess):
         log_print(f"preprocess: {to_preprocess}\nthreshold: {with_threshold}\n")
         if to_preprocess:
@@ -34,7 +32,6 @@ def detect_text(image_path):
         result = reader.readtext(preprocessed_image, detail=1)
 
         img_path = draw_bounding_boxes(preprocessed_image, result, image_path)
-        text_detection_image_paths.append(img_path)
 
         return [text for bbox, text, _ in result if len(text) > 2]
 
@@ -77,7 +74,7 @@ def detect_text(image_path):
 
     log_print(f"Unique text list: {book_text_list}\n\n")
 
-    return book_text_list, text_detection_image_paths
+    return book_text_list
 
 
 def preprocess(image, threshold):
