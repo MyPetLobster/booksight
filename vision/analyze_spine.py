@@ -31,8 +31,11 @@ def find_average_color_simple(image_path):
     Returns:
         np.array: An array containing the average color values.
     """
+    # Open image with PIL and convert to numpy array with uint8 data type
     image = Image.open(image_path)
     image_array = np.array(image, dtype=np.uint8)
+
+    # Find average color by taking the mean of all pixel values
     average_color = np.mean(image_array, axis=(0, 1)).astype(int)
 
     return average_color
@@ -48,6 +51,7 @@ def find_color_palette(image_path):
     Returns:
         tuple: A tuple containing the dominant color, color palette, height, and width of the image.
     """
+    # Read image using matplotlib and reshape pixel values for KMeans clustering
     image = mpimg.imread(image_path)
     height, width, depth = image.shape
     pixels = image.reshape((height * width, depth))
