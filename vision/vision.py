@@ -1,9 +1,6 @@
 import os
 import time
 
-from django.contrib.sessions.models import Session
-
-
 from . import analyze_spine as asp
 from . import detect_spines as ds
 from . import detect_text as dt
@@ -18,27 +15,30 @@ from booksight.settings import MEDIA_URL
 
 
 def vision(request, image_path, new_scan):
-    # Delete all scans except most recent
+    # Delete all scans except most recent - no persistent db storage, one scan at a time.
     Scan.objects.exclude(id=new_scan.id).delete()
 
+    # Set status to running - used for ajax polling
     new_scan.scan_status = "running"
     new_scan.save()
 
     log_print("Welcome to Booksight!\n\nBeginning the Vision process.")
 
+    # Retrieve session data set in dashboard/views.py
     email_address = request.session.get('email')
     output_formats = request.session.get('formats')
     torch_confidence = request.session.get('torch_confidence')
     
-    start = time.time()
 
     log_print("\n\n\n**************** PHASE ONE - BOOK SPINE IDENTIFICATION *****************\n\n\n")
+    start = time.time()
 
     ### Book Object Detection ###
-    # Detect book spines and create individual spine jpegs
     log_print("Beginning book spine detection in the uploaded image...\n")
     log_print(f"Image path: {image_path}\n")
     log_print("Cropping book spines (see media/detection_temp/spines/ dir)...\n")
+
+    # Detect book spines and create individual spine jpegs and bbox image
     spine_images, spine_count = ds.crop_spines(image_path, new_scan, torch_confidence)
     log_print(f"Spine images saved in 'media/detection_temp/spines/'\n")
 
