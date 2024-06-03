@@ -7,13 +7,13 @@ from PIL import Image
 from mimetypes import guess_type
 from rich import print as rprint
 
+# These variables are defined when the module is imported, so they are available to all functions in the module, unique to each session.
 timestamp = time.strftime("%Y%m%d-%H%M%S")
 date = time.strftime("%Y%m%d")
 
 
 def create_log_file():
-    """ Creates a log file for the current session. """
-   # Create new log dir for each day formatted like 'booksight/logs/240515/booksight_{timestamp}.log'
+    """Creates new log directory each day and a new log file for each session."""
     if not os.path.exists(f'booksight/logs/{date}'):
         print(f"Creating new log directory for {date}")
         os.makedirs(f'booksight/logs/{date}')
@@ -24,7 +24,7 @@ def create_log_file():
     
 
 def log_print(message):
-    """ Prints a message and logs it to a text file. """
+    """Prints a message and logs it to a text file."""
     
     with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'a') as file:
         file.write(f"{message}\n")
@@ -32,7 +32,7 @@ def log_print(message):
 
 
 def retrieve_last_log_file():
-    """ Returns the path to the most recent log file. """
+    """Returns the path to the most recent log file."""
     
     log_dir = f'booksight/logs/{date}'
     log_files = os.listdir(log_dir)
@@ -72,24 +72,3 @@ def empty_export_dirs():
                     shutil.rmtree(file_path)
             except Exception as e:
                 log_print(f"Failed to delete {file_path}. Reason: {e}")
-
-
-def convert_img_to_data(image_path):
-    """ Converts an image file to base64 data. """
-
-    mime_type, _ = guess_type(image_path)
-
-    if mime_type is None:
-        mime_type = "image/jpeg"
-    with open(image_path, "rb") as image_file:
-        # Shrink image to max size of 500px
-        image = Image.open(image_file)
-        image.thumbnail((500, 500))
-
-        # save as new image (append _resized to filename)
-        image.save(f"{image_path}_resized", "JPEG")
-                   
-        with open(f"{image_path}_resized", "rb") as image_file:
-            image_data = base64.b64encode(image_file.read()).decode("utf-8")
-
-    return f"data:{mime_type};base64,{image_data}"
