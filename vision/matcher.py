@@ -7,14 +7,11 @@ from io import BytesIO
 
 from . import analyze_spine as asp
 from . import db_requests as dbr
-from . import utility as util
+from . import gpt as gpt
+from . import gemini as gemini
 from .classes import Spine, Book
 from .token_counter import count_tokens
 from .utility import log_print
-
-
-from . import gpt as gpt
-from . import gemini as gemini
 
 
 
@@ -32,25 +29,25 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
         second_pass (bool): Whether to skip dimension checks.
 
     Returns:
-        tuple: A tuple containing the confidence score, updated color filter, updated pixel-to-inch ratio, and whether a second pass is needed.
+        tuple: A tuple containing the confidence score, updated color filter, updated pixel-to-inch ratio, and whether it's a second pass.
     """
+    # Assign confidence of 0 and get isbn info for this potential match
+    confidence = 0
+    p_match = dbr.get_isbn_info(isbn)
+
+    # Check if english language
+    # TODO: Add language detection
+    if p_match and p_match["language"].lower().strip() not in ["en", "eng", "english", "English", "EN", "ENG", "ENGLISH", "En"]:
+        log_print(f"Language: {p_match['language']}")
+        log_print("Booksight only supports English books at this time.\n")
+        return confidence, color_filter, px_to_inches, second_pass, isbn
+
+    # Handle spines undetected by torchvision
     if spine.height == None or spine.width == None or spine.text == None:
         log_print(f"\nSpine data is incomplete. This book likely went undetected by torchvision and was picked up by AI in full image OCR text.\n")
         log_print(f"\nPopulating Book Object with general data and skipping match process.\n")
-        confidence = 0
-        p_match = dbr.get_isbn_info(isbn)
-        # Check if english language
-        if p_match and p_match["language"].lower().strip() not in ["en", "eng", "english", "English", "EN", "ENG", "ENGLISH", "En"]:
-            log_print(f"Language: {p_match['language']}")
-            log_print("Booksight only supports English books at this time.\n")
-            return confidence, color_filter, px_to_inches, second_pass, isbn
-        else:
-            confidence = 34
-            return confidence, color_filter, px_to_inches, second_pass, isbn
-    
-    set_local_img = False
-    confidence = 0
-    p_match = dbr.get_isbn_info(isbn)
+        confidence = 34
+        return confidence, color_filter, px_to_inches, second_pass, isbn
 
     # Try to get an isbn13 if the provided isbn is not 13 digits
     if len(isbn) != 13:
@@ -59,14 +56,6 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
             isbn = p_match["isbn13"]
             p_match = dbr.get_isbn_info(isbn)
 
-    # Confirm that language is English 
-    # TODO: Add language detection
-    
-    if p_match and p_match["language"].lower().strip() not in ["en", "eng", "english", "English", "EN", "ENG", "ENGLISH", "En"]:
-        log_print(f"Language: {p_match['language']}")
-        log_print("Booksight only supports English books at this time.\n")
-        return confidence, color_filter, px_to_inches, second_pass, isbn
-    
     # Confirm that spine.title is included in p_match title
     if p_match and spine.title.lower().strip() in p_match["title"].lower().strip():
         pass
@@ -78,10 +67,13 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
         else:
             log_print(f"Title not found in ISBNdb data.\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
-    
+
     # Check if essential data is missing or incorrect
+    set_local_img = False
     if second_pass:
         log_print("\nSecond pass, skipping dimension checks.\n")
+        # If second pass, that means none of isbns returned a high enough confidence in first pass,
+        # so if no p_match at this point, we create a fake p_match with the spine dimensions and extracted spine image.
         if not p_match:
             # Create a fake p_match with the spine dimensions
             p_match = {
@@ -90,17 +82,21 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
                 "cover": spine.image_path
             }
             set_local_img = True
-        elif "height" not in p_match or "width" not in p_match or not p_match["height"] or not p_match["width"]:
-            p_match["height"] = spine.height * px_to_inches if px_to_inches else spine.height
-            p_match["width"] = spine.width * px_to_inches if px_to_inches else spine.width
+        else:
+            # Handle cases where p_match is missing essential data
+            if "height" not in p_match or "width" not in p_match or not p_match["height"] or not p_match["width"]:
+                p_match["height"] = spine.height * px_to_inches if px_to_inches else spine.height
+                p_match["width"] = spine.width * px_to_inches if px_to_inches else spine.width
             if "cover" not in p_match:
                 p_match["cover"] = spine.image_path
                 set_local_img = True
-
     else:
         if not p_match or "height" not in p_match or "width" not in p_match or not p_match["height"] or not p_match["width"]:
             log_print("\nEssential dimension data is missing or zero, skipping match checks for this ISBN.\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
+
+
+    # DIMENSION DATA COMPARISON
 
     # Calculate ratios if dimensions are valid
     p_match_height = p_match["height"]
@@ -113,92 +109,102 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     spine_ratio = spine_height / spine_width if spine_width else 0
     log_print(f"spine dimensions:\nheight: {spine_height}, width: {spine_width}, ratio: {spine_ratio}\n")
 
-    # Dimension checks
     if not second_pass:
         if px_to_inches != 1:
-            if 0.8 * spine_height <= p_match_height <= 1.2 * spine_height:
+            if 0.7 * spine_height <= p_match_height <= 1.3 * spine_height:
+                # Update confidence and set px_to_inches to the average of the current and p_match height ratio
                 confidence += 0.3
+                px_to_inches = (px_to_inches + (p_match["height"] / spine.height)) / 2
                 log_print("\np_match height match within 20%, confidence + 0.25\n")
             if 0.8 * spine_width <= p_match_width <= 1.2 * spine_width:
+                # Update confidence and px_to_inches again, but this time double the weight of the current height ratio
                 confidence += 0.2
+                px_to_inches = ((px_to_inches * 2) + (p_match["height"] / spine.height)) / 3
                 log_print("\np_match width match within 20%, confidence + 0.25\n")
+        else:
+            if p_match_ratio and 0.7 * p_match_ratio <= spine_ratio <= 1.3 * p_match_ratio:
+                # Update confidence and set px_to_inches to the ratio of the spine and p_match height
+                confidence += 0.3
+                px_to_inches = (p_match["height"] / spine.height) / 2
+                log_print(f"\np_match ratio match within 30% , confidence + 0.3\n\npx_to_inches updated to: {px_to_inches}\n")
+                if 0.8 * p_match_ratio <= spine_ratio <= 1.2 * p_match_ratio:
+                    confidence += 0.2
+                    log_print("\np_match ratio match within 20%, confidence + 0.2\n")
 
-        # Ratio checks
-        if p_match_ratio and 0.7 * p_match_ratio <= spine_ratio <= 1.3 * p_match_ratio:
-            confidence += 0.3
-            px_to_inches = p_match["height"] / spine.height
-            log_print(f"\np_match ratio match within 30% , confidence + 0.3\n\npx_to_inches set to: {px_to_inches}\n")
-            if 0.8 * p_match_ratio <= spine_ratio <= 1.2 * p_match_ratio:
-                confidence += 0.2
-                log_print("\np_match ratio match within 20%, confidence + 0.2\n")
 
+    # COLOR DATA COMPARISON
 
-    # Download cover image
+    # Download cover image for potential match
     p_match_cover_url = p_match["cover"]
 
-    if set_local_img:
-        p_match_cover_path = p_match_cover_url
-    else:
+    if not set_local_img:
         p_match_cover_path = download_image(p_match_cover_url, isbn)
 
-    # Retrieve color data for cover image
-    p_avg_color = asp.find_average_color_simple(p_match_cover_path)
-    p_dom_color, p_color_palette, h, w = asp.find_color_palette(p_match_cover_path)
-    avg_color, dom_color, color_palette = spine.avg_color, spine.dominant_color, spine.color_palette
+        # Validate that the cover image was downloaded
+        if p_match_cover_path == None:
+            log_print(f"Failed to download cover image for {isbn}. Skipping color comparison.\n")
+            return confidence, color_filter, px_to_inches, second_pass, isbn
 
-    log_print(f"p_match_color_data:\navg:{p_avg_color},\n{p_dom_color},\n{p_color_palette}\n")
-    log_print(f"spine_color_data:\navg:{avg_color},\n{dom_color},\n{color_palette}\n")
+        # Retrieve color data for cover image
+        p_avg_color = asp.find_average_color_simple(p_match_cover_path)
+        p_dom_color, p_color_palette, h, w = asp.find_color_palette(p_match_cover_path)
+        avg_color, dom_color, color_palette = spine.avg_color, spine.dominant_color, spine.color_palette
 
-    # Apply color filter
-    avg_color = tuple([avg_color[i] * color_filter[i] for i in range(3)])
-    dom_color = tuple([dom_color[i] * color_filter[i] for i in range(3)])
-    color_palette = [tuple([color_palette[i][j] * color_filter[j] for j in range(3)]) for i in range(6)]
+        log_print(f"p_match_color_data:\navg:{p_avg_color},\n{p_dom_color},\n{p_color_palette}\n")
+        log_print(f"spine_color_data:\navg:{avg_color},\n{dom_color},\n{color_palette}\n")
 
-    # Compare average color
-    avg_color_diff = sum([abs(avg_color[i] - p_avg_color[i]) for i in range(3)]) / 3
-    log_print(f"avg_color_diff: {avg_color_diff} for {isbn}\n")
-    if avg_color_diff < 100:
-        confidence += 0.2
-        # if color_filter not 1, 1, 1 find average color filter
-        if color_filter != [1, 1, 1]:
-            old_filter = color_filter
-            new_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
-            color_filter = [(new_filter[i] + old_filter[i]) / 2 for i in range(3)]
-        else:
-            color_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
+        # Apply color filter
+        avg_color = tuple([avg_color[i] * color_filter[i] for i in range(3)])
+        dom_color = tuple([dom_color[i] * color_filter[i] for i in range(3)])
+        color_palette = [tuple([color_palette[i][j] * color_filter[j] for j in range(3)]) for i in range(6)]
 
-        # dilute the filter to avoid overfitting, 80% dilution
-        color_filter = [(color_filter[i] + 4) / 5 for i in range(3)]
+        # Compare average color
+        avg_color_diff = sum([abs(avg_color[i] - p_avg_color[i]) for i in range(3)]) / 3
+        log_print(f"avg_color_diff: {avg_color_diff} for {isbn}\n")
+        if avg_color_diff < 100:
+            confidence += 0.2
+            # if color_filter not 1, 1, 1 find average color filter
+            if color_filter != [1, 1, 1]:
+                old_filter = color_filter
+                new_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
+                color_filter = [(new_filter[i] + old_filter[i]) / 2 for i in range(3)]
+            else:
+                color_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
 
-        log_print(f"avg color match, confidence + 0.2\nColor filter set to: {color_filter}\n ")
-    if avg_color_diff < 50:
-        confidence += 0.3
-        log_print("avg color match, confidence + 0.3\n")
-    # Compare dominant color
-    dom_color_diff = sum([abs(dom_color[i] - p_dom_color[i]) for i in range(3)]) / 3
-    log_print(f"dom_color_diff: {dom_color_diff} for {isbn}\n")
-    if dom_color_diff < 100:
-        confidence += 0.2
-        log_print("dom color match, confidence + 0.2\n")
-    if dom_color_diff < 50:
-        confidence += 0.3
-        log_print("dom color match, confidence + 0.3\n")
+            # dilute the filter to avoid overfitting, 80% dilution
+            color_filter = [(color_filter[i] + 4) / 5 for i in range(3)]
 
-    # Compare color palette
-    palette_diff = 0
-    for i in range(6):
-        palette_diff += sum([abs(color_palette[i][j] - p_color_palette[i][j]) for j in range(3)]) / 3
+            log_print(f"avg color match, confidence + 0.2\nColor filter set to: {color_filter}\n ")
+        if avg_color_diff < 50:
+            confidence += 0.3
+            log_print("avg color match, confidence + 0.3\n")
+        # Compare dominant color
+        dom_color_diff = sum([abs(dom_color[i] - p_dom_color[i]) for i in range(3)]) / 3
+        log_print(f"dom_color_diff: {dom_color_diff} for {isbn}\n")
+        if dom_color_diff < 100:
+            confidence += 0.2
+            log_print("dom color match, confidence + 0.2\n")
+        if dom_color_diff < 50:
+            confidence += 0.3
+            log_print("dom color match, confidence + 0.3\n")
 
-    log_print(f"palette_diff: {palette_diff} for {isbn}\n")
-    if palette_diff < 600:
-        confidence += 0.2
-        log_print("palette match, confidence + 0.2\n")
-    if palette_diff < 300:
-        confidence += 0.3
-        log_print("palette match, confidence + 0.3\n")
+        # Compare color palette
+        palette_diff = 0
+        for i in range(6):
+            palette_diff += sum([abs(color_palette[i][j] - p_color_palette[i][j]) for j in range(3)]) / 3
 
-
+        log_print(f"palette_diff: {palette_diff} for {isbn}\n")
+        if palette_diff < 600:
+            confidence += 0.2
+            log_print("palette match, confidence + 0.2\n")
+        if palette_diff < 300:
+            confidence += 0.3
+            log_print("palette match, confidence + 0.3\n")
+    else: 
+        log_print(f"Local image set for {isbn}. Skipping color comparison.\n")
+        
     log_print(f"Match confidence: {confidence}\ncolor_filter: {color_filter}\npx_to_inches: {px_to_inches}\n")
+
     return confidence, color_filter, px_to_inches, second_pass, isbn
 
 
@@ -223,6 +229,7 @@ def download_image(url, isbn):
 
     # Request the image from the web
     response = requests.get(url)
+
     if response.status_code == 200:
         # Open the image and save it to the file
         image = Image.open(BytesIO(response.content))
@@ -257,15 +264,6 @@ def id_possible_matches(request, spines, full_img_text):
     log_print(f"Number of books identified: {book_count}\n")
     log_print(f"Book Identification (Preliminary):\n{book_data_basic}\n")
 
-    # AI loop two, proofreader
-    # log_print("\nRunning GPT-4o Proofreader...\n")
-    # uploaded_image = request.session.get('uploaded_image')
-    # book_data_basic = gpt_proofreader(book_data_basic, uploaded_image)
-    # book_dict = json.loads(book_data_basic)
-    # book_count = len(book_dict)
-    # log_print(f"Number of books identified (Proofread): {book_count}\n")
-    # log_print(f"Book Identification (Proofread):\n{book_data_basic}\n")
-
     end_ai_process = time.time()
 
     log_print(f"\nAI processing complete. Time elapsed: {round(end_ai_process - start_ai_process, 2)} seconds.\n")
@@ -291,54 +289,21 @@ def id_possible_matches(request, spines, full_img_text):
     return spines
 
 
-def gpt_proofreader(book_data_basic, uploaded_image):
-    """
-    Double check the json object output listing the identified books. Image if uploaded to GPT-4o model to reference
-    when checking the json output. The json output will be checked for errors and corrected if necessary.
-    """
-    ai_model = "gpt-4o"
-    ai_temp = 0.5
-    data_url = util.convert_img_to_data(uploaded_image)
-    proofreader_prompt = f"""You will receive a JSON-formatted string containing a list of books identified from OCR text.
-    The OCR text was identified from the spines of books from an uploaded image. Computer vision was used to detect the spines,
-    so some spines may be missing. The first stage of AI processing has already attempted to identify any missing spines. But there
-    may still be missing, duplicate, or misidentified books. Your task is to review the json output while referencing the uploaded
-    image to correct any errors. Your goal is to respond with a json-formatted string that includes the correct author and title for
-    each book in the image. If you see 5 books in the image, you should provide 5 author/title pairs, even if the AI output only lists
-    4 books. If you see a book in the image that is not listed in the AI output, you should add that book to your response. If you see
-    a book listed in the AI output that is not in the image, you should remove that book from your response. If you see a book listed
-    in the AI output that is misidentified, you should correct the author and title. If everything's accurate, just return the same string.
-    You get the idea.
-
-    - IMPORTANT: DO NOT include any other text in your response. Your response will be directly interpreted as JSON data.
-    
-    Here is the output from the previous step of AI processing, delimited by three asterisks: ***{book_data_basic}***
-    
-    Here is the image data that you will be referencing, delimited by three asterisks: ***{data_url}***
-    """
-    proofreader_prompt_tokens = count_tokens(proofreader_prompt, ai_model)
-    log_print(f"Prompt token count for {ai_model}: {proofreader_prompt_tokens}\n")
-    log_print(f"Beginning proofreading with {ai_model} set to a temperature of {ai_temp}...\n")
-    proofreader_response = gpt.run_gpt(proofreader_prompt, ai_model, ai_temp)
-    log_print(f"Proofreading complete.\n")
-
-    return proofreader_response
-
-
 def identify_with_AI(request, prompt):
     """
-    Identify book titles and authors using AI. Choose between GPT and Gemini.
+    Identify book titles and authors using AI, fixes typos and formatting errors from OCR. Choose between GPT and Gemini.
 
     Args:
         prompt (str): The prompt message for the AI model.
 
     Returns:
-        str: The response from the AI model.
+        str: The response from the AI model (JSON-formatted string with book titles and authors).
     """
     ai_model = request.session.get('ai_model')
     ai_temp = request.session.get('ai_temp')
 
     if ai_model.startswith("gemini"):
+        # Use GPT-4o for token counting if using Gemini
         prompt_tokens = count_tokens(prompt, "gpt-4o")
     else:
         prompt_tokens = count_tokens(prompt, ai_model)
@@ -354,14 +319,14 @@ def identify_with_AI(request, prompt):
         log_print(f"Identification with {ai_model} complete.\nTime elapsed: {round(gpt_end - gpt_start, 2)} seconds.\n")
     elif ai_model.startswith("gemini"):
         log_print(f"You are using Gemini. Gemini token counting not yet implemented.")
-        log_print(f"Prompt token count for gpt-4o: {prompt_tokens}\n")
+        log_print(f"Prompt token count using gpt-4o tokenizer: {prompt_tokens}\n")
         gemini_start = time.time()
         log_print(f"Beginning identification with {ai_model}...\n")
         response = gemini.run_gemini(prompt, ai_model)
         gemini_end = time.time()
-        log_print(f"You are using Gemini. Gemini token counting not yet implemented.")
         response_tokens = count_tokens(response, "gpt-4o")
-        log_print(f"Response token count for gpt-4o: {response_tokens}\n")
+        log_print(f"You are using Gemini. Gemini token counting not yet implemented.")
+        log_print(f"Response token count using gpt-4o tokenizer: {response_tokens}\n")
         log_print(f"Identification with {ai_model} complete.\nTime elapsed: {round(gemini_end - gemini_start, 2)} seconds.\n")
     else:
         log_print("Invalid AI option. Please choose 'gpt' or 'gemini'.\n")
@@ -370,47 +335,16 @@ def identify_with_AI(request, prompt):
     return response
 
 
-### AI Prompt Message Formatting ###
-example_input_01 = """Individual Spine OCR Text:
-Book_0: ['uiz', 'Mcbij', 'JUNJI ITO', 'JUNII ITO', 'UZUMAkI', 'UZUMAKL'],
-Book_1: ['o} Aistont', 'Ului', 'History', 'ROME', 'o-~ Q m', 'BFARD', 'BEA RD', 'MA RY', 'Wumulii', 'MARY', '0 ~ Q x', '0i Ancieni'],
-Book_2: ['HA R U K /', ' 0 R W E 6 |A N', 'W 0 0 D', 'N 0 R W E 6 |a M', 'W 0 0 d', 'haruki Murakami', 'M U R a K a M /'],
-Book_3: ['STOrM', 'AVA', 'SEBASTIaI JuIGeR', 'New Tork', 'AUTHOR OF', 'AVAL', 'Auimor Of', 'NEW YORK', 'Sioat', 'TIMES', 'IME PtaftGT', 'The PERFECT', '1 WAR ipe SEBASTIAI JUHGER', 'D] WAR iI', 'BESTSELLER', 'TNIES'],
-Book_4: ['SYR?', 'Rure)', 'LER', 'THE LAUGHIng MONSTERS 8', 'DENIS JOHNSON', 'IER', 'DENIS', 'THE LAUGHING MONSTERS', 'JDANSOM'],
-
-Full Image OCR Text:
-['0, HKtONT', 'BEARD', 'DEMIS', 'Ha R U k / M U Ra Ka M [', 'WaEJ', 'W 0 0 |', 'UZUMAkL', 'WAR i', 'Jtorm', 'Toinegiam', 'LAUGHING MONSTERS', 'WAR', 'Joci', "Laughing WOnsteRs Qo IeXIS H8XSIX'", 'SEBASTIaI JUIGER 644', 'BYARD', 'Authon Or', 'M0 0 d', 'M 0 R W E 6 |a M', 'THE', 'MEW Tort', 'JDHMSOM', 'Maiuii muiaiami', 'O >', 'DeSTSELLEA', 'ROMF', 'SEBASTIAH JUNGER 64', 'Mennnnt']
-"""
-correct_output_01 = """{
-            "Book_0": {"author": "Junji Ito", "title": "Uzumaki"},
-            "Book_1": {"author": "Mary Beard", "title": "SPQR"},
-            "Book_2": {"author": "Haruki Murakami", "title": "Norwegian Wood"},
-            "Book_3": {"author": "Sebastian Junger", "title": "War"},
-            "Book_4": {"author": "Denis Johnson", "title": "The Laughing Monsters"}}"""
-
-example_input_02 = """Individual Spine OCR Text:
-Book_0: ['TIMES', 'of the', 'BESTSELLER', 'MONKEY GOD', 'PRESTON', 'douGLAS', 'MONKEY GOD 38', 'The', '0aa', 'centanl', 'NEW YORK', 'Dun', 'cunaat', 'Ujo', 'OaaND', 'Ovo', 'LOST CITY'],
-Book_1: ['JUNGER', 'SEBASTIAN JUNGER', 'THE', 'PERFECT', 'STO RM', 'SEBASTIAN'],
-
-Full Image OCR Text:
-['MCRID', 'CARL', 'WORLD', 'THE PERTECT STORM', 'LOST CITY   MONKEY GOD', 'DOUCLAS', 'Housr', 'RiesTOH', 'SEBASTLAX JUNGER', 'DEMON-HAUNIED', "THE PERFECT' STORM", 'SAGAN', 'DLMOMIAUNIID', 'LOST CITY ? MONKEY GOD ]3 %#']"""
-
-correct_output_02 = """{
-            "Book_0": {"author": "Douglas Preston", "title": "The Lost City of the Monkey God"},
-            "Book_1": {"author": "Sebastian Junger", "title": "The Perfect Storm"}}
-            "Book_2": {"author": "Carl Sagan", "title": "Demon-Haunted World"}}"""
-
-
 def format_AI_input(spines, full_img_text):
     """
     Format all data to be included in prompt message
 
-    inputs: 
-        - spines: list of spine objects
-        - full_img_text: list of text detected in the full image
+    Args:
+        spines (list): A list of spine objects.
+        full_img_text (str): The text detected in the full image.
 
-    output:
-        - book_data: String containing all book data in the format 'Book_X: <spine_text>,\n'
+    Returns:
+        str: The formatted prompt message for the AI model.
     """
     book_data = ""
     for i, spine in enumerate(spines):
@@ -452,7 +386,7 @@ def format_AI_input(spines, full_img_text):
         - Your response is being decoded directly with Python's json.loads() function. Make sure your response is in the correct format without
         any additional characters or formatting. Do not even label the response as JSON. Just provide the JSON-formatted string.
 
-        - Here are two examples of input and correct output, delimited by three backticks: 
+        - Here are two examples of input and correct output, each example is delimited by three backticks: 
         ```EXAMPLE INPUT 01: '''{example_input_01}'''
 
 
@@ -477,9 +411,6 @@ def format_AI_input(spines, full_img_text):
     return prompt
 
 
-
-
-### Book Identification and Metadata Retrieval. Create Book Object ###
 def create_book_object(isbn, confidence):
     """
     Once a positive identification is made, this function creates a Book object and populates it with data from multiple sources,
@@ -498,7 +429,6 @@ def create_book_object(isbn, confidence):
 
     # Initialize the book object
     book = Book()
-
 
     # Utilize data from Google Books as primary source
     if google_data and 'items' in google_data and google_data['items']:
@@ -521,7 +451,7 @@ def create_book_object(isbn, confidence):
                 elif identifier['type'] == 'ISBN_10':
                     book.isbn10 = identifier['identifier']
 
-    # Try ISBNdb if Google Books data is missing. Do not overwrite existing data.
+    # Try ISBNdb if Google Books data is missing. Will not overwrite existing data.
     if isbndb_data:
         isbndb_data = isbndb_data['book']
         if book.title == "" or book.title is None:
@@ -551,6 +481,7 @@ def create_book_object(isbn, confidence):
     # Set the confidence
     book.confidence = confidence
 
+    # If confidence is 0 or 34, set edition-specific data to empty strings
     if book.confidence == 0 or book.confidence == 34:
         book.publisher = ""
         book.date_published = ""
@@ -560,5 +491,37 @@ def create_book_object(isbn, confidence):
         book.isbn = ""
         book.pages = ""
 
-
     return book
+
+
+
+
+### EXAMPLES FOR USE IN PROMPT ###
+example_input_01 = """Individual Spine OCR Text:
+Book_0: ['uiz', 'Mcbij', 'JUNJI ITO', 'JUNII ITO', 'UZUMAkI', 'UZUMAKL'],
+Book_1: ['o} Aistont', 'Ului', 'History', 'ROME', 'o-~ Q m', 'BFARD', 'BEA RD', 'MA RY', 'Wumulii', 'MARY', '0 ~ Q x', '0i Ancieni'],
+Book_2: ['HA R U K /', ' 0 R W E 6 |A N', 'W 0 0 D', 'N 0 R W E 6 |a M', 'W 0 0 d', 'haruki Murakami', 'M U R a K a M /'],
+Book_3: ['STOrM', 'AVA', 'SEBASTIaI JuIGeR', 'New Tork', 'AUTHOR OF', 'AVAL', 'Auimor Of', 'NEW YORK', 'Sioat', 'TIMES', 'IME PtaftGT', 'The PERFECT', '1 WAR ipe SEBASTIAI JUHGER', 'D] WAR iI', 'BESTSELLER', 'TNIES'],
+Book_4: ['SYR?', 'Rure)', 'LER', 'THE LAUGHIng MONSTERS 8', 'DENIS JOHNSON', 'IER', 'DENIS', 'THE LAUGHING MONSTERS', 'JDANSOM'],
+
+Full Image OCR Text:
+['0, HKtONT', 'BEARD', 'DEMIS', 'Ha R U k / M U Ra Ka M [', 'WaEJ', 'W 0 0 |', 'UZUMAkL', 'WAR i', 'Jtorm', 'Toinegiam', 'LAUGHING MONSTERS', 'WAR', 'Joci', "Laughing WOnsteRs Qo IeXIS H8XSIX'", 'SEBASTIaI JUIGER 644', 'BYARD', 'Authon Or', 'M0 0 d', 'M 0 R W E 6 |a M', 'THE', 'MEW Tort', 'JDHMSOM', 'Maiuii muiaiami', 'O >', 'DeSTSELLEA', 'ROMF', 'SEBASTIAH JUNGER 64', 'Mennnnt']
+"""
+correct_output_01 = """{
+            "Book_0": {"author": "Junji Ito", "title": "Uzumaki"},
+            "Book_1": {"author": "Mary Beard", "title": "SPQR"},
+            "Book_2": {"author": "Haruki Murakami", "title": "Norwegian Wood"},
+            "Book_3": {"author": "Sebastian Junger", "title": "War"},
+            "Book_4": {"author": "Denis Johnson", "title": "The Laughing Monsters"}}"""
+
+example_input_02 = """Individual Spine OCR Text:
+Book_0: ['TIMES', 'of the', 'BESTSELLER', 'MONKEY GOD', 'PRESTON', 'douGLAS', 'MONKEY GOD 38', 'The', '0aa', 'centanl', 'NEW YORK', 'Dun', 'cunaat', 'Ujo', 'OaaND', 'Ovo', 'LOST CITY'],
+Book_1: ['JUNGER', 'SEBASTIAN JUNGER', 'THE', 'PERFECT', 'STO RM', 'SEBASTIAN'],
+
+Full Image OCR Text:
+['MCRID', 'CARL', 'WORLD', 'THE PERTECT STORM', 'LOST CITY   MONKEY GOD', 'DOUCLAS', 'Housr', 'RiesTOH', 'SEBASTLAX JUNGER', 'DEMON-HAUNIED', "THE PERFECT' STORM", 'SAGAN', 'DLMOMIAUNIID', 'LOST CITY ? MONKEY GOD ]3 %#']"""
+
+correct_output_02 = """{
+            "Book_0": {"author": "Douglas Preston", "title": "The Lost City of the Monkey God"},
+            "Book_1": {"author": "Sebastian Junger", "title": "The Perfect Storm"}}
+            "Book_2": {"author": "Carl Sagan", "title": "Demon-Haunted World"}}"""
