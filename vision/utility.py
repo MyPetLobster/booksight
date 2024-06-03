@@ -1,10 +1,7 @@
-import base64
 import os
 import shutil
 import time
-from PIL import Image
 
-from mimetypes import guess_type
 from rich import print as rprint
 
 # These variables are defined when the module is imported, so they are available to all functions in the module, unique to each session.
@@ -14,18 +11,30 @@ date = time.strftime("%Y%m%d")
 
 def create_log_file():
     """Creates new log directory each day and a new log file for each session."""
-    if not os.path.exists(f'booksight/logs/{date}'):
-        print(f"Creating new log directory for {date}")
-        os.makedirs(f'booksight/logs/{date}')
 
-    print(f"Creating new log file for {timestamp} ****")
-    with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'w') as file:
-        file.write(f"Booksight log file for {timestamp}\n") 
-    
+    # Update date in case the script runs past midnight
+    global date
+    old_date = date
+    date = time.strftime("%Y%m%d")
+
+    # Update the timestamp to avoid overwriting the log file
+    global timestamp
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+
+    if old_date != date:
+        if not os.path.exists(f'booksight/logs/{date}'):
+            os.makedirs(f'booksight/logs/{date}')
+        with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'w') as file:
+            file.write(f"Booksight log file for {timestamp}\n") 
+    else: 
+        if not os.path.exists(f'booksight/logs/{date}'):
+            os.makedirs(f'booksight/logs/{date}')  
+        with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'w') as file:
+            file.write(f"Booksight log file for {timestamp}\n")
+        
 
 def log_print(message):
     """Prints a message and logs it to a text file."""
-    
     with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'a') as file:
         file.write(f"{message}\n")
     rprint(message)

@@ -5,8 +5,8 @@ import cv2 as cv
 import numpy as np
 import easyocr as ocr
 
-from .utility import log_print
 from booksight.settings import MEDIA_ROOT
+from . import utility as util
 
 def detect_text(image_path):
     """
@@ -36,7 +36,7 @@ def detect_text(image_path):
         Returns:
             list: A list of strings containing the detected text.
         """
-        log_print(f"preprocess: {to_preprocess}\nthreshold: {with_threshold}\n")
+        util.log_print(f"preprocess: {to_preprocess}\nthreshold: {with_threshold}\n")
         if to_preprocess:
             preprocessed_image = preprocess(image, with_threshold)
         else:
@@ -49,16 +49,16 @@ def detect_text(image_path):
         bboxes_drawn = draw_bounding_boxes(preprocessed_image, result, image_path)
 
         if bboxes_drawn:
-            log_print(f"Bounding boxes drawn for image: {image_path}\n")
+            util.log_print(f"Bounding boxes drawn for image: {image_path}\n")
             # Return a list of detected text greater than 2 characters
             return [text for bbox, text, _ in result if len(text) > 2]
         else:
-            log_print(f"Bounding boxes not drawn for image: {image_path}\n")
+            util.log_print(f"Bounding boxes not drawn for image: {image_path}\n")
             return []
 
     # Read the image and resize if necessary
     original_image = cv.imread(image_path)
-    log_print(f"\nOriginal image shape: {original_image.shape}\n")
+    util.log_print(f"\nOriginal image shape: {original_image.shape}\n")
 
     # If og_image.shape[1] (number of columns) is greater than 800, resize the image while maintaining aspect ratio
     if original_image.shape[1] > 800:
@@ -67,32 +67,32 @@ def detect_text(image_path):
         height = int(original_image.shape[0] * scale_percent / 100)
         dim = (width, height)
         original_image = cv.resize(original_image, dim, interpolation=cv.INTER_AREA)
-        log_print(f"Resized image shape: {original_image.shape}\n\n")
+        util.log_print(f"Resized image shape: {original_image.shape}\n\n")
 
     # Process the raw image and the image rotated 90 degrees counter-clockwise
-    log_print(f"Detecting all text from image: {image_path}\n")
+    util.log_print(f"Detecting all text from image: {image_path}\n")
     book_text_list = process_image(original_image, False, False)
-    log_print(f"Text detected (original image): {book_text_list}\n")
+    util.log_print(f"Text detected (original image): {book_text_list}\n")
     original_90 = process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), False, False)
-    log_print(f"Text detected (original rotated 90 degrees): {original_90}\n")
+    util.log_print(f"Text detected (original rotated 90 degrees): {original_90}\n")
 
     # Basic preprocessing with and without threshold
     no_threshold = process_image(original_image, False, True)
-    log_print(f"Text detected No Threshold: {no_threshold}")
+    util.log_print(f"Text detected No Threshold: {no_threshold}")
     no_threshold_90 = process_image(cv.rotate(original_image, cv.ROTATE_90_COUNTERCLOCKWISE), False, True)
-    log_print(f"Text detected Rotate 90 No Threshold: {no_threshold_90}\n")
+    util.log_print(f"Text detected Rotate 90 No Threshold: {no_threshold_90}\n")
 
     # Combine all detected text lists
-    log_print("\nCompleted text detection. Combining results...\n")    
+    util.log_print("\nCompleted text detection. Combining results...\n")    
     book_text_list.extend(original_90)
     book_text_list.extend(no_threshold)
     book_text_list.extend(no_threshold_90)
-    log_print(f"\nCombined text list: {book_text_list}\n")
+    util.log_print(f"\nCombined text list: {book_text_list}\n")
 
     # Remove duplicates and return the list of detected text
-    log_print("Removing duplicates...\n")
+    util.log_print("Removing duplicates...\n")
     book_text_list = list(set(book_text_list))
-    log_print(f"Unique text list: {book_text_list}\n\n")
+    util.log_print(f"Unique text list: {book_text_list}\n\n")
 
     return book_text_list
 

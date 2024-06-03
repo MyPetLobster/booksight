@@ -3,7 +3,7 @@ import time
 import requests
 from dotenv import load_dotenv
 
-from .utility import log_print
+from . import utility as util
 
 load_dotenv()
 
@@ -29,7 +29,7 @@ def get_potential_isbns(title, author):
     
     all_isbns = openlibrary_isbns + google_isbns
     
-    log_print(f"{title} - {author} all ISBNS: {all_isbns[:ISBN_COUNT_COMBINED]}\n")
+    util.log_print(f"{title} - {author} all ISBNS: {all_isbns[:ISBN_COUNT_COMBINED]}\n")
 
     return all_isbns[:ISBN_COUNT_COMBINED]
 
@@ -50,7 +50,7 @@ def get_isbns_openlibrary(title, author):
 
     # If no results are found or API is down, return an empty list
     if response.status_code != 200 or response.json().get("numFound", 0) == 0:
-        log_print(f"-- OpenLibrary API --\nError: {response.status_code}\nNumber of results: {response.json().get('numFound', 0)}\n")
+        util.log_print(f"-- OpenLibrary API --\nError: {response.status_code}\nNumber of results: {response.json().get('numFound', 0)}\n")
         return []
     
     # Extract the ISBNs from the response
@@ -58,7 +58,7 @@ def get_isbns_openlibrary(title, author):
     for result in response.json()["docs"]:
         isbns += result.get("isbn", [])
     
-    log_print(f"Open Library ISBNs for {title} - {author}: {isbns}\n")
+    util.log_print(f"Open Library ISBNs for {title} - {author}: {isbns}\n")
 
     return isbns[:ISBN_COUNT]
 
@@ -82,7 +82,7 @@ def get_isbns_google_books(title, author):
 
     # If no results are found or API is down, return an empty list
     if response.status_code != 200 or response.json().get("totalItems", 0) == 0:
-        log_print(f"\n-- Google Books API --\nError: {response.status_code}\nNumber of results: {response.json().get('totalItems', 0)}\n")
+        util.log_print(f"\n-- Google Books API --\nError: {response.status_code}\nNumber of results: {response.json().get('totalItems', 0)}\n")
         return []
 
     # Extract the ISBNs from the response
@@ -94,7 +94,7 @@ def get_isbns_google_books(title, author):
                     if identifier["type"] == "ISBN_13" or identifier["type"] == "ISBN_10":
                         isbns.append(identifier["identifier"])
 
-    log_print(f"Google Books ISBNs for {title} - {author}: {isbns}\n")
+    util.log_print(f"Google Books ISBNs for {title} - {author}: {isbns}\n")
 
     return isbns[:ISBN_COUNT]
 
@@ -119,7 +119,7 @@ def get_isbn_info(isbn):
         # Get the 'Height' and 'Width' of the book
         book_info = response.json()
 
-        log_print(f"ISBNdb Data for {isbn}:\n{book_info}\n")
+        util.log_print(f"ISBNdb Data for {isbn}:\n{book_info}\n")
 
         height, width = get_dimensions(book_info)
         language, cover = get_language_and_cover(book_info)
@@ -136,7 +136,7 @@ def get_isbn_info(isbn):
             "binding": book_info["book"]["binding"] if "binding" in book_info["book"] else None,
         }
     else:
-        log_print(f"Error: {response.status_code}")
+        util.log_print(f"Error: {response.status_code}")
         return None
 
 
@@ -230,7 +230,7 @@ def get_all_data_isbndb(isbn):
         book_info = response.json()
         return book_info
     else:
-        log_print(f"\nError: {response.status_code}")
+        util.log_print(f"\nError: {response.status_code}")
         return None
     
 
@@ -251,7 +251,7 @@ def get_all_data_google(isbn):
         book_info = response.json()
         return book_info
     else:
-        log_print(f"\nError: {response.status_code}")
+        util.log_print(f"\nError: {response.status_code}")
         return None
     
 
@@ -271,7 +271,7 @@ def get_all_data_openlibrary(isbn):
         book_info = response.json()
         return book_info
     else:
-        log_print(f"\nError: {response.status_code}")
+        util.log_print(f"\nError: {response.status_code}")
         return None
     
 
@@ -280,7 +280,7 @@ def get_all_data_openlibrary(isbn):
 # def test_isbndb_response():
 #     isbn = "9780099520290"
 #     book_info = get_all_data_isbndb(isbn)
-#     log_print(book_info)
+#     util.log_print(book_info)
 
 
 # if __name__ == "__main__":

@@ -6,7 +6,7 @@ import threading
 from .models import Scan
 from vision.vision import vision as vision_app
 import vision.utility as util
-from vision.utility import log_print
+
 
 
 def index(request):
@@ -52,8 +52,8 @@ def vision(request):
         new_scan.save()
         upload_path = new_scan.uploaded_image.path
 
-        log_print('\nForm Submitted, new scan request details:\n')
-        log_print(f'Email: {email},\nFormats: {formats},\nImage: {image},\nAI Model: {ai_model},\nAI Temp: {ai_temp},\nTorch Confidence: {torch_confidence}')
+        util.log_print('\nForm Submitted, new scan request details:\n')
+        util.log_print(f'Email: {email},\nFormats: {formats},\nImage: {image},\nAI Model: {ai_model},\nAI Temp: {ai_temp},\nTorch Confidence: {torch_confidence}')
 
         # Run Vision app in a separate thread
         thread = threading.Thread(target=vision_app, args=(request, upload_path, new_scan))

@@ -9,9 +9,9 @@ from . import analyze_spine as asp
 from . import db_requests as dbr
 from . import gpt as gpt
 from . import gemini as gemini
+from . import utility as util
 from .classes import Spine, Book
 from .token_counter import count_tokens
-from .utility import log_print
 
 
 
@@ -38,14 +38,14 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     # Check if english language
     # TODO: Add language detection
     if p_match and p_match["language"].lower().strip() not in ["en", "eng", "english", "English", "EN", "ENG", "ENGLISH", "En"]:
-        log_print(f"Language: {p_match['language']}")
-        log_print("Booksight only supports English books at this time.\n")
+        util.log_print(f"Language: {p_match['language']}")
+        util.log_print("Booksight only supports English books at this time.\n")
         return confidence, color_filter, px_to_inches, second_pass, isbn
 
     # Handle spines undetected by torchvision
     if spine.height == None or spine.width == None or spine.text == None:
-        log_print(f"\nSpine data is incomplete. This book likely went undetected by torchvision and was picked up by AI in full image OCR text.\n")
-        log_print(f"\nPopulating Book Object with general data and skipping match process.\n")
+        util.log_print(f"\nSpine data is incomplete. This book likely went undetected by torchvision and was picked up by AI in full image OCR text.\n")
+        util.log_print(f"\nPopulating Book Object with general data and skipping match process.\n")
         confidence = 34
         return confidence, color_filter, px_to_inches, second_pass, isbn
 
@@ -62,22 +62,22 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     else:
         p_match_title = p_match["title"] if p_match else None
         if p_match_title != None:
-            log_print(f"Title mismatch: '{p_match['title']}' -- '{spine.title}'\n")
+            util.log_print(f"Title mismatch: '{p_match['title']}' -- '{spine.title}'\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
         else:
-            log_print(f"Title not found in ISBNdb data.\n")
+            util.log_print(f"Title not found in ISBNdb data.\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
         
     # Confirm that the binding is not "Audio Cassette" or "Audio CD"
     if p_match["binding"]:
         if p_match and p_match["binding"].lower().strip() in ["audio cassette", "audio cd"]:
-            log_print(f"Audio binding detected: '{p_match['binding']}'\nSkipping match process for isbn - {isbn}.\n")
+            util.log_print(f"Audio binding detected: '{p_match['binding']}'\nSkipping match process for isbn - {isbn}.\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
 
     # Check if essential data is missing or incorrect
     set_local_img = False
     if second_pass:
-        log_print("\nSecond pass, skipping dimension checks.\n")
+        util.log_print("\nSecond pass, skipping dimension checks.\n")
         # If second pass, that means none of isbns returned a high enough confidence in first pass,
         # so if no p_match at this point, we create a fake p_match with the spine dimensions and extracted spine image.
         if not p_match:
@@ -98,7 +98,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
                 set_local_img = True
     else:
         if not p_match or "height" not in p_match or "width" not in p_match or not p_match["height"] or not p_match["width"]:
-            log_print("\nEssential dimension data is missing or zero, skipping match checks for this ISBN.\n")
+            util.log_print("\nEssential dimension data is missing or zero, skipping match checks for this ISBN.\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
 
 
@@ -108,12 +108,12 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     p_match_height = p_match["height"]
     p_match_width = p_match["width"]
     p_match_ratio = p_match_height / p_match_width if p_match_width else 0
-    log_print(f"p_match dimensions:\nheight: {p_match_height}, width: {p_match_width}, ratio: {p_match_ratio}\n")
+    util.log_print(f"p_match dimensions:\nheight: {p_match_height}, width: {p_match_width}, ratio: {p_match_ratio}\n")
 
     spine_height = spine.height * px_to_inches if px_to_inches else spine.height
     spine_width = spine.width * px_to_inches if px_to_inches else spine.width
     spine_ratio = spine_height / spine_width if spine_width else 0
-    log_print(f"spine dimensions:\nheight: {spine_height}, width: {spine_width}, ratio: {spine_ratio}\n")
+    util.log_print(f"spine dimensions:\nheight: {spine_height}, width: {spine_width}, ratio: {spine_ratio}\n")
 
     if not second_pass:
         if px_to_inches != 1:
@@ -121,21 +121,21 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
                 # Update confidence and set px_to_inches to the average of the current and p_match height ratio
                 confidence += 0.3
                 px_to_inches = (px_to_inches + (p_match["height"] / spine.height)) / 2
-                log_print("\np_match height match within 20%, confidence + 0.25\n")
+                util.log_print("\np_match height match within 20%, confidence + 0.25\n")
             if 0.8 * spine_width <= p_match_width <= 1.2 * spine_width:
                 # Update confidence and px_to_inches again, but this time double the weight of the current height ratio
                 confidence += 0.2
                 px_to_inches = ((px_to_inches * 2) + (p_match["height"] / spine.height)) / 3
-                log_print("\np_match width match within 20%, confidence + 0.25\n")
+                util.log_print("\np_match width match within 20%, confidence + 0.25\n")
         else:
             if p_match_ratio and 0.7 * p_match_ratio <= spine_ratio <= 1.3 * p_match_ratio:
                 # Update confidence and set px_to_inches to the ratio of the spine and p_match height
                 confidence += 0.3
                 px_to_inches = (p_match["height"] / spine.height) / 2
-                log_print(f"\np_match ratio match within 30% , confidence + 0.3\n\npx_to_inches updated to: {px_to_inches}\n")
+                util.log_print(f"\np_match ratio match within 30% , confidence + 0.3\n\npx_to_inches updated to: {px_to_inches}\n")
                 if 0.8 * p_match_ratio <= spine_ratio <= 1.2 * p_match_ratio:
                     confidence += 0.2
-                    log_print("\np_match ratio match within 20%, confidence + 0.2\n")
+                    util.log_print("\np_match ratio match within 20%, confidence + 0.2\n")
 
 
     # COLOR DATA COMPARISON
@@ -148,7 +148,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
 
         # Validate that the cover image was downloaded
         if p_match_cover_path == None:
-            log_print(f"Failed to download cover image for {isbn}. Skipping color comparison.\n")
+            util.log_print(f"Failed to download cover image for {isbn}. Skipping color comparison.\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
 
         # Retrieve color data for cover image
@@ -156,8 +156,8 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
         p_dom_color, p_color_palette, h, w = asp.find_color_palette(p_match_cover_path)
         avg_color, dom_color, color_palette = spine.avg_color, spine.dominant_color, spine.color_palette
 
-        log_print(f"p_match_color_data:\navg:{p_avg_color},\n{p_dom_color},\n{p_color_palette}\n")
-        log_print(f"spine_color_data:\navg:{avg_color},\n{dom_color},\n{color_palette}\n")
+        util.log_print(f"p_match_color_data:\navg:{p_avg_color},\n{p_dom_color},\n{p_color_palette}\n")
+        util.log_print(f"spine_color_data:\navg:{avg_color},\n{dom_color},\n{color_palette}\n")
 
         # Apply color filter
         avg_color = tuple([avg_color[i] * color_filter[i] for i in range(3)])
@@ -166,7 +166,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
 
         # Compare average color
         avg_color_diff = sum([abs(avg_color[i] - p_avg_color[i]) for i in range(3)]) / 3
-        log_print(f"avg_color_diff: {avg_color_diff} for {isbn}\n")
+        util.log_print(f"avg_color_diff: {avg_color_diff} for {isbn}\n")
         if avg_color_diff < 100:
             confidence += 0.2
             # if color_filter not 1, 1, 1 find average color filter
@@ -180,36 +180,38 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
             # dilute the filter to avoid overfitting, 80% dilution
             color_filter = [(color_filter[i] + 4) / 5 for i in range(3)]
 
-            log_print(f"avg color match, confidence + 0.2\nColor filter set to: {color_filter}\n ")
+            util.log_print(f"avg color match, confidence + 0.2\nColor filter set to: {color_filter}\n ")
         if avg_color_diff < 50:
             confidence += 0.3
-            log_print("avg color match, confidence + 0.3\n")
+            util.log_print("avg color match, confidence + 0.3\n")
         # Compare dominant color
         dom_color_diff = sum([abs(dom_color[i] - p_dom_color[i]) for i in range(3)]) / 3
-        log_print(f"dom_color_diff: {dom_color_diff} for {isbn}\n")
+        util.log_print(f"dom_color_diff: {dom_color_diff} for {isbn}\n")
         if dom_color_diff < 100:
             confidence += 0.2
-            log_print("dom color match, confidence + 0.2\n")
+            util.log_print("dom color match, confidence + 0.2\n")
         if dom_color_diff < 50:
             confidence += 0.3
-            log_print("dom color match, confidence + 0.3\n")
+            util.log_print("dom color match, confidence + 0.3\n")
 
         # Compare color palette
         palette_diff = 0
         for i in range(6):
             palette_diff += sum([abs(color_palette[i][j] - p_color_palette[i][j]) for j in range(3)]) / 3
 
-        log_print(f"palette_diff: {palette_diff} for {isbn}\n")
+        util.log_print(f"palette_diff: {palette_diff} for {isbn}\n")
         if palette_diff < 600:
             confidence += 0.2
-            log_print("palette match, confidence + 0.2\n")
+            util.log_print("palette match, confidence + 0.2\n")
         if palette_diff < 300:
             confidence += 0.3
-            log_print("palette match, confidence + 0.3\n")
+            util.log_print("palette match, confidence + 0.3\n")
     else: 
-        log_print(f"Local image set for {isbn}. Skipping color comparison.\n")
+        util.log_print(f"Local image set for {isbn}. Skipping color comparison.\n")
+
+    confidence = round(confidence, 2)
         
-    log_print(f"Match confidence: {confidence}\ncolor_filter: {color_filter}\npx_to_inches: {px_to_inches}\n")
+    util.log_print(f"Match confidence: {confidence}\ncolor_filter: {color_filter}\npx_to_inches: {px_to_inches}\n")
 
     return confidence, color_filter, px_to_inches, second_pass, isbn
 
@@ -240,10 +242,10 @@ def download_image(url, isbn):
         # Open the image and save it to the file
         image = Image.open(BytesIO(response.content))
         image.save(image_path)
-        log_print(f"Image saved to {image_path}")
+        util.log_print(f"Image saved to {image_path}")
         return image_path
     else:
-        log_print(f"Failed to download the image. HTTP status: {response.status_code}")
+        util.log_print(f"Failed to download the image. HTTP status: {response.status_code}")
         return None
 
 
@@ -259,22 +261,22 @@ def id_possible_matches(request, spines, full_img_text):
     Returns:
         list: A list of spine objects with updated data.
     """
-    log_print("Preparing text for AI input...\n")
+    util.log_print("Preparing text for AI input...\n")
     book_data_prompt = format_AI_input(spines, full_img_text)
-    log_print(f"AI Prompt and Raw Book Data:\n{book_data_prompt}\n")
+    util.log_print(f"AI Prompt and Raw Book Data:\n{book_data_prompt}\n")
 
     start_ai_process = time.time()
     book_data_basic = identify_with_AI(request, book_data_prompt)
     book_dict = json.loads(book_data_basic)
     book_count = len(book_dict)
-    log_print(f"Number of books identified: {book_count}\n")
-    log_print(f"Book Identification (Preliminary):\n{book_data_basic}\n")
+    util.log_print(f"Number of books identified: {book_count}\n")
+    util.log_print(f"Book Identification (Preliminary):\n{book_data_basic}\n")
 
     end_ai_process = time.time()
 
-    log_print(f"\nAI processing complete. Time elapsed: {round(end_ai_process - start_ai_process, 2)} seconds.\n")
+    util.log_print(f"\nAI processing complete. Time elapsed: {round(end_ai_process - start_ai_process, 2)} seconds.\n")
 
-    log_print("\nRetrieving potential ISBN's from OpenLibrary and Google Books...\nUpdating Spine objects with title, author, and possible ISBNs...\n")
+    util.log_print("\nRetrieving potential ISBN's from OpenLibrary and Google Books...\nUpdating Spine objects with title, author, and possible ISBNs...\n")
 
     spine_count = len(spines)
     if book_count > spine_count:
@@ -315,27 +317,27 @@ def identify_with_AI(request, prompt):
         prompt_tokens = count_tokens(prompt, ai_model)
 
     if ai_model.startswith("gpt"):
-        log_print(f"Prompt token count for {ai_model}: {prompt_tokens}\n")
+        util.log_print(f"Prompt token count for {ai_model}: {prompt_tokens}\n")
         gpt_start = time.time()
-        log_print(f"Beginning identification with {ai_model} set to a temperature of {ai_temp}...\n ")
+        util.log_print(f"Beginning identification with {ai_model} set to a temperature of {ai_temp}...\n ")
         response = gpt.run_gpt(prompt, ai_model, ai_temp)
         gpt_end = time.time()
         response_tokens = count_tokens(response, ai_model)
-        log_print(f"Response token count for {ai_model}: {response_tokens}\n")
-        log_print(f"Identification with {ai_model} complete.\nTime elapsed: {round(gpt_end - gpt_start, 2)} seconds.\n")
+        util.log_print(f"Response token count for {ai_model}: {response_tokens}\n")
+        util.log_print(f"Identification with {ai_model} complete.\nTime elapsed: {round(gpt_end - gpt_start, 2)} seconds.\n")
     elif ai_model.startswith("gemini"):
-        log_print(f"You are using Gemini. Gemini token counting not yet implemented.")
-        log_print(f"Prompt token count using gpt-4o tokenizer: {prompt_tokens}\n")
+        util.log_print(f"You are using Gemini. Gemini token counting not yet implemented.")
+        util.log_print(f"Prompt token count using gpt-4o tokenizer: {prompt_tokens}\n")
         gemini_start = time.time()
-        log_print(f"Beginning identification with {ai_model}...\n")
+        util.log_print(f"Beginning identification with {ai_model}...\n")
         response = gemini.run_gemini(prompt, ai_model)
         gemini_end = time.time()
         response_tokens = count_tokens(response, "gpt-4o")
-        log_print(f"You are using Gemini. Gemini token counting not yet implemented.")
-        log_print(f"Response token count using gpt-4o tokenizer: {response_tokens}\n")
-        log_print(f"Identification with {ai_model} complete.\nTime elapsed: {round(gemini_end - gemini_start, 2)} seconds.\n")
+        util.log_print(f"You are using Gemini. Gemini token counting not yet implemented.")
+        util.log_print(f"Response token count using gpt-4o tokenizer: {response_tokens}\n")
+        util.log_print(f"Identification with {ai_model} complete.\nTime elapsed: {round(gemini_end - gemini_start, 2)} seconds.\n")
     else:
-        log_print("Invalid AI option. Please choose 'gpt' or 'gemini'.\n")
+        util.log_print("Invalid AI option. Please choose 'gpt' or 'gemini'.\n")
         response = None
 
     return response
