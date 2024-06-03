@@ -11,7 +11,6 @@ date = time.strftime("%Y%m%d")
 
 def create_log_file():
     """Creates new log directory each day and a new log file for each session."""
-
     # Update date in case the script runs past midnight
     global date
     old_date = date
@@ -42,7 +41,6 @@ def log_print(message):
 
 def retrieve_last_log_file():
     """Returns the path to the most recent log file."""
-    
     log_dir = f'booksight/logs/{date}'
     log_files = os.listdir(log_dir)
     log_files.sort(reverse=True)
@@ -51,6 +49,7 @@ def retrieve_last_log_file():
 
 
 def empty_directory(directory): 
+    """This function deletes all files in a directory."""
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
         try:
@@ -65,9 +64,7 @@ def empty_directory(directory):
 def empty_export_dirs():
     """ This function deletes all except the 5 most recent exports in each export directory.
      'vision/exports/csv', 'vision/exports/json', 'vision/exports/xml', 'vision/exports/text'"""
-
     export_directories = ['csv', 'json', 'xml', 'text']
-
     for directory in export_directories:
         export_dir = f'vision/exports/{directory}'
         files = os.listdir(export_dir)
