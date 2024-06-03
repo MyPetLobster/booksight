@@ -1,11 +1,10 @@
 import os
 import time
 import requests
-from dotenv import load_dotenv
 
+from . import config
 from . import utility as util
 
-load_dotenv()
 
 ISBN_COUNT = 10
 ISBN_COUNT_COMBINED = 15
@@ -74,11 +73,11 @@ def get_isbns_google_books(title, author):
     Returns:
         list: A list of ISBNs associated with the book
     """
-
-    api_key = os.getenv("GOOGLE_BOOKS_API_KEY")
+    config_data = config.get_config()
+    google_books_key = config_data.api_keys["google_books_key"]
 
     # Query the Google Books API
-    response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}+inauthor:{author}&maxResults=5&key={api_key}")
+    response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}+inauthor:{author}&maxResults=5&key={google_books_key}")
 
     # If no results are found or API is down, return an empty list
     if response.status_code != 200 or response.json().get("totalItems", 0) == 0:
@@ -111,8 +110,11 @@ def get_isbn_info(isbn):
     """
     # Prevent rate limiting
     time.sleep(1)
-    api_key = os.getenv("ISBNDB_API_KEY")
-    h = {'Authorization': api_key}
+
+    config_data = config.get_config()
+    isbndb_key = config_data.api_keys["isbndb_key"]
+
+    h = {'Authorization': isbndb_key}
     response = requests.get(f"https://api2.isbndb.com/book/{isbn}", headers=h)
     
     if response.status_code == 200:
@@ -222,8 +224,10 @@ def get_all_data_isbndb(isbn):
     """
     time.sleep(1) # Prevent rate limiting
 
-    api_key = os.getenv("ISBNDB_API_KEY")
-    h = {'Authorization': api_key}
+    config_data = config.get_config()
+    isbndb_key = config_data.api_keys["isbndb_key"]
+
+    h = {'Authorization': isbndb_key}
     response = requests.get(f"https://api2.isbndb.com/book/{isbn}", headers=h)
     
     if response.status_code == 200:
@@ -244,8 +248,9 @@ def get_all_data_google(isbn):
     Returns:
         book_info (dict): A dictionary containing information about the book.
     """
-    api_key = os.getenv("GOOGLE_BOOKS_API_KEY")
-    response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}&key={api_key}")
+    config_data = config.get_config()
+    google_books_key = config_data.api_keys["google_books_key"]
+    response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}&key={google_books_key}")
 
     if response.status_code == 200:
         book_info = response.json()

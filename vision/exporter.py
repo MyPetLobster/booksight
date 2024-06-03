@@ -237,8 +237,6 @@ def email_file(file_paths, user_email, log_file_path):
         message = 'Thank you for using Booksight! Your exported files are attached.'
 
     email = EmailMessage(subject, message, settings.EMAIL_HOST_USER, [user_email])
-    
-    util.log_print(f"Email sent to: {user_email}\n")
 
     # Attach bounding box image
     bounding_box_image = 'media/detection_temp/spines/full_detected.jpeg'
@@ -252,4 +250,5 @@ def email_file(file_paths, user_email, log_file_path):
         email.attach_file(file_path)
 
     email.send()
-    
+
+    util.log_print(f"Email sent to: {user_email}\n")

@@ -1,15 +1,6 @@
-import os
-from dotenv import load_dotenv
-
 import google.generativeai as genai
 
-
-load_dotenv()
-gemini_api_key = os.getenv("GEMINI_API_KEY")
-
-# Configure genai settings
-genai.configure(api_key=gemini_api_key)
-model = genai.GenerativeModel('gemini-pro')
+from . import config
 
 
 def run_gemini(prompt, model):
@@ -25,10 +16,13 @@ def run_gemini(prompt, model):
     Returns:
         response.text (str): A string containing the generated content from the AI model.
     """
+    # Configure genai settings
+    config_data = config.get_config()
+    google_gemini_key = config_data.api_keys['google_gemini_key']
+    genai.configure(api_key=google_gemini_key)
     model = genai.GenerativeModel(model)
     response = model.generate_content(prompt)
 
-    print(response.text)
     return response.text
 
 

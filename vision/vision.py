@@ -2,6 +2,7 @@ import os
 import time
 
 from . import analyze_spine as asp
+from . import config
 from . import detect_spines as ds
 from . import detect_text as dt
 from . import exporter as export
@@ -13,7 +14,7 @@ from dashboard.models import Scan
 from booksight.settings import MEDIA_URL
 
 
-def vision(request, image_path, new_scan):
+def vision(image_path, new_scan):
     """
     This function is the main function for the Booksight Vision process. It runs the entire process of detecting book spines, 
     analyzing the spines, detecting text, cleaning up text data, identifying books, and exporting the results. The function 
@@ -28,12 +29,12 @@ def vision(request, image_path, new_scan):
 
     util.log_print("Welcome to Booksight!\n\nBeginning the Vision process.")
 
-    # Retrieve session data set in dashboard/views.py
-    email_address = request.session.get('email')
-    output_formats = request.session.get('formats')
-    torch_confidence = request.session.get('torch_confidence')
+    # Load configuration data from config.py
+    config_data = config.get_config()
+    email_address = config_data.email
+    output_formats = config_data.formats
+    torch_confidence = config_data.torch_confidence
     
-
     util.log_print("\n\n\n**************** PHASE ONE - BOOK SPINE IDENTIFICATION *****************\n\n\n")
 
     start = time.time()
@@ -139,7 +140,7 @@ def vision(request, image_path, new_scan):
     
     # Clean up text data using AI and retrieve potential ISBNs for each spine
     util.log_print("Cleaning up text data and making preliminary title/author identification with AI model...\n")
-    spines = match.id_possible_matches(request, spines, full_image_text)
+    spines = match.id_possible_matches(spines, full_image_text)
     util.log_print("Text data cleanup and preliminary identification complete.\n")
     ai_end = time.time()
     util.log_print(f"Total time taken for AI processing and ISBN retrieval: {round(ai_end - ocr_end, 2)} seconds\n")

@@ -1,8 +1,6 @@
 from openai import OpenAI
-from dotenv import load_dotenv
 
-load_dotenv()
-client = OpenAI()
+from . import config
 
 
 def run_gpt(prompt, model, temperature):
@@ -19,7 +17,10 @@ def run_gpt(prompt, model, temperature):
     Returns:
         chat_response (str): A string containing the generated content from the AI model.
     """
-
+    # Configure OpenAI settings
+    
+    # Automatically uses OPENAI_API_KEY env var
+    client = OpenAI()
     instructions = {
         "role": "system", 
         "content": prompt
@@ -32,7 +33,4 @@ def run_gpt(prompt, model, temperature):
         max_tokens=4000,
     )
 
-    chat_response = response.choices[0].message.content.strip()
-    print(chat_response)
-
-    return chat_response
+    return response.choices[0].message.content.strip()

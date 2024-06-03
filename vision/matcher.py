@@ -6,6 +6,7 @@ from PIL import Image
 from io import BytesIO
 
 from . import analyze_spine as asp
+from . import config
 from . import db_requests as dbr
 from . import gpt as gpt
 from . import gemini as gemini
@@ -239,7 +240,7 @@ def download_image(url, isbn):
     response = requests.get(url)
 
     if response.status_code == 200:
-        # Open the image and save it to the file
+        # Open the image and save it to the file, BytesIO is used to handle the image as a file-like object
         image = Image.open(BytesIO(response.content))
         image.save(image_path)
         util.log_print(f"Image saved to {image_path}")
@@ -250,7 +251,7 @@ def download_image(url, isbn):
 
 
 ### AI OCR Text Cleanup and External API ISBN Identification Functions ###
-def id_possible_matches(request, spines, full_img_text):
+def id_possible_matches(spines, full_img_text):
     """
     Identify possible matches for each spine using AI and external APIs.
 
@@ -266,7 +267,7 @@ def id_possible_matches(request, spines, full_img_text):
     util.log_print(f"AI Prompt and Raw Book Data:\n{book_data_prompt}\n")
 
     start_ai_process = time.time()
-    book_data_basic = identify_with_AI(request, book_data_prompt)
+    book_data_basic = identify_with_AI(book_data_prompt)
     book_dict = json.loads(book_data_basic)
     book_count = len(book_dict)
     util.log_print(f"Number of books identified: {book_count}\n")
@@ -297,7 +298,7 @@ def id_possible_matches(request, spines, full_img_text):
     return spines
 
 
-def identify_with_AI(request, prompt):
+def identify_with_AI(prompt):
     """
     Identify book titles and authors using AI, fixes typos and formatting errors from OCR. Choose between GPT and Gemini.
 
@@ -307,8 +308,10 @@ def identify_with_AI(request, prompt):
     Returns:
         str: The response from the AI model (JSON-formatted string with book titles and authors).
     """
-    ai_model = request.session.get('ai_model')
-    ai_temp = request.session.get('ai_temp')
+    # Get AI model and temperature from config
+    config_data = config.get_config()
+    ai_model = config_data.ai_model
+    ai_temp = config_data.ai_temp
 
     if ai_model.startswith("gemini"):
         # Use GPT-4o for token counting if using Gemini
