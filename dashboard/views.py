@@ -5,7 +5,7 @@ import os
 import threading
 
 from .models import Scan
-from vision.vision import vision as vision_app
+from vision.vision import vision_core
 import vision.utility as util
 import vision.config as vision_config
 
@@ -107,7 +107,7 @@ def vision(request):
         util.log_print(f'Email: {email},\nFormats: {formats},\nImage: {image},\nAI Model: {ai_model},\nAI Temp: {ai_temp},\nTorch Confidence: {torch_confidence}')
 
         # Run Vision app in a separate thread
-        thread = threading.Thread(target=vision_app, args=(upload_path, new_scan))
+        thread = threading.Thread(target=vision_core, args=(upload_path, new_scan))
         thread.setDaemon(True)
         thread.start()
 

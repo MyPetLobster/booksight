@@ -14,11 +14,12 @@ from dashboard.models import Scan
 from booksight.settings import MEDIA_URL
 
 
-def vision(image_path, new_scan):
+def vision_core(image_path, new_scan):
     """
     This function is the main function for the Booksight Vision process. It runs the entire process of detecting book spines, 
     analyzing the spines, detecting text, cleaning up text data, identifying books, and exporting the results. The function 
-    is called by the dashboard/views.py file and runs in a separate thread.
+    can be called by the dashboard/views.py file, where it runs in a separate thread. Or it can be called by the command line
+    by running vision_terminal.py from within the vision directory.
     """
     # Delete all scans except most recent - no persistent db storage, one scan at a time.
     Scan.objects.exclude(id=new_scan.id).delete()
