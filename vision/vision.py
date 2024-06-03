@@ -317,9 +317,3 @@ def match_spines_to_books(spines):
     log_print(f"Time taken per potential ISBN: {round((end_spine_match - start_spine_match) / total_potential_isbns, 2)} seconds\n")
 
     return books
-
-
-
-
-if __name__ == "__main__":
-    vision("vision/images/test_images/mom_test.jpeg")
