@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 from .utility import log_print
 
 load_dotenv()
-ISBNDB_API_KEY = os.getenv("ISBNDB_API_KEY")
+
+ISBN_COUNT = 10
+ISBN_COUNT_COMBINED = 15
 
 
 # Get potential ISBNs from Open Library and Google Books
@@ -14,16 +16,22 @@ def get_potential_isbns(title, author):
     """
     This function takes in an author and title and returns a list of all possible ISBNs from 
     Open Library and Google Books APIs.
+
+    Args:
+        title (str): The title of the book.
+        author (str): The author of the book.
+
+    Returns:
+        list: A list of ISBNs associated with the book.
     """
     openlibrary_isbns = get_isbns_openlibrary(title, author)
     google_isbns = get_isbns_google_books(title, author)
     
     all_isbns = openlibrary_isbns + google_isbns
     
-    log_print(f"{title} - {author}: {all_isbns}\n")
+    log_print(f"{title} - {author} all ISBNS: {all_isbns[:ISBN_COUNT_COMBINED]}\n")
 
-    return all_isbns[:10]
-
+    return all_isbns[:ISBN_COUNT_COMBINED]
 
 
 def get_isbns_openlibrary(title, author):
@@ -41,12 +49,8 @@ def get_isbns_openlibrary(title, author):
     response = requests.get(f"https://openlibrary.org/search.json?title={title}&author={author}&limit=5")
 
     # If no results are found or API is down, return an empty list
-    if response.status_code != 200:
-        log_print(f"Error: {response.status_code}")
-        return []
-    
-    result_count = response.json()["numFound"]
-    if result_count == 0:
+    if response.status_code != 200 or response.json().get("numFound", 0) == 0:
+        log_print(f"-- OpenLibrary API --\nError: {response.status_code}\nNumber of results: {response.json().get('numFound', 0)}\n")
         return []
     
     # Extract the ISBNs from the response
@@ -55,7 +59,8 @@ def get_isbns_openlibrary(title, author):
         isbns += result.get("isbn", [])
     
     log_print(f"Open Library ISBNs for {title} - {author}: {isbns}\n")
-    return isbns[:10]
+
+    return isbns[:ISBN_COUNT]
 
 
 def get_isbns_google_books(title, author):
@@ -67,7 +72,7 @@ def get_isbns_google_books(title, author):
         author (str): The author of the book.
 
     Returns:
-        list: A list of ISBNs associated with the book, divided into chunks(lists) of 20.
+        list: A list of ISBNs associated with the book
     """
 
     api_key = os.getenv("GOOGLE_BOOKS_API_KEY")
@@ -76,27 +81,24 @@ def get_isbns_google_books(title, author):
     response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}+inauthor:{author}&maxResults=5&key={api_key}")
 
     # If no results are found or API is down, return an empty list
-    if response.status_code != 200:
-        log_print(f"\nError: {response.status_code}\n")
+    if response.status_code != 200 or response.json().get("totalItems", 0) == 0:
+        log_print(f"\n-- Google Books API --\nError: {response.status_code}\nNumber of results: {response.json().get('totalItems', 0)}\n")
         return []
-    
-    if response.json().get("totalItems", 0) == 0:
-        return []
-    
+
     # Extract the ISBNs from the response
     isbns = []
     for item in response.json()["items"]:
-        # Check if title matches
         if item["volumeInfo"]["title"].lower() == title.lower():
             if "industryIdentifiers" in item["volumeInfo"]:
                 for identifier in item["volumeInfo"]["industryIdentifiers"]:
                     if identifier["type"] == "ISBN_13" or identifier["type"] == "ISBN_10":
                         isbns.append(identifier["identifier"])
+
     log_print(f"Google Books ISBNs for {title} - {author}: {isbns}\n")
-    return isbns[:10]
+
+    return isbns[:ISBN_COUNT]
 
 
-# Get book information using ISBNdb API
 def get_isbn_info(isbn):
     """
     This function queries ISBNdb API to retrieve information about a book given its ISBN. Requires a paid API key.
@@ -107,16 +109,17 @@ def get_isbn_info(isbn):
     Returns:
         dict: A dictionary containing information about the book.
     """
-    time.sleep(1) # Prevent rate limiting
-
-    h = {'Authorization': ISBNDB_API_KEY}
+    # Prevent rate limiting
+    time.sleep(1)
+    api_key = os.getenv("ISBNDB_API_KEY")
+    h = {'Authorization': api_key}
     response = requests.get(f"https://api2.isbndb.com/book/{isbn}", headers=h)
     
     if response.status_code == 200:
         # Get the 'Height' and 'Width' of the book
         book_info = response.json()
 
-        log_print(f"Data for {isbn}:\n{book_info}\n")
+        log_print(f"ISBNdb Data for {isbn}:\n{book_info}\n")
 
         height, width = get_dimensions(book_info)
         language, cover = get_language_and_cover(book_info)
@@ -135,17 +138,21 @@ def get_isbn_info(isbn):
         log_print(f"Error: {response.status_code}")
         return None
 
-# Book Info:
-# {'book': {'publisher': 'Devir Livraria', 'language': 'pt', 'image': 'https://images.isbndb.com/covers/69/09/9788575326909.jpg', 'title_long': 'Uzumaki', 'dimensions': 'Height: 1.6535433054 Inches, Length: 9.448818888 Inches, Weight: 0 Pounds, Width: 6.4566929068 Inches', 'dimensions_structured': {'length': {'value': 9.448818888, 'unit': 'inches'}, 'width': {'value': 6.4566929068, 'unit': 'inches'}, 'weight': {'value': 0, 'unit': 'pounds'}, 'height': {'value': 1.6535433054, 'unit': 'inches'}}, 'date_published': '2021', 'authors': ['Junji Ito'], 'title': 'Uzumaki', 'isbn13': '9788575326909', 'msrp': '0.00', 'binding': 'Paperback', 'isbn': '8575326902', 'isbn10': '8575326902'}}
-
 
 def get_dimensions(book_info):
     """
     Extract dimensions from the book_info dictionary.
+
+    Args:
+        book_info (dict): A dictionary containing information about the book.
+
+    Returns:
+        tuple: A tuple containing the height and width of the book (float, float)
     """
     height = ""
     width = ""
 
+    # Extract height and width from the book_info dictionary
     try:
         book_dimension_string = book_info["book"]["dimensions"]
         if "Height" in book_dimension_string:
@@ -156,7 +163,8 @@ def get_dimensions(book_info):
             width = width.split(" ")[0]
     except KeyError:
         pass
-
+    
+    # Extraction if not found in the previous step. Account for different formats in API response.
     try:
         if height == "":
             height = book_info["book"]["dimensions_structured"]["height"]["value"]
@@ -179,6 +187,15 @@ def get_dimensions(book_info):
 
 
 def get_language_and_cover(book_info):
+    """
+    Extract language and cover from the book_info dictionary.
+
+    Args:
+        book_info (dict): A dictionary containing information about the book.
+
+    Returns:
+        tuple: A tuple containing the language and cover of the book (str, str)
+    """
     if "language" not in book_info["book"] or book_info["book"]["language"] == "":
         language = "Unknown"
     else:
@@ -194,25 +211,25 @@ def get_language_and_cover(book_info):
 
 def get_all_data_isbndb(isbn):
     """
-    This function queries ISBNdb API to retrieve information about a book given its ISBN. Requires a paid API key.
+    This function queries ISBNdb API to retrieve information about a book given its ISBN.
 
     Args:
         isbn (str): The ISBN of the book.
 
     Returns:
-        dict: A dictionary containing information about the book.
+        book_info (dict): A dictionary containing information about the book.
     """
     time.sleep(1) # Prevent rate limiting
 
-    h = {'Authorization': ISBNDB_API_KEY}
-    resp = requests.get(f"https://api2.isbndb.com/book/{isbn}", headers=h)
+    api_key = os.getenv("ISBNDB_API_KEY")
+    h = {'Authorization': api_key}
+    response = requests.get(f"https://api2.isbndb.com/book/{isbn}", headers=h)
     
-    if resp.status_code == 200:
-        # Get the 'Height' and 'Width' of the book
-        book_info = resp.json()
+    if response.status_code == 200:
+        book_info = response.json()
         return book_info
     else:
-        log_print(f"\nError: {resp.status_code}")
+        log_print(f"\nError: {response.status_code}")
         return None
     
 
@@ -224,7 +241,7 @@ def get_all_data_google(isbn):
         isbn (str): The ISBN of the book.
 
     Returns:
-        dict: A dictionary containing information about the book.
+        book_info (dict): A dictionary containing information about the book.
     """
     api_key = os.getenv("GOOGLE_BOOKS_API_KEY")
     response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}&key={api_key}")
@@ -245,7 +262,7 @@ def get_all_data_openlibrary(isbn):
         isbn (str): The ISBN of the book.
 
     Returns:
-        dict: A dictionary containing information about the book.
+        book_info (dict): A dictionary containing information about the book.
     """
     response = requests.get(f"https://openlibrary.org/isbn/{isbn}.json")
 
@@ -258,11 +275,12 @@ def get_all_data_openlibrary(isbn):
     
 
 
-def test_isbndb_response():
-    isbn = "9780099520290"
-    book_info = get_all_data_isbndb(isbn)
-    log_print(book_info)
+
+# def test_isbndb_response():
+#     isbn = "9780099520290"
+#     book_info = get_all_data_isbndb(isbn)
+#     log_print(book_info)
 
 
-if __name__ == "__main__":
-    test_isbndb_response()
+# if __name__ == "__main__":
+#     test_isbndb_response()
