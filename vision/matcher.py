@@ -69,9 +69,10 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
             return confidence, color_filter, px_to_inches, second_pass, isbn
         
     # Confirm that the binding is not "Audio Cassette" or "Audio CD"
-    if p_match and p_match["binding"].lower().strip() in ["audio cassette", "audio cd"]:
-        log_print(f"Binding is Audio Cassette or Audio CD: {p_match['binding']}\n")
-        return confidence, color_filter, px_to_inches, second_pass, isbn
+    if p_match["binding"]:
+        if p_match and p_match["binding"].lower().strip() in ["audio cassette", "audio cd"]:
+            log_print(f"Audio binding detected: '{p_match['binding']}'\nSkipping match process for isbn - {isbn}.\n")
+            return confidence, color_filter, px_to_inches, second_pass, isbn
 
     # Check if essential data is missing or incorrect
     set_local_img = False
