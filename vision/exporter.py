@@ -17,6 +17,9 @@ def export_books(books, formats, user_email, log_file_path):
         formats (list): A list of file formats to export to.
         user_email (str): The email address to send the exported files to.
         log_file_path (str): The path to the log file.
+
+    Returns:
+        bool: True if the files were exported successfully, False otherwise.
     """
     
     exported_files = []

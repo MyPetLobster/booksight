@@ -71,6 +71,8 @@ def vision(request):
 
 
 def vision_status(request):
+    """Query the status of the most recent Scan object and return the status as a JSON response.
+    Used to feed data to the pseudo-terminal in the frontend to display the status of the vision app."""
     last_scan = Scan.objects.first()
     vision_status = last_scan.scan_status
     

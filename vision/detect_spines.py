@@ -26,7 +26,7 @@ transform = transforms.Compose([
 book_count = 0 
 
 
-def crop_spines(jpeg_file, new_scan, torch_confidence):
+def crop_detect_spines(jpeg_file, new_scan, torch_confidence):
     """
     This function detects book spines in an image and creates a new image for each spine.
 
