@@ -5,8 +5,15 @@ import cv2 as cv
 import numpy as np
 import easyocr as ocr
 
-from booksight.settings import MEDIA_ROOT
 from . import utility as util
+
+
+from django.conf import settings
+MEDIA_ROOT = settings.MEDIA_ROOT
+MEDIA_URL = settings.MEDIA_URL
+
+
+
 
 def detect_text(image_path):
     """

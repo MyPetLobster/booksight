@@ -40,7 +40,8 @@ def export_books(books, formats, user_email, log_file_path):
         text_file = export_to_text(books)
         exported_files.append(text_file)
     
-    email_file(exported_files, user_email, log_file_path)
+    if user_email:
+        email_file(exported_files, user_email, log_file_path)
 
     return True
 

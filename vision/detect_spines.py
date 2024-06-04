@@ -8,10 +8,11 @@ import torch
 from torchvision import models, transforms
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
-from booksight.settings import MEDIA_ROOT, MEDIA_URL
 from . import utility as util
 
-
+from django.conf import settings
+MEDIA_ROOT = settings.MEDIA_ROOT
+MEDIA_URL = settings.MEDIA_URL
 
 
 # Load a pre-trained Faster R-CNN model

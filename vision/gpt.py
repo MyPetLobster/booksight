@@ -1,6 +1,6 @@
 from openai import OpenAI
 
-from . import config
+
 
 
 def run_gpt(prompt, model, temperature):

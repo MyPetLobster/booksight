@@ -2,7 +2,7 @@ import os
 import time
 
 from . import analyze_spine as asp
-from . import config
+from . import config 
 from . import detect_spines as ds
 from . import detect_text as dt
 from . import exporter as export
@@ -11,7 +11,26 @@ from . import utility as util
 from .classes import Spine, Book
 from dashboard.models import Scan
 
-from booksight.settings import MEDIA_URL
+from django.conf import settings
+MEDIA_URL = settings.MEDIA_URL
+
+
+def create_scan(image_path):
+    """
+    This function creates a new Scan object in the database and saves the image path. The function is called by the vision_terminal.py file 
+    when the vision process is started from the command line.
+
+    Args:
+        image_path (str): The path to the uploaded image file.
+
+    Returns:
+        Scan: The new Scan object.
+    """
+    new_scan = Scan()
+    new_scan.image = image_path
+    new_scan.save()
+
+    return new_scan
 
 
 def vision_core(image_path, new_scan):
@@ -183,6 +202,7 @@ def vision_core(image_path, new_scan):
     util.log_print("\n\n**************** PHASE THREE - EXPORTING RESULTS *****************\n\n")
 
     # Export the results to a text file and email to user
+
     log_file_path = util.retrieve_last_log_file()
     sent = export.export_books(books, output_formats, email_address, log_file_path)
 
