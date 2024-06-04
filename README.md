@@ -196,6 +196,100 @@ BookSight is built with Django, so you'll need to have Python installed on your 
 3. Watch the magic happen by following the progress logs in the terminal. 
 
 
+
+
+
+
+
+## File Structure
+<pre>booksight
+    |- .venv
+    |- booksight/
+    |   |- __pycache__
+    |   |- logs/
+    |   |- __init__.py
+    |   |- asgi.py
+    |   |- settings.py
+    |   |- urls.py
+    |   |- wsgi.py
+    |- dashboard/
+    |   |- __pycache__
+    |   |- migrations/
+    |   |- static/
+    |   |   |- dashboard/
+    |   |   |   |- css/
+    |   |   |   |   |- style.css
+    |   |   |   |   |- style.css.map
+    |   |   |   |- images/
+    |   |   |   |- javascript/
+    |   |   |   |- sass/
+    |   |   |   |   |-stye_sass.scss
+    |   |   |- public/
+    |   |   |   |- style_sass.css
+    |   |   |   |- style_sass.css.map
+    |   |- templates/
+    |   |   |- about.html
+    |   |   |- index.html
+    |   |   |- layout.html
+    |   |   |- tips.html
+    |   |   |- vision_complete.html
+    |   |   |- vision_failed.html
+    |   |   |- vision.html
+    |   |- __init__.py
+    |   |- admin.py
+    |   |- apps.py
+    |   |- models.py
+    |   |- tests.py
+    |   |- urls.py
+    |   |- views.py
+    |- media/
+    |   |- detection_temp/
+    |   |- uploaded_images/
+    |- vision/
+    |   |- __pycache__
+    |   |- exports/
+    |   |   |- csv/
+    |   |   |- json/
+    |   |   |- text/
+    |   |   |- xml/
+    |   |- images/
+    |   |   |- test_images/
+    |   |- migrations/
+    |   |- __init__.py
+    |   |- admin.py
+    |   |- analyze_spine.py
+    |   |- apps.py
+    |   |- classes.py
+    |   |- config.py
+    |   |- db_requests.py
+    |   |- detect_spines.py
+    |   |- detect_text.py
+    |   |- exporter.py
+    |   |- gemini.py
+    |   |- gpt.py
+    |   |- matcher.py
+    |   |- models.py
+    |   |- tests.py
+    |   |- token_counter.py
+    |   |- utility.py
+    |   |- vision_cli.py
+    |   |- vision.py
+    |- .env
+    |- .gitignore
+    |- db.sqlite3
+    |- manage.py
+    |- README.md
+    |- requirements.txt</pre>
+
+
+
+
+
+
+
+
+
+
 <!-- CONTACT -->
 ## Contact
 
