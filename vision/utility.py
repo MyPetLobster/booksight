@@ -4,44 +4,38 @@ import time
 
 from rich import print as rprint
 
-# These variables are defined when the module is imported, so they are available to all functions in the module, unique to each session.
-timestamp = time.strftime("%Y%m%d-%H%M%S")
+
 date = time.strftime("%Y%m%d")
 
 
 def create_log_file():
     """Creates new log directory each day and a new log file for each session."""
-    # Update date in case the script runs past midnight
     global date
-    old_date = date
     date = time.strftime("%Y%m%d")
 
-    # Update the timestamp to avoid overwriting the log file
-    global timestamp
     timestamp = time.strftime("%Y%m%d-%H%M%S")
 
-    if old_date != date:
-        if not os.path.exists(f'booksight/logs/{date}'):
-            os.makedirs(f'booksight/logs/{date}')
-        with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'w') as file:
-            file.write(f"Booksight log file for {timestamp}\n") 
-    else: 
-        if not os.path.exists(f'booksight/logs/{date}'):
-            os.makedirs(f'booksight/logs/{date}')  
-        with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'w') as file:
-            file.write(f"Booksight log file for {timestamp}\n")
-        
+    if not os.path.exists(f'booksight/logs/{date}'):
+        os.makedirs(f'booksight/logs/{date}')
+    with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'w') as file:
+        file.write(f"Booksight log file for {timestamp}\n") 
 
+        
 def log_print(message):
     """Prints a message and logs it to a text file."""
-    with open(f'booksight/logs/{date}/booksight_{timestamp}.log', 'a') as file:
+    log_file = retrieve_last_log_file()
+    with open(log_file, 'a') as file:
         file.write(f"{message}\n")
     rprint(message)
 
 
 def retrieve_last_log_file():
     """Returns the path to the most recent log file."""
+    date = time.strftime("%Y%m%d")
     log_dir = f'booksight/logs/{date}'
+    if not os.path.exists(log_dir):
+        yesterday = time.strftime("%Y%m%d", time.gmtime(time.time() - 86400))
+        log_dir = f'booksight/logs/{yesterday}'
     log_files = os.listdir(log_dir)
     log_files.sort(reverse=True)
     

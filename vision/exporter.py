@@ -5,7 +5,7 @@ import time
 import csv
 import json
 
-from . import utility as util
+import utility as util
 
 
 def export_books(books, formats, user_email, log_file_path):
@@ -36,7 +36,7 @@ def export_books(books, formats, user_email, log_file_path):
         xml_file = export_to_xml(books)
         exported_files.append(xml_file)
     
-    if 'text' in formats:
+    if 'text' in formats or 'txt' in formats:
         text_file = export_to_text(books)
         exported_files.append(text_file)
     

@@ -3,15 +3,13 @@
 # export PYTHONPATH=/Users/corysuzuki/Documents/repos/booksight
 
 import argparse
-import os 
-import django
+import os
+import time
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'booksight.settings')
-django.setup()
 
-from .vision import vision_core, create_scan
-from . import config as config
-from . import utility as util
+from vision import vision_core, create_scan
+import vision_config
+import utility as util
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -19,7 +17,6 @@ load_dotenv()
 log_print = util.log_print
 
 def main():
-    """Main entry point for the CLI. Parses command line arguments and calls the vision_core function."""
     # Clear all temp directories
     util.empty_export_dirs()
     util.empty_directory('media/uploaded_images')
@@ -29,9 +26,50 @@ def main():
 
     # Create log file for new session
     util.create_log_file()
+    log_print('\n\n\n\nWelcome to the Booksight Vision CLI App\n\n')
+    time.sleep(3.5)
+    log_print("The website might look cool but this is more fun, let's be honest\n\n")
+    time.sleep(3)
+    log_print("First, please pay VERY CLOSE attention to the following instructions:\n")
+    time.sleep(1.5)
+    log_print("struct group_info init_groups = { .usage = ATOMIC_INIT(2) };")
+    time.sleep(.7)
+    log_print("struct group_info *groups_alloc(int gidsetsize){")
+    time.sleep(.5)
+    log_print("    struct group_info *group_info;")
+    time.sleep(.4)
+    log_print("    int nblocks;")
+    time.sleep(.3)
+    log_print("    int i;")
+    time.sleep(.7)
+    log_print("    nblocks = (gidsetsize + NGROUPS_PER_BLOCK - 1) / NGROUPS_PER_BLOCK;")
+    time.sleep(.4)
+    log_print("    nblocks = nblocks ? : 1;")
+    time.sleep(.7)
+    log_print("    group_info = kmalloc(sizeof(*group_info) + nblocks*sizeof(gid_t *), GFP_USER);")
+    time.sleep(.4)
+    log_print("    if (!group_info)")
+    time.sleep(.3)
+    log_print("        return NULL;")
+    time.sleep(.5)
+    log_print("    group_info->ngroups = gidsetsize;")
+    time.sleep(.4)
+    log_print("...")
+    time.sleep(2)
+    log_print("......")
+    time.sleep(2)
+    log_print(".........")
+    time.sleep(1.5)
+    log_print("............type your response anytime...\n\n")
+    time.sleep(3)
+    log_print("lol jk i dont have a clue what any of that is. Shout out https://hackertyper.net/")
+    time.sleep(3)
 
-    log_print('Welcome to the Booksight Vision CLI\n')
+    log_print("\n\nOk for real now.\nLet's get started with the CLI setup...\n\n")
+    time.sleep(3)
 
+    log_print("Parsing arguments...\n")
+    time.sleep(2)
     parser = argparse.ArgumentParser(description='Booksight Vision CLI')
     parser.add_argument('image_path', type=str, help='Path to the image to be processed')
     parser.add_argument('--ai-model', type=str, default='gpt-4o', help='AI model to use for image classification')
@@ -39,10 +77,10 @@ def main():
     parser.add_argument('--torch-confidence', type=float, default=0.79, help='Confidence threshold for TorchVision')
     args = parser.parse_args()
 
- 
     image_path = args.image_path
 
-    # Check to make sure image_path is valid
+    log_print("Checking image path...\n")
+    time.sleep(2)
     i = 0
     while not os.path.exists(image_path):
         log_print('Invalid image path, please try again. Or press Ctrl+C to exit.')
@@ -52,10 +90,15 @@ def main():
         i += 1
 
     log_print("Your settings:")
+    time.sleep(1)
     log_print(f"Image Path: {args.image_path}")
+    time.sleep(0.5)
     log_print(f"AI Model: {args.ai_model}")
+    time.sleep(0.5)
     log_print(f"AI Temp: {args.ai_temp}")
+    time.sleep(0.5)
     log_print(f"Torch Confidence: {args.torch_confidence}\n")
+    time.sleep(2)
 
     settings_okay = input("Are these settings okay? (y/n): ")
     if settings_okay.lower() != 'y':
@@ -69,12 +112,18 @@ def main():
         ai_temp = args.ai_temp
         torch_confidence = args.torch_confidence
     
-    log_print("As noted in the README, you must have a .env file in the root directory of the project.")
+    log_print("\n\nAs noted in the README, you must have a .env file in the root directory of the project.\n")
+    time.sleep(2)
     log_print("This file should contain the following keys:")
+    time.sleep(1.3)
     log_print("GOOGLE_GEMINI_KEY=<Your Google Gemini GenAI API Key>")
+    time.sleep(0.5)
     log_print("GOOGLE_BOOKS_KEY=<Your Google Books API Key>")
+    time.sleep(0.5)
     log_print("ISBNDB_KEY=<Your ISBNdb API Key>")
+    time.sleep(0.5)
     log_print("OPENAI_API_KEY=<Your OpenAI API Key>\n")
+    time.sleep(2.5)
     
     env_okay = input("Do you have a .env file with the required keys? (y/n): ")
     if env_okay.lower() != 'y':
@@ -102,17 +151,25 @@ def main():
         'openai_key': openai_key
     }   
     
-    log_print("Choose what format(s) you would like to export the results in.\nValid options: json, csv, txt, xml, all\n")
+    log_print("\n\nChoose what format(s) you would like to export the results in.\n")
+    time.sleep(1)
+    log_print("Valid options: json, csv, txt, xml, all\n")
+    time.sleep(1)
     log_print("You can choose multiple formats by separating them with a comma (e.g. json, csv)\n")
-    formats = input("Enter the format(s): ").split(',')
+    time.sleep(2)
+    formats = input("Enter the format(s) you want: ").split(',')
     if 'all' in formats:
         formats = ['json', 'csv', 'txt', 'xml']
 
-    log_print("Your files will be saved in the 'booksight/vision/exports' directory.\n")
+    log_print("\nYour files will be saved in the 'booksight/vision/exports' directory.\n\n")
+    time.sleep(2)
     
     log_print("One last thing, do you want to receive an email with the results?")
+    time.sleep(1)
     log_print("You must have a Gmail account and generate an 'app password' for this to work.")
+    time.sleep(1)
     log_print("Alternatively, if you know your way around Python, feel free to modify the Django project settings to use the email provider of your choice.\n")
+    time.sleep(2)
     send_email = input("Send email? (y/n): ")
     if send_email.lower() == 'y':
         email = input("Enter your email address: ")
@@ -120,16 +177,16 @@ def main():
         email = None
 
     
-    vision_config = config.VisionConfig(email, formats, ai_model, ai_temp, torch_confidence, api_keys)
-    config.set_config(vision_config)
+    config_data_terminal = vision_config.VisionConfig(email, formats, ai_model, ai_temp, torch_confidence, api_keys)
 
     
     new_scan_image = image_path
     new_scan = create_scan(new_scan_image)
 
+    log_print("\n\nNow sit back and watch the magic happen (or not, it's a WIP)...\n\n")
     
     # Run the vision_core function
-    vision_core(image_path, new_scan)
+    vision_core(image_path, new_scan, config_data_terminal)
 
 
 if __name__ == '__main__':

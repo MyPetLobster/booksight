@@ -1,39 +1,30 @@
 import os
 import time
 
-from . import analyze_spine as asp
-from . import config 
-from . import detect_spines as ds
-from . import detect_text as dt
-from . import exporter as export
-from . import matcher as match
-from . import utility as util
-from .classes import Spine, Book
-from dashboard.models import Scan
+import sys
+sys.path.append('/Users/corysuzuki/Documents/repos/booksight/vision')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'booksight.settings')
+
+import django
+django.setup()
 
 from django.conf import settings
 MEDIA_URL = settings.MEDIA_URL
 
-
-def create_scan(image_path):
-    """
-    This function creates a new Scan object in the database and saves the image path. The function is called by the vision_terminal.py file 
-    when the vision process is started from the command line.
-
-    Args:
-        image_path (str): The path to the uploaded image file.
-
-    Returns:
-        Scan: The new Scan object.
-    """
-    new_scan = Scan()
-    new_scan.image = image_path
-    new_scan.save()
-
-    return new_scan
+import analyze_spine as asp
+import vision_config
+import detect_spines as ds
+import detect_text as dt
+import exporter as export
+import matcher as match
+import utility as util
+from classes import Spine, Book
+from dashboard.models import Scan
 
 
-def vision_core(image_path, new_scan):
+
+
+def vision_core(image_path, new_scan, config):
     """
     This function is the main function for the Booksight Vision process. It runs the entire process of detecting book spines, 
     analyzing the spines, detecting text, cleaning up text data, identifying books, and exporting the results. The function 
@@ -47,10 +38,12 @@ def vision_core(image_path, new_scan):
     new_scan.scan_status = "running"
     new_scan.save()
 
-    util.log_print("Welcome to Booksight!\n\nBeginning the Vision process.")
+    util.log_print("\n\nBeginning the Vision process.")
 
-    # Load configuration data from config.py
-    config_data = config.get_config()
+    # Set and retrieve configuration data
+    vision_config.set_config(config)
+    config_data = vision_config.get_config()
+    
     email_address = config_data.email
     output_formats = config_data.formats
     torch_confidence = config_data.torch_confidence
@@ -219,6 +212,24 @@ def vision_core(image_path, new_scan):
 
     
     return
+
+
+def create_scan(image_path):
+    """
+    This function creates a new Scan object in the database and saves the image path. The function is called by the vision_terminal.py file 
+    when the vision process is started from the command line.
+
+    Args:
+        image_path (str): The path to the uploaded image file.
+
+    Returns:
+        Scan: The new Scan object.
+    """
+    new_scan = Scan()
+    new_scan.image = image_path
+    new_scan.save()
+
+    return new_scan
 
 
 def match_spines_to_books(spines):

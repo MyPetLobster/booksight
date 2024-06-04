@@ -1,8 +1,8 @@
 import time
 import requests
 
-from . import config
-from . import utility as util
+import vision_config as vision_config
+import utility as util
 
 
 ISBN_COUNT = 10
@@ -72,7 +72,7 @@ def get_isbns_google_books(title, author):
     Returns:
         list: A list of ISBNs associated with the book
     """
-    config_data = config.get_config()
+    config_data = vision_config.get_config()
     google_books_key = config_data.api_keys["google_books_key"]
 
     # Query the Google Books API
@@ -110,7 +110,7 @@ def get_isbn_info(isbn):
     # Prevent rate limiting
     time.sleep(1)
 
-    config_data = config.get_config()
+    config_data = vision_config.get_config()
     isbndb_key = config_data.api_keys["isbndb_key"]
 
     h = {'Authorization': isbndb_key}
@@ -223,7 +223,7 @@ def get_all_data_isbndb(isbn):
     """
     time.sleep(1) # Prevent rate limiting
 
-    config_data = config.get_config()
+    config_data = vision_config.get_config()
     isbndb_key = config_data.api_keys["isbndb_key"]
 
     h = {'Authorization': isbndb_key}
@@ -247,7 +247,7 @@ def get_all_data_google(isbn):
     Returns:
         book_info (dict): A dictionary containing information about the book.
     """
-    config_data = config.get_config()
+    config_data = vision_config.get_config()
     google_books_key = config_data.api_keys["google_books_key"]
     response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}&key={google_books_key}")
 

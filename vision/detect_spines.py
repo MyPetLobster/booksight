@@ -8,7 +8,7 @@ import torch
 from torchvision import models, transforms
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
-from . import utility as util
+import utility as util
 
 from django.conf import settings
 MEDIA_ROOT = settings.MEDIA_ROOT

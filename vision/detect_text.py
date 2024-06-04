@@ -5,7 +5,7 @@ import cv2 as cv
 import numpy as np
 import easyocr as ocr
 
-from . import utility as util
+import utility as util
 
 
 from django.conf import settings

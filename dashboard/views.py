@@ -7,7 +7,7 @@ import threading
 from .models import Scan
 from vision.vision import vision_core
 import vision.utility as util
-import vision.config as vision_config
+import vision.vision_config as vision_config
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -27,6 +27,7 @@ def vision(request):
 
         # Create log file for new session
         util.create_log_file()
+        util.log_print('Welcome to the Booksight Vision Web App\n')
 
         # Get all form data
         image = request.FILES.get('uploaded-image')
@@ -34,17 +35,11 @@ def vision(request):
             return render(request, 'index.html', {
                 'error': 'No image uploaded'
             })
-        util.log_print(f'Image uploaded: {image.name}')
         email = request.POST.get('user-email')
-        util.log_print(f'User email: {email}')
         formats = request.POST.getlist('format')
-        util.log_print(f'Formats: {formats}')
         ai_model = request.POST.get('ai-model')
-        util.log_print(f'AI Model: {ai_model}')
         ai_temp = float(request.POST.get('ai-temp'))
-        util.log_print(f'AI Temp: {ai_temp}')
         torch_confidence = float(request.POST.get('torch-confidence')) 
-        util.log_print(f'Torch Confidence: {torch_confidence}')
 
         # Check if .env file exists
         if not os.path.exists('.env'):
@@ -60,13 +55,6 @@ def vision(request):
             open_ai_key = os.getenv('OPENAI_API_KEY')
             gmail_user = os.getenv('GMAIL_USERNAME')
             gmail_pass = os.getenv('GMAIL_PASSWORD')
-
-            util.log_print(f'Google Gemini Key: {google_gemini_key}')
-            util.log_print(f'Google Books Key: {google_books_key}')
-            util.log_print(f'ISBNdb Key: {isbndb_key}')
-            util.log_print(f'Open AI Key: {open_ai_key}')
-            util.log_print(f'Gmail User: {gmail_user}')
-            util.log_print(f'Gmail Pass: {gmail_pass}')
 
             # Check if any API keys are missing
             if not google_gemini_key and not open_ai_key:
@@ -95,7 +83,6 @@ def vision(request):
 
         # Save data/settings in VisionConfig class
         config = vision_config.VisionConfig(email, formats, ai_model, ai_temp, torch_confidence, credentials)
-        vision_config.set_config(config)
         
         # Create new scan and save image
         new_scan = Scan.objects.create()
@@ -107,7 +94,7 @@ def vision(request):
         util.log_print(f'Email: {email},\nFormats: {formats},\nImage: {image},\nAI Model: {ai_model},\nAI Temp: {ai_temp},\nTorch Confidence: {torch_confidence}')
 
         # Run Vision app in a separate thread
-        thread = threading.Thread(target=vision_core, args=(upload_path, new_scan))
+        thread = threading.Thread(target=vision_core, args=(upload_path, new_scan, config))
         thread.setDaemon(True)
         thread.start()
 

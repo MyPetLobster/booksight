@@ -5,14 +5,14 @@ import time
 from PIL import Image
 from io import BytesIO
 
-from . import analyze_spine as asp
-from . import config
-from . import db_requests as dbr
-from . import gpt as gpt
-from . import gemini as gemini
-from . import utility as util
-from .classes import Spine, Book
-from .token_counter import count_tokens
+import analyze_spine as asp
+import vision_config as vision_config 
+import db_requests as dbr
+import gpt as gpt
+import gemini as gemini
+import utility as util
+from classes import Spine, Book
+from token_counter import count_tokens
 
 
 
@@ -309,7 +309,7 @@ def identify_with_AI(prompt):
         str: The response from the AI model (JSON-formatted string with book titles and authors).
     """
     # Get AI model and temperature from config
-    config_data = config.get_config()
+    config_data = vision_config.get_config()
     ai_model = config_data.ai_model
     ai_temp = config_data.ai_temp
 

@@ -15,4 +15,5 @@ def set_config(config):
     global_config = config
 
 def get_config():
+    print(f"GLOBAL CONFIG: {global_config}")
     return global_config
