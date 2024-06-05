@@ -27,7 +27,7 @@ def vision(request):
 
         # Create log file for new session
         util.create_log_file()
-        util.log_print('Welcome to the Booksight Vision Web App\n')
+        util.log_print('Beginning new session with Booksight Vision Web App\n')
 
         # Get all form data
         image = request.FILES.get('uploaded-image')
