@@ -210,8 +210,7 @@ def vision_core(image_path, new_scan, config):
 
     util.log_print("\nAll processes complete. Thank you for using Booksight.\n\n")
 
-    
-    return
+    return True
 
 
 def create_scan(image_path):
