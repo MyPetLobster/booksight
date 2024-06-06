@@ -56,7 +56,7 @@ def main():
 
     # silly_tricks()
 
-    console.print("[bold pink3]Parsing arguments...[/bold pink3]\n", justify="left")
+    console.print("[bold pink3]Parsing arguments...[/bold pink3]", justify="left")
     time.sleep(1)
 
 
@@ -214,9 +214,9 @@ def main():
         console.print("\n[bold light_slate_blue]New credentials have been saved to the .env file[/bold light_slate_blue]\n", justify="left")
 
     # Validate API Keys
-    console.print("\n[bold light_slate_blue]Validating API keys...[/bold light_slate_blue]\n", justify="left")
+    console.print("\n[bold light_slate_blue]Validating API keys...[/bold light_slate_blue]", justify="left")
     dbr.validate_api_keys()
-    console.print("\n[bold light_sky_blue3]API keys have been validated successfully.[/bold light_sky_blue3]\n", justify="left")
+    console.print("[bold medium_purple3]API keys have been validated successfully.[/bold medium_purple3]", justify="left")
     time.sleep(0.7)
 
     console.print("\n\n[bold dodger_blue1]Wonderful! API keys have been set up successfully.[/bold dodger_blue1]\n\n", justify="left")
