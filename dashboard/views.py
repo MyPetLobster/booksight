@@ -60,7 +60,7 @@ def vision(request):
                     'error': 'Invalid API keys'
                 })
             
-            # Gmail Check 
+            # Django Gmail Backend Check 
             # TODO - Extend this error message to the frontend
             if os.getenv('GMAIL_USERNAME') == '' or os.getenv('GMAIL_PASSWORD') == '':
                 util.log_print('Missing Gmail username or password')
