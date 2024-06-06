@@ -2,17 +2,19 @@
 {% load static %}
 
 {% block title %}Booksight{% endblock %}
+
 {% block body %}
     <div class="page-identifier" style="display:none">index</div>
     <div class="idx-content">
+
         <div class="landing-logo-div">
             <img id="logo-eyes" src="{% static 'dashboard/images/eyes-only.png' %}" alt="Booksight Logo Owl Eyes">
             <img id="logo-text" src="{% static 'dashboard/images/booksight-text.png' %}" alt="Booksight Logo Text">
             <p class="hidden-subtitle" style="opacity:0">For the details your eyes can't see</p>
         </div>
 
-
         <div class="upload-form-div"  style="opacity:0">
+
             <form class="floating-form" id="upload-img-form" action="{% url 'vision' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="form-div">
@@ -61,10 +63,12 @@
                     <input class="button" id="submit-button" type="submit" value="Submit">
                     <button class="button" id="cancel-button" type="button">Cancel</button>
                 </div>
+
                 <button class="button" id="adv-options-button" type="button">Advanced Options</button>
+
                 <div id="adv-options-div" style="display:none">
                     <h3 class="form-title" style="align-self:center">Advanced Options</h3>
-                </br>
+                    </br>
                     <div>
                         <label for="ai-model">AI Model - </label>
                         <select name="ai-model" id="ai-model">
@@ -75,23 +79,22 @@
                             <option value="gpt-4o">GPT 4o</option>
                         </select>
                     </div>
-                </br>
+                    </br>
                     <div>
+                        
                         <label for="ai-temp">AI Temperature - </label>
                         <input type="number" name="ai-temp" id="ai-temp" min="0" max="1" step="0.1" value="0.3">
                     </div>
-                </br>
+                    </br>
                     <div>
                         <label for="torch-confidence">Torchvision confidence - </label>
                         <input type="number" name="torch-confidence" id="torch-confidence" min="0" max="1" step="0.01" value="0.79">
                     </div>
-                </br>
+                    </br>
                     <p>Warning: Adjusting these settings may greatly affect the accuracy of the results, use with caution.</p>
                 </div>
                 <button class="button" id="adv-options-close" type="button" style="display:none">Close Advanced Options</button>
             </form> 
-
-
 
         </div>
     </div>
@@ -99,6 +102,8 @@
 
 
     <script>
+
+        // Checkboxes for export formats - index form
         const selectAll = document.getElementById('all');
         const csv = document.getElementById('csv');
         const json = document.getElementById('json');
@@ -118,41 +123,20 @@
                 txt.checked = false;
             }
         })
-
-        csv.addEventListener('change', () => {
-            if (csv.checked && json.checked && xml.checked && txt.checked) {
-                selectAll.checked = true;
-            } else {
-                selectAll.checked = false;
-            }
-        })
-
-        json.addEventListener('change', () => {
-            if (csv.checked && json.checked && xml.checked && txt.checked) {
-                selectAll.checked = true;
-            } else {
-                selectAll.checked = false;
-            }
-        })
-
-        xml.addEventListener('change', () => {
-            if (csv.checked && json.checked && xml.checked && txt.checked) {
-                selectAll.checked = true;
-            } else {
-                selectAll.checked = false;
-            }
-        })
-
-        txt.addEventListener('change', () => {
-            if (csv.checked && json.checked && xml.checked && txt.checked) {
-                selectAll.checked = true;
-            } else {
-                selectAll.checked = false;
-            }
-        })
+        
+        options = [csv, json, xml, txt];
+        for (let option of options) {
+            option.addEventListener('change', () => {
+                if (csv.checked && json.checked && xml.checked && txt.checked) {
+                    selectAll.checked = true;
+                } else {
+                    selectAll.checked = false;
+                }
+            })
+        }
 
 
-
+        // Index Form and Landing Logo Interplay, Form Handling
         const logoEyes = document.getElementById('logo-eyes');
         const logoText = document.getElementById('logo-text');
         const hiddenSubtitle = document.querySelector('.hidden-subtitle');
@@ -164,39 +148,26 @@
         const advOptionsDiv = document.getElementById('adv-options-div');
         const advOptionsClose = document.getElementById('adv-options-close');
         const screenWidth = window.innerWidth;
+        
         if (screenWidth > 600) {
-            logoEyes.addEventListener('mouseover', () => {
-                logoText.style.maxWidth = "110%";
-                logoText.style.opacity = 1;
-                logoEyes.style.maxWidth = "70%";
-                logoEyes.style.opacity = 1;
-                hiddenSubtitle.style.opacity = 1;
-                hiddenSubtitle.style.transition = "10s";
-            })
-            logoEyes.addEventListener('mouseout', () => {
-                logoText.style.maxWidth = "100%";
-                logoText.style.opacity = 0.15;
-                logoEyes.style.maxWidth = "60%";
-                logoEyes.style.opacity = 0.15;
-                hiddenSubtitle.style.opacity = 0;
-                hiddenSubtitle.style.transition = "2s";
-
-            })
-            logoText.addEventListener('mouseover', () => {
-                logoText.style.maxWidth = "110%";
-                logoText.style.opacity = 1;
-                logoEyes.style.maxWidth = "70%";
-                logoEyes.style.opacity = 1;
-                hiddenSubtitle.style.opacity = 1;
-                hiddenSubtitle.style.transition = "10s";
-            })
-            logoText.addEventListener('mouseout', () => {
-                logoText.style.maxWidth = "100%";
-                logoText.style.opacity = 0.15;
-                logoEyes.style.maxWidth = "60%";
-                logoEyes.style.opacity = 0.15;
-                hiddenSubtitle.style.opacity = 0;
-                hiddenSubtitle.style.transition = "2s";
+            // Desktop behavior
+            [logoEyes, logoText].forEach((element) => {
+                element.addEventListener('mouseover', () => {
+                    logoText.style.maxWidth = "110%";
+                    logoText.style.opacity = 1;
+                    logoEyes.style.maxWidth = "70%";
+                    logoEyes.style.opacity = 1;
+                    hiddenSubtitle.style.opacity = 1;
+                    hiddenSubtitle.style.transition = "10s";
+                })
+                element.addEventListener('mouseout', () => {
+                    logoText.style.maxWidth = "100%";
+                    logoText.style.opacity = 0.15;
+                    logoEyes.style.maxWidth = "60%";
+                    logoEyes.style.opacity = 0.15;
+                    hiddenSubtitle.style.opacity = 0;
+                    hiddenSubtitle.style.transition = "2s";
+                })
             })
             landingLogoDiv.addEventListener('click', () => {
                 floatingForm.style.opacity = 1;
@@ -204,8 +175,8 @@
                 landingLogoDiv.style.opacity = 0;
             })
         } else {
+            // Mobile behavior
             landingLogoDiv.addEventListener('click', () => {
-                // slowly display the subtitle text, darken the logo and text, then display the form and hide the logo/text. 4s total
                 logoEyes.style.transition = "2s";
                 logoEyes.style.opacity = 1;
                 logoText.style.transition = "2s";
@@ -237,37 +208,39 @@
             })
         }
 
-            cancelBtn.addEventListener('click', () => {
-                floatingForm.style.opacity = 0;
-                floatingForm.style.zIndex = -1;
-                landingLogoDiv.style.transition = "2s";
-                landingLogoDiv.style.opacity = 1;
-                logoEyes.style.transition = "2s";
-                logoEyes.style.opacity = 0.15;
-                logoText.style.transition = "2s";
-                logoText.style.opacity = 0.15;
-            
-                window.scrollTo(0, 0);
+        cancelBtn.addEventListener('click', () => {
+            floatingForm.style.opacity = 0;
+            floatingForm.style.zIndex = -1;
+            landingLogoDiv.style.transition = "2s";
+            landingLogoDiv.style.opacity = 1;
+            logoEyes.style.transition = "2s";
+            logoEyes.style.opacity = 0.15;
+            logoText.style.transition = "2s";
+            logoText.style.opacity = 0.15;
+        
+            window.scrollTo(0, 0);
 
-                const footer = document.getElementById('footer');
-                footer.style.opacity = 1;
-                const owlLogoNavItem = document.getElementById('owl-logo-nav-item');
-                if (owlLogoNavItem) {
-                    owlLogoNavItem.style.transition = "2s";
-                    owlLogoNavItem.style.opacity = 1;
-                    owlLogoNavItem.style.zIndex = 1;
-                }
-            })
-            advOptionsButton.addEventListener('click', () => {
-                advOptionsDiv.style.display = 'flex';
-                advOptionsClose.style.display = 'block';
-                advOptionsButton.style.display = 'none';
-            })
-            advOptionsClose.addEventListener('click', () => {
-                advOptionsDiv.style.display = 'none';
-                advOptionsClose.style.display = 'none';
-                advOptionsButton.style.display = 'block';
-            })     
+            const footer = document.getElementById('footer');
+            footer.style.opacity = 1;
+            const owlLogoNavItem = document.getElementById('owl-logo-nav-item');
+            if (owlLogoNavItem) {
+                owlLogoNavItem.style.transition = "2s";
+                owlLogoNavItem.style.opacity = 1;
+                owlLogoNavItem.style.zIndex = 1;
+            }
+        })
+        advOptionsButton.addEventListener('click', () => {
+            advOptionsDiv.style.display = 'flex';
+            advOptionsClose.style.display = 'block';
+            advOptionsButton.style.display = 'none';
+            window.scrollTo(0, document.body.scrollHeight);
+        })
+        advOptionsClose.addEventListener('click', () => {
+            advOptionsDiv.style.display = 'none';
+            advOptionsClose.style.display = 'none';
+            advOptionsButton.style.display = 'block';
+            window.scrollTo(0, 0);
+        })     
 
         
     </script>
