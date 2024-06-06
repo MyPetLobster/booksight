@@ -163,6 +163,8 @@ def main():
     env_table.add_row("GOOGLE_BOOKS_KEY", "<Your Google Books API Key>", style="medium_purple")
     env_table.add_row("ISBNDB_KEY", "<Your ISBNdb API Key>", style="light_slate_grey")
     env_table.add_row("OPENAI_API_KEY", "<Your OpenAI API Key>", style="grey53")
+    env_table.add_row("GMAIL_USERNAME", "<Your Gmail Username>", style="plum4")
+    env_table.add_row("GMAIL_PASSWORD", "<Your Gmail Password>", style="light_pink4")
     console.print(env_table, justify="center")
     time.sleep(0.5)
     
@@ -174,12 +176,16 @@ def main():
         time.sleep(0.5)
         console.print("[bold orange_red1]If you choose not to, the program will exit.[/bold orange_red1]\n")
         time.sleep(0.5)
-        console.print("[bold light_slate_grey]Note: Only one of google_gemini_key and openai_key is required. The other two are mandatory.[/bold light_slate_grey]\n\n")
+        console.print("[bold light_slate_grey]Note: Only one of google_gemini_key and openai_key is required. The other two API keys are mandatory.[/bold light_slate_grey]\n\n")
+        time.sleep(0.5)
+        console.print("[bold grey53]Gmail credentials are required if you want to receive an email with the results.[/bold grey53]\n")
+        console.print("[bold grey53]You must generate an 'app password' for your Gmail account.[/bold grey53]\n")
+        console.print("[bold grey53]If you don't want to receive an email, just press enter with an empty field.[/bold grey53]\n")
 
         valid_input = False
         while not valid_input:
             enter_keys = console.input("[bold]Enter API keys? ([chartreuse3]y[/chartreuse3]/[red1]n[/red1]): [/bold]")
-            if enter_keys.lower() not in ['y', 'n', 'yes', 'ya', 'yeah', 'yep', 'no', 'nah', 'nope']:
+            if enter_keys[0].lower() not in ['y', 'n']:
                 console.print("\n[bold red]Invalid input. Please try again.[/bold red]\n")
             else:
                 valid_input = True
@@ -187,17 +193,23 @@ def main():
             enter_keys = enter_keys[0].lower()
             if enter_keys.lower() != 'y':
                 return
+            
         console.print("\n[bold red]WARNING: This process will overwrite the entire existing .env file.[/bold red]\n")
         google_gemini_key = console.input("\n[bold light_slate_blue]Enter your Google Gemini GenAI API Key: [/bold light_slate_blue]")
         google_books_key = console.input("\n[bold medium_purple]Enter your Google Books API Key: [/bold medium_purple]")
         isbndb_key = console.input("\n[bold light_slate_grey]Enter your ISBNdb API Key: [/bold light_slate_grey]")
         openai_key = console.input("\n[bold grey53]Enter your OpenAI API Key: [/bold grey53]")
+        gmail_user = console.input("\n[bold plum4]Enter your Gmail Username: [/bold plum4]")
+        gmail_pass = console.input("\n[bold light_pink4]Enter your Gmail Password: [/bold light_pink4]")
+
         # Overwrite the .env file
         with open('.env', 'w') as f:
             f.write(f"GOOGLE_GEMINI_KEY={google_gemini_key}\n")
             f.write(f"GOOGLE_BOOKS_KEY={google_books_key}\n")
             f.write(f"ISBNDB_KEY={isbndb_key}\n")
             f.write(f"OPENAI_API_KEY={openai_key}\n")
+            f.write(f"GMAIL_USERNAME={gmail_user}\n")
+            f.write(f"GMAIL_PASSWORD={gmail_pass}\n")
 
         console.print("\n[bold light_slate_blue]New credentials have been saved to the .env file[/bold light_slate_blue]\n", justify="left")
 
@@ -237,6 +249,8 @@ def main():
     console.print("\n[bold sea_green3]Your files will be saved in the 'booksight/vision/exports' directory.[/bold sea_green3]\n\n", justify="left")
     time.sleep(1)
     
+
+    # EMAIL SETUP
     console.print("[bold dark_turquoise]One last thing, do you want to receive an email with the results?[/bold dark_turquoise]\n")
     time.sleep(1)
     console.print("[bold light_sea_green]You must have a Gmail account and generate an 'app password' for this to work.[/bold light_sea_green]\n")
@@ -244,13 +258,12 @@ def main():
     console.print("[italic dark_cyan]If you know your way around Python, you can modify the Django project settings to use the email provider of your choice.[/italic dark_cyan]\n\n")
     time.sleep(1)
 
-    send_email = console.input("[bold]Send email? ([chartreuse3]y[/chartreuse3]/[red1]n[/red1]): [/bold]")
-    console.print("\n")
+    send_email = console.input("[bold]Send email? To skip, hit 'Enter'. ([chartreuse3]y[/chartreuse3]/[red1]n[/red1]): [/bold]") 
     if send_email.lower() == 'y':
         valid_email = False
         i = 0
         while not valid_email:
-            email = console.input("[bold]Enter your email address: [/bold]")
+            email = console.input("[bold]Email address to receive exported files: [/bold]")
 
             if email == '':
                 email = None
@@ -293,6 +306,7 @@ def main():
         time.sleep(1)
         if email: 
             console.print("\n[bold sea_green3]An email has been sent to you with the results.[/bold sea_green3]\n")
+            console.print("\nIf you do not receive the email, refer to the README for help setting up Django email settings.\n\n")
             time.sleep(1)
         console.print("\n[bold steel_blue1]If you have any questions or feedback, please reach out to me at BookcaseDatabase@gmail.com[/bold steel_blue1]\n\n")
         console.print("\n\n[bold medium_turquoise]Thank you for using the Booksight Vision CLI app![/bold medium_turquoise]\n\n")
