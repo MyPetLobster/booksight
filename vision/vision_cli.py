@@ -50,7 +50,7 @@ def main():
     console.print("\n\n[bold thistle1]Initializing the CLI setup...[/bold thistle1]\n", justify="left")
     time.sleep(1.2)
 
-    silly_tricks()
+    # silly_tricks()
 
     console.print("[bold pink3]Parsing arguments...[/bold pink3]\n", justify="left")
     time.sleep(2)
@@ -99,7 +99,7 @@ def main():
 
     # Check if image path is valid
     console.print("\n\n[bold honeydew2]Checking image path...[/bold honeydew2]", justify="left")
-    time.sleep(2)
+    time.sleep(0.5)
     i = 0
     while not os.path.exists(image_path):
         console.print("\n[bold red]Invalid image path, please try again. Or press Ctrl+C to exit.[/bold red]")
@@ -112,7 +112,7 @@ def main():
     
     # Check if AI model is valid
     console.print("[bold dark_sea_green2]Checking AI model...[/bold dark_sea_green2]", justify="left")
-    time.sleep(2)
+    time.sleep(0.2)
 
     valid_models = ['gpt-4o', 'gpt-3.5-turbo', 'gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-1.0-turbo']
     ai_model = ai_model.lower()
@@ -129,7 +129,7 @@ def main():
 
     # Check if AI temperature and Torch confidence are valid (both should be between 0 and 1)
     console.print("[bold dark_sea_green]Checking AI temperature and Torch confidence...[/bold dark_sea_green]", justify="left")
-    time.sleep(2)
+    time.sleep(0.4)
 
     is_valid_floats = False
     while not is_valid_floats:
@@ -146,21 +146,21 @@ def main():
 
 
     # ENV FILE SETUP
-    time.sleep(1.5)
+    time.sleep(0.5)
     console.print("[bold light_slate_blue]Great! Now let's set up the API keys and export formats.[/bold light_slate_blue]\n\n", justify="left")
-    time.sleep(2)
+    time.sleep(1)
 
     console.print("[bold plum4]As noted in the README, you must have a .env file in the root directory of the project.[/bold plum4]\n", justify="left")
-    time.sleep(2)
+    time.sleep(1)
     console.print("[bold medium_orchid3]This file should contain the following keys:[/bold medium_orchid3]\n", justify="left")
-    time.sleep(1.5)
+    time.sleep(0.5)
     env_table = Table(show_header=False, border_style="bold medium_orchid3")
     env_table.add_row("GOOGLE_GEMINI_KEY", "<Your Google Gemini GenAI API Key>", style="light_slate_blue")
     env_table.add_row("GOOGLE_BOOKS_KEY", "<Your Google Books API Key>", style="medium_purple")
     env_table.add_row("ISBNDB_KEY", "<Your ISBNdb API Key>", style="light_slate_grey")
     env_table.add_row("OPENAI_API_KEY", "<Your OpenAI API Key>", style="grey53")
     console.print(env_table, justify="center")
-    time.sleep(1.5)
+    time.sleep(0.5)
     
     env_okay = console.input("[bold]\nDo you have a .env file with the required keys? (y/n):[/bold] ")
     env_okay = env_okay[0].lower()
@@ -205,27 +205,27 @@ def main():
 
     # TODO: input, api validation checks
 
-    console.print("\n\n[bold dodger_blue1]API keys have been set up successfully.[/bold dodger_blue1]\n\n", justify="left")
+    console.print("\n\n[bold dodger_blue1]Wonderful! API keys have been set up successfully.[/bold dodger_blue1]\n\n", justify="left")
 
     console.print("[bold sky_blue1]Choose what format(s) you would like to export the results in.[/bold sky_blue1]\n", justify="left")
-    time.sleep(1)
+    time.sleep(0.6)
     console.print("[bold dark_slate_gray3]Valid options: json, csv, txt, xml, all[/bold dark_slate_gray3]\n", justify="left")
-    time.sleep(1)
+    time.sleep(0.6)
     console.print("[bold aquamarine3]You can choose multiple formats by separating them with a comma [/bold aquamarine3](e.g. [italic]Enter the format(s) you want: json, csv[/italic])\n", justify="left")
-    time.sleep(2)
+    time.sleep(0.5)
 
-    formats_valid = False
-    while not formats_valid:
-        formats = console.input("[bold]Enter the format(s) you want: [/bold]").split(',')
-        formats = [format.strip().lower() for format in formats]
-
-        valid_formats = ['json', 'csv', 'txt', 'xml', 'all']
-        for format in formats:
-            if format not in valid_formats:
-                console.print("\n[bold red]Invalid format entered. Please try again.[/bold red]\n")
-                break
-
-        formats_valid = True
+    # Check valid formats entered
+    valid_formats = False
+    while not valid_formats:
+        formats = console.input("[bold]Enter the format(s) you want: [/bold]")
+        formats = formats.split(',')
+        formats = [f.strip() for f in formats]
+        valid_formats = all(f in ['json', 'csv', 'txt', 'xml', 'all'] for f in formats)
+        if not valid_formats:
+            console.print("\n[bold red]Invalid format(s) entered. Please try again.[/bold red]\n")
+            time.sleep(0.5)
+        else:
+            valid_formats = True
 
     if 'all' in formats:
         formats = ['json', 'csv', 'txt', 'xml']
@@ -233,14 +233,14 @@ def main():
     console.print("\n[bold cyan]Formats have been set up successfully.[/bold cyan]\n", justify="left")
 
     console.print("\n[bold sea_green3]Your files will be saved in the 'booksight/vision/exports' directory.[/bold sea_green3]\n\n", justify="left")
-    time.sleep(2)
+    time.sleep(1)
     
     console.print("[bold dark_turquoise]One last thing, do you want to receive an email with the results?[/bold dark_turquoise]\n")
-    time.sleep(2)
+    time.sleep(1)
     console.print("[bold light_sea_green]You must have a Gmail account and generate an 'app password' for this to work.[/bold light_sea_green]\n")
-    time.sleep(2)
+    time.sleep(1)
     console.print("[italic dark_cyan]If you know your way around Python, you can modify the Django project settings to use the email provider of your choice.[/italic dark_cyan]\n\n")
-    time.sleep(2)
+    time.sleep(1)
 
     send_email = console.input("[bold]Send email? (y/n): [/bold]")
     console.print("\n")
@@ -300,7 +300,7 @@ def main():
         console.print("\n\n[bold red]Email logs to BookcaseDatabase@gmail.com for further assistance.[/bold red]\n\n")
         return
     
-    
+
 def silly_tricks():
     console.print("[bold red]Pay very close attention to the following instructions:[/bold red]\n", justify="left")
     time.sleep(2)
