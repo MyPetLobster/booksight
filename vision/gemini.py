@@ -1,6 +1,7 @@
+import os
 import google.generativeai as genai
-
-import vision_config as vision_config
+from dotenv import load_dotenv
+load_dotenv()
 
 def run_gemini(prompt, model):
     """
@@ -16,8 +17,7 @@ def run_gemini(prompt, model):
         response.text (str): A string containing the generated content from the AI model.
     """
     # Configure genai settings
-    config_data = vision_config.get_config()
-    google_gemini_key = config_data.api_keys['google_gemini_key']
+    google_gemini_key = os.getenv('GOOGLE_GEMINI_KEY')
     genai.configure(api_key=google_gemini_key)
     model = genai.GenerativeModel(model)
     response = model.generate_content(prompt)

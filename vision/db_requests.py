@@ -4,7 +4,6 @@ import requests
 
 import gemini
 import gpt
-import vision_config as vision_config
 import utility as util
 
 from dotenv import load_dotenv
@@ -77,8 +76,7 @@ def get_isbns_google_books(title, author):
     Returns:
         list: A list of ISBNs associated with the book
     """
-    config_data = vision_config.get_config()
-    google_books_key = config_data.api_keys["google_books_key"]
+    google_books_key = os.getenv("GOOGLE_BOOKS_KEY")
 
     # Query the Google Books API
     response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}+inauthor:{author}&maxResults=5&key={google_books_key}")
@@ -115,8 +113,7 @@ def get_isbn_info(isbn):
     # Prevent rate limiting
     time.sleep(1)
 
-    config_data = vision_config.get_config()
-    isbndb_key = config_data.api_keys["isbndb_key"]
+    isbndb_key = os.getenv("ISBNDB_KEY")
 
     h = {'Authorization': isbndb_key}
     response = requests.get(f"https://api2.isbndb.com/book/{isbn}", headers=h)
@@ -228,8 +225,7 @@ def get_all_data_isbndb(isbn):
     """
     time.sleep(1) # Prevent rate limiting
 
-    config_data = vision_config.get_config()
-    isbndb_key = config_data.api_keys["isbndb_key"]
+    isbndb_key = os.getenv("ISBNDB_KEY")
 
     h = {'Authorization': isbndb_key}
     response = requests.get(f"https://api2.isbndb.com/book/{isbn}", headers=h)
@@ -252,8 +248,7 @@ def get_all_data_google(isbn):
     Returns:
         book_info (dict): A dictionary containing information about the book.
     """
-    config_data = vision_config.get_config()
-    google_books_key = config_data.api_keys["google_books_key"]
+    google_books_key = os.getenv("GOOGLE_BOOKS_KEY")
     response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}&key={google_books_key}")
 
     if response.status_code == 200:

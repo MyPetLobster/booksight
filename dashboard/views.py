@@ -6,9 +6,11 @@ import threading
 
 from .models import Scan
 from vision.vision import vision_core
+import vision.db_requests as dbr
 import vision.utility as util
 import vision.vision_config as vision_config
 
+# TODO - Is this being used? 
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -41,6 +43,7 @@ def vision(request):
         ai_temp = float(request.POST.get('ai-temp'))
         torch_confidence = float(request.POST.get('torch-confidence')) 
 
+
         # Check if .env file exists
         if not os.path.exists('.env'):
             util.log_print('Missing .env file')
@@ -49,42 +52,24 @@ def vision(request):
                 'error': 'Missing .env file'
             })
         else: 
-            google_gemini_key = os.getenv('GOOGLE_GEMINI_KEY')
-            google_books_key = os.getenv('GOOGLE_BOOKS_KEY')
-            isbndb_key = os.getenv('ISBNDB_KEY')
-            open_ai_key = os.getenv('OPENAI_API_KEY')
-            gmail_user = os.getenv('GMAIL_USERNAME')
-            gmail_pass = os.getenv('GMAIL_PASSWORD')
-
-            # Check if any API keys are missing
-            if not google_gemini_key and not open_ai_key:
+            # Validate API Keys and Django email setup (Gmail and app password)
+            keys_valid = dbr.validate_api_keys()
+            if not keys_valid:
+                util.log_print('Invalid API keys - please refer to the README for the required API keys and ensure all of your provided keys are valid.')
                 return render(request, 'index.html', {
-                    'error': 'Need at least one AI API key. As of 6/03/2024 Gemini has a generous free tier.'
+                    'error': 'Invalid API keys'
                 })
-            elif not google_books_key:
+            
+            # Gmail Check 
+            # TODO - Extend this error message to the frontend
+            if os.getenv('GMAIL_USERNAME') == '' or os.getenv('GMAIL_PASSWORD') == '':
+                util.log_print('Missing Gmail username or password')
                 return render(request, 'index.html', {
-                    'error': 'Missing Google Books API key. You can get this key for free.'
+                    'error': 'Missing Gmail username or password.'
                 })
-            elif not isbndb_key:
-                return render(request, 'index.html', {
-                    'error': 'Missing ISBNdb API key. This key is NOT free and has strict rate limits.'
-                })
-            elif not gmail_user or not gmail_pass:
-                return render(request, 'index.html', {
-                    'error': 'Missing Gmail credentials. This is required to send emails.'
-                })
-        
-        credentials = {
-            'google_gemini_key': google_gemini_key,
-            'google_books_key': google_books_key,
-            'isbndb_key': isbndb_key,
-            'open_ai_key': open_ai_key,
-        }
-
-        # TODO - Validate API Keys
 
         # Save data/settings in VisionConfig class
-        config = vision_config.VisionConfig(email, formats, ai_model, ai_temp, torch_confidence, credentials)
+        config = vision_config.VisionConfig(email, formats, ai_model, ai_temp, torch_confidence)
         
         # Create new scan and save image
         new_scan = Scan.objects.create()
