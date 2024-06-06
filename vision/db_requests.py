@@ -1,9 +1,14 @@
+import os
 import time
 import requests
 
+import gemini
+import gpt
 import vision_config as vision_config
 import utility as util
 
+from dotenv import load_dotenv
+load_dotenv()
 
 ISBN_COUNT = 10
 ISBN_COUNT_COMBINED = 15
@@ -279,13 +284,98 @@ def get_all_data_openlibrary(isbn):
         return None
     
 
+def validate_api_keys():
+    """
+    This function validates the API keys provided by the user. Only one of OpenAI or Google Gemini is required. 
+    The rest of the keys are mandatory.
+    
+    Args:
+        None: The API keys are stored in the environment variables.
+        
+    Returns:
+        bool: True if all the keys are valid and necessary keys are present. False otherwise.
+    """
+    
+    if not validate_google_books_api_key() or not validate_isbndb_api_key():
+        return False
+    if not validate_openai_api_key() and not validate_gemini_api_key():
+        return False
+    return True
+    
+
+def validate_google_books_api_key():
+    """
+    This function validates the Google Books API key provided by the user.
+
+    Args:
+        None: The Google Books API key is automatically set in the environment variables.
+
+    Returns:
+        bool: True if the key is valid. False otherwise.
+"""
+    google_books_key = os.getenv("GOOGLE_BOOKS_KEY")
+    response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=sheltering+skyResults=5&key={google_books_key}")
+    if response.status_code != 200:
+        return False
+    return True
 
 
-# def test_isbndb_response():
-#     isbn = "9780099520290"
-#     book_info = get_all_data_isbndb(isbn)
-#     util.log_print(book_info)
+def validate_isbndb_api_key():
+    """
+    This function validates the ISBNdb API key provided by the user.
+
+    Args:
+        None: The ISBNdb API key is automatically set in the environment variables. 
+    Returns:
+        bool: True if the key is valid. False otherwise.
+    """
+    isbndb_key = os.getenv("ISBNDB_KEY")
+    h = {'Authorization': isbndb_key}
+    response = requests.get(f"https://api2.isbndb.com/book/9780099520290", headers=h)
+    if response.status_code != 200:
+        return False
+    return True
 
 
-# if __name__ == "__main__":
-#     test_isbndb_response()
+def validate_openai_api_key():
+    """
+    This function validates the OpenAI API key provided by the user.
+
+    Args:
+        None: The OpenAI API key is automatically set in the environment variables and is retrieved within the function.
+
+    Returns:
+        bool: True if the key is valid. False otherwise.
+    """
+    prompt = "In 50 words or less, describe the plot of the book 'Train Dreams' by Denis Johnson."
+    model = 'gpt-4o'
+    temperature = 0.5
+
+    response = gpt.run_gpt(prompt, model, temperature)
+
+    if not response:
+        return False
+    
+    return True
+
+
+def validate_gemini_api_key():
+    """
+    This function validates the Google Gemini API key provided by the user.
+
+    Args:
+        None: The Google Gemini API key is automatically set in the environment variables and is retrieved within the function.
+
+    Returns:    
+        bool: True if the key is valid. False otherwise.
+    """
+    prompt = "In 50 words or less, describe the plot of the book 'Tigana' by Guy Gavriel Kay."
+    model = 'gemini-1.5-pro'
+    
+    response = gemini.run_gemini(prompt, model)
+
+    if not response:
+        return False
+    
+    return True
+

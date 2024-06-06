@@ -12,8 +12,10 @@ from rich.table import Table
 from rich.text import Text
 
 from vision import vision_core, create_scan
-import vision_config
+
+import db_requests as dbr
 import utility as util
+import vision_config
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -31,6 +33,8 @@ def main():
 
     # Create log file for new session
     util.create_log_file()
+
+    # Create log header to specify Vision launched with CLI
     log_print("\n\n\n\nBeginning new session with the BookSight Vision CLI app\n\n\n\n")
 
     # Create intro table, begin CLI setup
@@ -46,14 +50,17 @@ def main():
     intro_table.add_row(" ")
     console.print(intro_table, justify="center")
 
-    time.sleep(2)
+    time.sleep(1.5)
     console.print("\n\n[bold thistle1]Initializing the CLI setup...[/bold thistle1]\n", justify="left")
-    time.sleep(1.2)
+    time.sleep(1)
 
     # silly_tricks()
 
     console.print("[bold pink3]Parsing arguments...[/bold pink3]\n", justify="left")
-    time.sleep(2)
+    time.sleep(1)
+
+
+    # PARSE ARGS and SETUP SETTINGS
     parser = argparse.ArgumentParser(description='Booksight Vision CLI')
     parser.add_argument('image_path', type=str, help='Path to the image to be processed')
     parser.add_argument('--ai-model', type=str, default='gpt-4o', help='AI model to use for image classification')
@@ -66,6 +73,7 @@ def main():
     ai_temp = args.ai_temp
     torch_confidence = args.torch_confidence
     
+    # Settings check
     settings_okay = 'n'
     while settings_okay.lower() != 'y':
         console.print("\n[bold hot_pink2]Your settings:[/bold hot_pink2]", justify="left")
@@ -86,11 +94,8 @@ def main():
             console.print("\n[bold red]WARNING: [/bold red][red]If you are not sure about the settings, please refer to the README or stick with the defaults.[/red]\n")
             time.sleep(1.5)
             image_path = console.input("\n[dark_sea_green2][bold]Image path[/bold] must be valid absolute or relative path to the image file.[/dark_sea_green2]\n\n[bold]Enter the path to the image to be processed: [/bold]")
-
             ai_model = console.input("\n\n[pale_green1]Choose the [bold]AI model[/bold] to use for image classification\n[italic]Valid options: gpt-4o, gpt-3.5-turbo, gemini-1.5-pro, gemini-1.5-flash, gemini-1.0-turbo[/italic][/pale_green1]\n\n[bold]Enter the model name: [/bold]")
-
             ai_temp = float(console.input("\n\n[dark_olive_green2][bold]Temperature[/bold] is a setting used for OpenAI GPT models to determine the randomness of a response.\nValid range: 0.0 to 2.0\nBookSight recommended temperature is [bold]0.3[/bold]\n[italic]If you are not using an OpenAi model, enter 0 for temperature.[/italic][/dark_olive_green2]\n\n[bold]Enter the temperature parameter for the AI model:[/bold] "))
-
             torch_confidence = float(console.input("\n\n[green_yellow][bold]Torchvision confidence threshold[/bold]. Valid range: 0.00 to 1.00\nBookSight recommended threshold is [bold]0.79[/bold][/green_yellow]\n\n[bold]Enter the confidence threshold for TorchVision:[/bold] "))
             time.sleep(1.5)
 
@@ -153,7 +158,6 @@ def main():
     console.print("[bold plum4]As noted in the README, you must have a .env file in the root directory of the project.[/bold plum4]\n", justify="left")
     time.sleep(1)
     console.print("[bold medium_orchid3]This file should contain the following keys:[/bold medium_orchid3]\n", justify="left")
-    time.sleep(0.5)
     env_table = Table(show_header=False, border_style="bold medium_orchid3")
     env_table.add_row("GOOGLE_GEMINI_KEY", "<Your Google Gemini GenAI API Key>", style="light_slate_blue")
     env_table.add_row("GOOGLE_BOOKS_KEY", "<Your Google Books API Key>", style="medium_purple")
@@ -183,27 +187,25 @@ def main():
             enter_keys = enter_keys[0].lower()
             if enter_keys.lower() != 'y':
                 return
-        
+        console.print("\n[bold red]WARNING: This process will overwrite the entire existing .env file.[/bold red]\n")
         google_gemini_key = console.input("\n[bold light_slate_blue]Enter your Google Gemini GenAI API Key: [/bold light_slate_blue]")
         google_books_key = console.input("\n[bold medium_purple]Enter your Google Books API Key: [/bold medium_purple]")
         isbndb_key = console.input("\n[bold light_slate_grey]Enter your ISBNdb API Key: [/bold light_slate_grey]")
         openai_key = console.input("\n[bold grey53]Enter your OpenAI API Key: [/bold grey53]")
+        # Overwrite the .env file
+        with open('.env', 'w') as f:
+            f.write(f"GOOGLE_GEMINI_KEY={google_gemini_key}\n")
+            f.write(f"GOOGLE_BOOKS_KEY={google_books_key}\n")
+            f.write(f"ISBNDB_KEY={isbndb_key}\n")
+            f.write(f"OPENAI_API_KEY={openai_key}\n")
 
-    else:
-        google_gemini_key = os.getenv('GOOGLE_GEMINI_KEY')
-        google_books_key = os.getenv('GOOGLE_BOOKS_KEY')
-        isbndb_key = os.getenv('ISBNDB_KEY')
-        openai_key = os.getenv('OPENAI_API_KEY')
+        console.print("\n[bold light_slate_blue]New credentials have been saved to the .env file[/bold light_slate_blue]\n", justify="left")
 
-    api_keys = {
-        'google_gemini_key': google_gemini_key,
-        'google_books_key': google_books_key,
-        'isbndb_key': isbndb_key,
-        'openai_key': openai_key
-    }   
-    time.sleep(1.5)
-
-    # TODO: input, api validation checks
+    # Validate API Keys
+    console.print("\n[bold light_slate_blue]Validating API keys...[/bold light_slate_blue]\n", justify="left")
+    dbr.validate_api_keys()
+    console.print("\n[bold light_sky_blue3]API keys have been validated successfully.[/bold light_sky_blue3]\n", justify="left")
+    time.sleep(0.7)
 
     console.print("\n\n[bold dodger_blue1]Wonderful! API keys have been set up successfully.[/bold dodger_blue1]\n\n", justify="left")
 
@@ -275,7 +277,7 @@ def main():
         time.sleep(2)
         console.print(f"\n[bold chartreuse3]An email with the attached files you requested will be sent to {email} once the process is complete.[/bold chartreuse3]\n", justify="left")
         time.sleep(1)
-    config_data_terminal = vision_config.VisionConfig(email, formats, ai_model, ai_temp, torch_confidence, api_keys)
+    config_data_terminal = vision_config.VisionConfig(email, formats, ai_model, ai_temp, torch_confidence)
 
     
     new_scan_image = image_path

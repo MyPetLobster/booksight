@@ -81,6 +81,8 @@ def vision(request):
             'open_ai_key': open_ai_key,
         }
 
+        # TODO - Validate API Keys
+
         # Save data/settings in VisionConfig class
         config = vision_config.VisionConfig(email, formats, ai_model, ai_temp, torch_confidence, credentials)
         
