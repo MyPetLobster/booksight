@@ -77,7 +77,7 @@ def main():
         console.print(settings_table, justify="center")
         time.sleep(0.5)
 
-        settings_okay = console.input("\n[bold]Are these settings okay? (y/n):[/bold] ")
+        settings_okay = console.input("\n[bold]Are these settings okay? ([chartreuse3]y[/chartreuse3]/[red1]n[/red1]):[/bold] ")
         settings_okay = settings_okay[0].lower()
 
         if settings_okay != 'y':
@@ -162,7 +162,7 @@ def main():
     console.print(env_table, justify="center")
     time.sleep(0.5)
     
-    env_okay = console.input("[bold]\nDo you have a .env file with the required keys? (y/n):[/bold] ")
+    env_okay = console.input("[bold]\nDo you have a .env file with the required keys? ([chartreuse3]y[/chartreuse3]/[red1]n[/red1]):[/bold] ")
     env_okay = env_okay[0].lower()
 
     if env_okay.lower() != 'y':
@@ -174,7 +174,7 @@ def main():
 
         valid_input = False
         while not valid_input:
-            enter_keys = console.input("[bold]Enter API keys? (y/n): [/bold]")
+            enter_keys = console.input("[bold]Enter API keys? ([chartreuse3]y[/chartreuse3]/[red1]n[/red1]): [/bold]")
             if enter_keys.lower() not in ['y', 'n', 'yes', 'ya', 'yeah', 'yep', 'no', 'nah', 'nope']:
                 console.print("\n[bold red]Invalid input. Please try again.[/bold red]\n")
             else:
@@ -242,7 +242,7 @@ def main():
     console.print("[italic dark_cyan]If you know your way around Python, you can modify the Django project settings to use the email provider of your choice.[/italic dark_cyan]\n\n")
     time.sleep(1)
 
-    send_email = console.input("[bold]Send email? (y/n): [/bold]")
+    send_email = console.input("[bold]Send email? ([chartreuse3]y[/chartreuse3]/[red1]n[/red1]): [/bold]")
     console.print("\n")
     if send_email.lower() == 'y':
         valid_email = False
