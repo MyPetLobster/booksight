@@ -173,3 +173,6 @@ exports/
 # User uploaded images
 media/
 scan_images/
+
+# log dir
+logs/
