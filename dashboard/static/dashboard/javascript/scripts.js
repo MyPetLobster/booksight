@@ -17,7 +17,7 @@ const owlLogoNavItem = document.getElementById('owl-logo-nav-item');
 // If user is not at the top of the page, hide the nav logo/link
 document.addEventListener('scroll', () => {
     if (window.scrollY > 0) {
-        owlLogoNavItem.style.transition = '1s';
+        owlLogoNavItem.style.transition = '0.5s';
         owlLogoNavItem.style.opacity = 0;
     } else {
         owlLogoNavItem.style.transition = '2s';
@@ -26,11 +26,11 @@ document.addEventListener('scroll', () => {
 });
 
 if (pageIdentifier === 'index') {
-    logoLink.href = "{% url 'about' %}";
+    logoLink.href = "/about";
     toPageNavItem.innerHTML = 'About';
     footer.style.display = 'block';
 } else if (pageIdentifier === 'about' || pageIdentifier === 'tips' || pageIdentifier === 'vision-complete') {
-    logoLink.href = "{% url 'index' %}";
+    logoLink.href = "/";
     toPageNavItem.innerHTML = 'Home';
     footer.style.display = 'block';
 } else if (pageIdentifier === 'vision') {
