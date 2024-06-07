@@ -264,6 +264,7 @@ def id_possible_matches(spines, full_img_text):
 
     Returns:
         list: A list of spine objects with updated data.
+        None: If the AI output is invalid.
     """
     log_print("Preparing text for AI input...\n")
     book_data_prompt = format_AI_input(spines, full_img_text)
@@ -271,6 +272,11 @@ def id_possible_matches(spines, full_img_text):
 
     start_ai_process = time.time()
     book_data_basic = identify_with_AI(book_data_prompt)
+
+    if not validate_ai_output(book_data_basic):
+        log_print("AI output is invalid. Please check the AI model and try again.\n")
+        return None
+    
     book_dict = json.loads(book_data_basic)
     book_count = len(book_dict)
     log_print(f"Number of books identified: {book_count}\n")
@@ -511,7 +517,22 @@ def create_book_object(isbn, confidence):
     return book
 
 
+def validate_ai_output(response):
+    """
+    Validate the output from the AI model. Must be a valid JSON-formatted string.
 
+    Args:
+        response (str): The response from the AI model.
+
+    Returns:
+        bool: True if the response is valid, False otherwise.
+    """
+    try:
+        json.loads(response)
+        return True
+    except json.JSONDecodeError:
+        return False
+    
 
 ### EXAMPLES FOR USE IN PROMPT ###
 example_input_01 = """Individual Spine OCR Text:

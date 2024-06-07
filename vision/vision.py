@@ -157,6 +157,14 @@ def vision_core(image_path, new_scan, config):
     # Clean up text data using AI and retrieve potential ISBNs for each spine
     log_print("Cleaning up text data and making preliminary title/author identification with AI model...\n")
     spines = match.id_possible_matches(spines, full_image_text)
+
+    # If AI output is not valid, program will exit
+    if spines == None:
+        log_print("\nProblem with AI output. Exiting program.\n")
+        new_scan.scan_status = "failed"
+        new_scan.save()
+        return
+    
     log_print("Text data cleanup and preliminary identification complete.\n")
     ai_end = time.time()
     log_print(f"Total time taken for AI processing and ISBN retrieval: {round(ai_end - ocr_end, 2)} seconds\n")
