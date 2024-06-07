@@ -1,8 +1,8 @@
-from django.http import JsonResponse
-from django.shortcuts import render
-
 import os
 import threading
+
+from django.http import JsonResponse
+from django.shortcuts import render
 
 from .models import Scan
 from vision.vision import vision_core
@@ -10,9 +10,11 @@ import vision.db_requests as dbr
 import vision.utility as util
 import vision.vision_config as vision_config
 
-# TODO - Is this being used? 
 from dotenv import load_dotenv
 load_dotenv()
+
+
+
 
 def index(request):
     return render(request, 'index.html')
@@ -43,12 +45,10 @@ def vision(request):
         ai_temp = float(request.POST.get('ai-temp'))
         torch_confidence = float(request.POST.get('torch-confidence')) 
 
-
         # Check if .env file exists
         if not os.path.exists('.env'):
             util.log_print('Missing .env file')
             return render(request, 'index.html', {
-                # TODO: Are my errors being displayed correctly?
                 'error': 'Missing .env file'
             })
         else: 
@@ -60,8 +60,7 @@ def vision(request):
                     'error': 'Invalid API keys'
                 })
             
-            # Django Gmail Backend Check 
-            # TODO - Extend this error message to the frontend
+            # Validate Django Gmail Backend Settings (Gmail and app password)
             if os.getenv('GMAIL_USERNAME') == '' or os.getenv('GMAIL_PASSWORD') == '':
                 util.log_print('Missing Gmail username or password')
                 return render(request, 'index.html', {
@@ -132,6 +131,7 @@ def vision_status(request):
         })
 
 
+# STATIC PAGES
 def about(request):
     return render(request, 'about.html')
 

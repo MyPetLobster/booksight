@@ -13,6 +13,7 @@ class Spine(models.Model):
     possible_matches = models.TextField()
     scan = models.ForeignKey('Scan', on_delete=models.CASCADE, null=True, related_name='spines')
 
+
 class Book(models.Model):
     title = models.CharField(max_length=200)
     subtitle = models.CharField(max_length=200)
@@ -29,6 +30,7 @@ class Book(models.Model):
     image_path = models.CharField(max_length=200)
     confidence = models.FloatField()
     spine = models.ForeignKey(Spine, on_delete=models.CASCADE, null=True, related_name='books')
+
 
 class Scan(models.Model):
     uploaded_image = models.ImageField(upload_to='uploaded_images/', default='', blank=True, null=True)
