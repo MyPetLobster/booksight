@@ -62,7 +62,6 @@ def vision_core(image_path, new_scan, config):
 
     # Detect book spines and create individual spine jpegs and bounding box image
     spine_images, spine_count = ds.crop_detect_spines(image_path, new_scan, torch_confidence)
-    log_print(f"Spine images saved in 'media/detection_temp/spines/'\n")
 
     if spine_images == None or spine_count == None:
         log_print("\nNo valid books detected. Exiting program.\n")
@@ -72,9 +71,9 @@ def vision_core(image_path, new_scan, config):
     else:
         new_scan.scan_status = "bbox-detected"
         new_scan.save()
-   
-    spine_detection_end = time.time()
 
+    log_print(f"Spine images saved in 'media/detection_temp/spines/'\n")
+    spine_detection_end = time.time()
     log_print(f"Spine detection complete. Time taken: {round(spine_detection_end - start, 2)} seconds\n")
 
 
