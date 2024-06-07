@@ -1,9 +1,9 @@
 import tiktoken
 
 
-def count_tokens(string: str, model: str) -> int:
+def count_gpt_tokens(string: str, model: str) -> int:
     """
-    This function counts the number of tokens in a given string based on the encoding of a specific AI model.
+    This function counts the number of tokens in a given string based on the encoding of a specific OpenAI Model.
 
     Args:
         string (str): A string for which the number of tokens needs to be counted.
