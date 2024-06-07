@@ -7,6 +7,8 @@ import json
 
 import utility as util
 
+log_print = util.log_print
+
 
 def export_books(books, formats, user_email, log_file_path):
     """
@@ -89,11 +91,11 @@ def export_to_csv(books):
                 'Confidence': book.confidence
             })
     
-    util.log_print(f"\nBooks exported to CSV: {csv_file}\n\n")
+    log_print(f"\nBooks exported to CSV: {csv_file}\n\n")
 
     with open(csv_file, mode='r') as file:
-        util.log_print(file.read())
-        util.log_print("\n\n")
+        log_print(file.read())
+        log_print("\n\n")
 
     return csv_file
 
@@ -118,11 +120,11 @@ def export_to_json(books):
     with open(json_file, 'w') as file:
         json.dump([book.__dict__ for book in books], file, indent=4)
     
-    util.log_print(f"\nBooks exported to JSON: {json_file}\n\n")
+    log_print(f"\nBooks exported to JSON: {json_file}\n\n")
 
     with open(json_file, mode='r') as file:
-        util.log_print(file.read())
-        util.log_print("\n\n")
+        log_print(file.read())
+        log_print("\n\n")
 
     return json_file
 
@@ -168,11 +170,11 @@ def export_to_xml(books):
         
         file.write('</books>')
     
-    util.log_print(f"\nBooks exported to XML: {xml_file}\n\n")
+    log_print(f"\nBooks exported to XML: {xml_file}\n\n")
 
     with open(xml_file, mode='r') as file:
-        util.log_print(file.read())
-        util.log_print("\n\n")
+        log_print(file.read())
+        log_print("\n\n")
 
     return xml_file
 
@@ -212,11 +214,11 @@ def export_to_text(books):
             file.write(f"Confidence: {book.confidence}\n")
             file.write("\n")
     
-    util.log_print(f"\nBooks exported to text: {text_file}\n\n")
+    log_print(f"\nBooks exported to text: {text_file}\n\n")
 
     with open(text_file, mode='r') as file:
-        util.log_print(file.read())
-        util.log_print("\n\n")
+        log_print(file.read())
+        log_print("\n\n")
 
     return text_file
 
@@ -252,4 +254,4 @@ def email_file(file_paths, user_email, log_file_path):
 
     email.send()
 
-    util.log_print(f"Email sent to: {user_email}\n")
+    log_print(f"Email sent to: {user_email}\n")

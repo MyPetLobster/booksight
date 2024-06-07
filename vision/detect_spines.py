@@ -28,6 +28,7 @@ transform = transforms.Compose([
 
 book_count = 0 
 
+log_print = util.log_print
 
 
 def crop_detect_spines(jpeg_file, new_scan, torch_confidence):
@@ -92,7 +93,7 @@ def detect_spines(jpeg_file, torch_confidence):
             os.remove("media/detection_temp/spines/rotated_image.jpeg")
         rotated_image_path = os.path.join(MEDIA_ROOT, "detection_temp/spines/rotated_image.jpeg")
         img.save(rotated_image_path)
-        util.log_print("\nRotated image saved as 'media/detection_temp/spines/rotated_image.jpeg'\n")
+        log_print("\nRotated image saved as 'media/detection_temp/spines/rotated_image.jpeg'\n")
 
         img_tensor = load_image(rotated_image_path)
         prediction = predict(model, img_tensor)
@@ -118,7 +119,7 @@ def draw_boxes(img, prediction, torch_confidence):
     """
     # Set up matplotlib figure. 'Agg' (Anti-Grain Geometry) is the canonical renderer for user interfaces in Matplotlib.
     matplotlib.use('Agg')
-    util.log_print("\nDrawing bounding boxes...\n")
+    log_print("\nDrawing bounding boxes...\n")
 
     # Create a figure for the bbox image. Figsize is the size of the figure in inches.
     plt.figure(figsize=(12, 8))
@@ -127,7 +128,7 @@ def draw_boxes(img, prediction, torch_confidence):
     # Get the current Axes instance on the figure. gca stands for 'get current axis'.
     ax = plt.gca()
 
-    util.log_print("\nProcessing detected objects...\n")
+    log_print("\nProcessing detected objects...\n")
 
     # Initialize vars to store total book height and thickness for use in validation (avg book height and thickness)
     total_book_height = 0
@@ -144,7 +145,7 @@ def draw_boxes(img, prediction, torch_confidence):
 
     # If no books are detected, return None
     if not books:
-        util.log_print("\nNo books detected. Exiting...\n")
+        log_print("\nNo books detected. Exiting...\n")
         return None, None
 
     # Calculate average book height and thickness
@@ -152,11 +153,11 @@ def draw_boxes(img, prediction, torch_confidence):
     average_book_height = total_book_height / book_count
     average_book_thickness = total_book_thickness / book_count
 
-    util.log_print(f"\n\nPreliminary statistics:\n")
-    util.log_print(f"Average book height: {round(float(average_book_height), 2)} pixels\nAverage book thickness: {round(float(average_book_thickness), 2)} pixels\n")
+    log_print(f"\n\nPreliminary statistics:\n")
+    log_print(f"Average book height: {round(float(average_book_height), 2)} pixels\nAverage book thickness: {round(float(average_book_thickness), 2)} pixels\n")
 
     valid_books = []
-    util.log_print("\nValidating detected books and drawing bounding boxes...\n")
+    log_print("\nValidating detected books and drawing bounding boxes...\n")
 
     # Validate books and draw bounding boxes
     for box in books:
@@ -170,15 +171,15 @@ def draw_boxes(img, prediction, torch_confidence):
 
     # If no valid books are detected, return None
     if not valid_books:
-        util.log_print("\nNo valid books detected. Exiting...\n")
+        log_print("\nNo valid books detected. Exiting...\n")
         return None, None
 
     bbox_image_path = os.path.join(MEDIA_ROOT, "detection_temp/spines/full_detected.jpeg")
     plt.savefig(bbox_image_path)
     bbox_image_url = os.path.join(MEDIA_URL, "detection_temp/spines/full_detected.jpeg")
 
-    util.log_print(f"Number of verified books: {len(valid_books)}\n")
-    util.log_print("Image with bounding boxes saved as 'media/detection_temp/spines/full_detected.jpeg'\n")
+    log_print(f"Number of verified books: {len(valid_books)}\n")
+    log_print("Image with bounding boxes saved as 'media/detection_temp/spines/full_detected.jpeg'\n")
 
     return valid_books, bbox_image_url
 
@@ -198,11 +199,11 @@ def load_image(input_path):
         torch.Tensor: The transformed image tensor.
     """
     # Use PIL to load the image 
-    util.log_print("\nLoading image...\n")
+    log_print("\nLoading image...\n")
     img = Image.open(input_path).convert("RGB")
     
     # Basic image enhancement - autocontrast, brightness adjustment, edge enhancement
-    util.log_print("\nEnhancing image...\n")
+    log_print("\nEnhancing image...\n")
     img = ImageOps.autocontrast(img)
     brightness = calculate_brightness(cv.imread(input_path))
     img = adjust_brightness(img, brightness)
@@ -213,9 +214,9 @@ def load_image(input_path):
         os.remove("media/detection_temp/spines/enhanced_image.jpeg")
     enhanced_image_path = os.path.join(MEDIA_ROOT, "detection_temp/spines/enhanced_image.jpeg")
     img.save(enhanced_image_path)
-    util.log_print("\nEnhanced image saved as 'media/detection_temp/spines/enhanced_image.jpeg'\n")
+    log_print("\nEnhanced image saved as 'media/detection_temp/spines/enhanced_image.jpeg'\n")
 
-    util.log_print("\nApplying tensor transformation...\n")
+    log_print("\nApplying tensor transformation...\n")
     # Apply tensor transformation, which converts the image to a tensor and normalizes it
     img_tensor = transform(img)
 
@@ -233,7 +234,7 @@ def predict(model, img_tensor):
     Returns:
         dict: The prediction results from the model.
     """
-    util.log_print("\nPerforming prediction...\n")
+    log_print("\nPerforming prediction...\n")
     # no_grad() disables gradient calculation, which is useful for inference. 
     # This means that the model will not be able to backpropagate/learn from the image.
     # The reason for this is that we are not training the model, only using it to make predictions.

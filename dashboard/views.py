@@ -13,7 +13,7 @@ import vision.vision_config as vision_config
 from dotenv import load_dotenv
 load_dotenv()
 
-
+log_print = util.log_print
 
 
 def index(request):
@@ -31,7 +31,7 @@ def vision(request):
 
         # Create log file for new session
         util.create_log_file()
-        util.log_print('Beginning new session with Booksight Vision Web App\n')
+        log_print('Beginning new session with Booksight Vision Web App\n')
 
         # Get all form data
         image = request.FILES.get('uploaded-image')
@@ -47,7 +47,7 @@ def vision(request):
 
         # Check if .env file exists
         if not os.path.exists('.env'):
-            util.log_print('Missing .env file')
+            log_print('Missing .env file')
             return render(request, 'index.html', {
                 'error': 'Missing .env file'
             })
@@ -55,14 +55,14 @@ def vision(request):
             # Validate API Keys and Django email setup (Gmail and app password)
             keys_valid = dbr.validate_api_keys()
             if not keys_valid:
-                util.log_print('Invalid API keys - please refer to the README for the required API keys and ensure all of your provided keys are valid.')
+                log_print('Invalid API keys - please refer to the README for the required API keys and ensure all of your provided keys are valid.')
                 return render(request, 'index.html', {
                     'error': 'Invalid API keys'
                 })
             
             # Validate Django Gmail Backend Settings (Gmail and app password)
             if os.getenv('GMAIL_USERNAME') == '' or os.getenv('GMAIL_PASSWORD') == '':
-                util.log_print('Missing Gmail username or password')
+                log_print('Missing Gmail username or password')
                 return render(request, 'index.html', {
                     'error': 'Missing Gmail username or password.'
                 })
@@ -76,8 +76,8 @@ def vision(request):
         new_scan.save()
         upload_path = new_scan.uploaded_image.path
 
-        util.log_print('\nForm Submitted, new scan request details:\n')
-        util.log_print(f'Email: {email},\nFormats: {formats},\nImage: {image},\nAI Model: {ai_model},\nAI Temp: {ai_temp},\nTorch Confidence: {torch_confidence}')
+        log_print('\nForm Submitted, new scan request details:\n')
+        log_print(f'Email: {email},\nFormats: {formats},\nImage: {image},\nAI Model: {ai_model},\nAI Temp: {ai_temp},\nTorch Confidence: {torch_confidence}')
 
         # Run Vision app in a separate thread
         thread = threading.Thread(target=vision_core, args=(upload_path, new_scan, config))

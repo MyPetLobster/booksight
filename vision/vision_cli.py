@@ -21,6 +21,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 log_print = util.log_print
+
 console = Console()
 
 def main():
