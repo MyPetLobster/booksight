@@ -41,6 +41,21 @@ a:hover {
     display: none;
 }
 
+/* Alert Styles */
+.alert-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.alert {
+    width: 40%;
+    text-align: center;
+}
 
 /* NAVBAR STYLES */
 .navbar {

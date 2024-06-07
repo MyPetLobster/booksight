@@ -1,5 +1,13 @@
 /// LAYOUT -- NavLogo and Footer
 
+// Alert message auto-hide
+const alertDiv = document.querySelector('.alert');
+if (alertDiv) {
+    setTimeout(() => {
+        alertDiv.style.display = 'none';
+    }, 5000);
+}
+
 const logoLink = document.getElementById('logo-link');
 const footer = document.getElementById('footer');
 const pageIdentifier = document.querySelector('.page-identifier').textContent;
