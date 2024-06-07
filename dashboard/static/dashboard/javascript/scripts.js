@@ -1,3 +1,57 @@
+// Layout scripts -- NavLogo and Footer
+const logoLink = document.getElementById('logo-link');
+const footer = document.getElementById('footer');
+const pageIdentifier = document.querySelector('.page-identifier').textContent;
+const toPageNavItem = document.getElementById('to-page-nav-item');
+const owlLogoNavItem = document.getElementById('owl-logo-nav-item');
+
+// If user is not at the top of the page, hide the nav logo/link
+document.addEventListener('scroll', () => {
+    if (window.scrollY > 0) {
+        owlLogoNavItem.style.transition = '1s';
+        owlLogoNavItem.style.opacity = 0;
+    } else {
+        owlLogoNavItem.style.transition = '2s';
+        owlLogoNavItem.style.opacity = 1;
+    }
+});
+
+if (pageIdentifier === 'index') {
+    logoLink.href = "{% url 'about' %}";
+    toPageNavItem.innerHTML = 'About';
+    footer.style.display = 'block';
+} else if (pageIdentifier === 'about' || pageIdentifier === 'tips' || pageIdentifier === 'vision-complete') {
+    logoLink.href = "{% url 'index' %}";
+    toPageNavItem.innerHTML = 'Home';
+    footer.style.display = 'block';
+} else if (pageIdentifier === 'vision') {
+    logoLink.style.display = 'none';
+    footer.style.display = 'none';
+} 
+
+// Darken the owl logo nav link on hover
+const darkOwlLogo = document.getElementById('owl-logo-img');
+owlLogoNavItem.addEventListener('mouseover', () => {
+    if (screen.width > 600) {
+        darkOwlLogo.style.opacity = 1;
+        toPageNavItem.style.opacity = 1;
+    }
+});
+owlLogoNavItem.addEventListener('mouseout', () => {
+    darkOwlLogo.style.opacity = 0.15;
+    toPageNavItem.style.opacity = 0;
+});
+
+// Hide footer link if not scrolled to bottom of the page
+window.onscroll = function(ev) {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        footer.style.display = 'block';
+    } else {
+        footer.style.display = 'none';
+    }
+};
+
+
 // Small logo animation (Tips, About pages)
 const pageIdentifierText = document.querySelector(".page-identifier").textContent;
 
