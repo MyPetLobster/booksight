@@ -12,8 +12,8 @@ import db_requests as dbr
 import gpt as gpt
 import gemini as gemini
 import utility as util
+import token_counter
 from classes import Spine, Book
-from token_counter import count_gpt_tokens
 
 log_print = util.log_print
 
@@ -316,31 +316,33 @@ def identify_with_AI(prompt):
     ai_model = config_data.ai_model
     ai_temp = config_data.ai_temp
 
-    if ai_model.startswith("gemini"):
-        # Use GPT-4o for token counting if using Gemini
-        prompt_tokens = count_gpt_tokens(prompt, "gpt-4o")
-    else:
-        prompt_tokens = count_gpt_tokens(prompt, ai_model)
+    # Count prompt tokens
+    if ai_model.startswith("gpt"):
+        prompt_tokens = token_counter.count_gpt_tokens(prompt, ai_model)
+    elif ai_model.startswith("gemini"):
+        prompt_tokens, prompt_chars = token_counter.count_gemini_tokens(prompt, 'prompt')
 
+    # Run AI model
     if ai_model.startswith("gpt"):
         log_print(f"Prompt token count for {ai_model}: {prompt_tokens}\n")
         gpt_start = time.time()
         log_print(f"Beginning identification with {ai_model} set to a temperature of {ai_temp}...\n ")
         response = gpt.run_gpt(prompt, ai_model, ai_temp)
         gpt_end = time.time()
-        response_tokens = count_gpt_tokens(response, ai_model)
+        # Count GPT response tokens
+        response_tokens = token_counter.count_gpt_tokens(response, ai_model)
         log_print(f"Response token count for {ai_model}: {response_tokens}\n")
         log_print(f"Identification with {ai_model} complete.\nTime elapsed: {round(gpt_end - gpt_start, 2)} seconds.\n")
     elif ai_model.startswith("gemini"):
-        log_print(f"You are using Gemini. Gemini token counting not yet implemented.")
-        log_print(f"Prompt token count using gpt-4o tokenizer: {prompt_tokens}\n")
+        log_print(f"Prompt token count for {ai_model}: {prompt_tokens}\n")
+        log_print(f"Prompt character count for {ai_model}: {prompt_chars}\n")
         gemini_start = time.time()
         log_print(f"Beginning identification with {ai_model}...\n")
         response = gemini.run_gemini(prompt, ai_model)
         gemini_end = time.time()
-        response_tokens = count_gpt_tokens(response, "gpt-4o")
-        log_print(f"You are using Gemini. Gemini token counting not yet implemented.")
-        log_print(f"Response token count using gpt-4o tokenizer: {response_tokens}\n")
+        # Count Gemini response tokens
+        prompt_tokens, candidate_tokens, total_tokens = token_counter.count_gemini_tokens(response, 'response')
+        log_print(f"prompt token count: {prompt_tokens},\ncandidate token count: {candidate_tokens},\ntotal token count: {total_tokens}\n\n")
         log_print(f"Identification with {ai_model} complete.\nTime elapsed: {round(gemini_end - gemini_start, 2)} seconds.\n")
     else:
         log_print("Invalid AI option. Please choose 'gpt' or 'gemini'.\n")
