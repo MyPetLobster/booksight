@@ -53,7 +53,9 @@
                         </div>
                     </div>
                 </div>
- 
+                <div class="image-preview-div">
+                    <img id="image-preview" src="" alt="Image Preview" class="hidden">
+                </div>
                 <div class="form-div upload-div">
                     <input type="file" name="uploaded-image" id="uploaded-image" style="display:none;"/>
                     <label class="button" id="upload-image-button" for="uploaded-image">Upload Image</label>
@@ -98,6 +100,26 @@
 
         </div>
     </div>
+
+    <script>
+        const uploadedImage = document.getElementById("uploaded-image");
+        const imagePreview = document.getElementById("image-preview");
+
+        // run displayPreviewImage function when the user selects an image
+        uploadedImage.addEventListener("change", displayPreviewImage);
+
+        function displayPreviewImage() {
+            if (uploadedImage.files.length > 0) {
+                imagePreview.classList.remove("hidden");
+                let selectedImage = uploadedImage.files[0];
+                let objectURL = URL.createObjectURL(selectedImage);
+                imagePreview.src = objectURL;
+            } else {
+                imagePreview.classList.add("hidden");
+            }
+            
+        }
+    </script>
 {% endblock %}
 
 

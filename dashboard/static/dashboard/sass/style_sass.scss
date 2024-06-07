@@ -37,8 +37,9 @@ a:hover {
     color: $primary-black !important;
     text-decoration: none !important;
 }
-
-
+.hidden {
+    display: none;
+}
 
 
 /* NAVBAR STYLES */
@@ -304,7 +305,19 @@ a:hover {
     flex-direction: column;
     align-items: flex-start;
 }
-
+.image-preview-div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#image-preview {
+    margin-top: 18px;
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
 
 
 
