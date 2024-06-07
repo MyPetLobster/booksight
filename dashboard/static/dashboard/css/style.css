@@ -136,6 +136,7 @@ a:hover {
 .landing-logo-div-vision #logo-eyes-vision {
   max-width: 20%;
   transition: 400ms;
+  z-index: 9999;
 }
 .landing-logo-div-vision #logo-text-vision {
   max-width: 40%;

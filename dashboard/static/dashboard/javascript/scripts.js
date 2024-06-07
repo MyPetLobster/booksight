@@ -70,28 +70,48 @@ if (animatedPages.includes(pageIdentifier)) {
     const logoEyes = document.querySelector("#logo-eyes-vision");
     const logoText = document.querySelector("#logo-text-vision");
     const smallLogoElements = [logoEyes, logoText];
-    smallLogoElements.forEach((element) => {
-        element.style.cursor = "pointer";  
-        element.addEventListener("mouseover", () => {
-            logoEyes.style.transition = "3s";
-            logoEyes.style.transform = "scale(1.7)";
-            logoEyes.style.position = "relative";
 
-            logoText.style.transition = "3s";
-            logoText.style.transform = "scale(0.1)";
-            logoText.style.opacity = 0;
-        })
-        element.addEventListener("mouseout", () => {
-            logoEyes.style.transition = "0.8s";
-            logoText.style.transition = "0.8s";
-            logoEyes.style.transform = "scale(1)";
-            logoText.style.transform = "scale(1)";
-            logoText.style.opacity = 1;
+    // If screen width is greater than 600px 
+    if (screen.width > 600) {
+        smallLogoElements.forEach((element) => {
+            element.style.cursor = "pointer";  
+            element.addEventListener("mouseover", () => {
+                logoEyes.style.transition = "3s";
+                logoEyes.style.transform = "scale(1.7)";
+
+                logoText.style.transition = "3s";
+                logoText.style.transform = "scale(0.1)";
+                logoText.style.opacity = 0;
+            })
+            element.addEventListener("mouseout", () => {
+                logoEyes.style.transition = "0.8s";
+                logoText.style.transition = "0.8s";
+                logoEyes.style.transform = "scale(1)";
+                logoText.style.transform = "scale(1)";
+                logoText.style.opacity = 1;
+            });
+            element.addEventListener("click", () => {
+                window.location.href = "/";
+            });
         });
-        element.addEventListener("click", () => {
-            window.location.href = "/";
+    } else {
+        // If screen less than 600px, wait until user clicks logo or text, then animate and redirect
+        smallLogoElements.forEach((element) => {
+            element.style.cursor = "pointer";  
+            element.addEventListener("click", () => {
+                logoEyes.style.transition = "1.5s";
+                logoEyes.style.transform = "scale(1.7)";
+
+                logoText.style.transition = "1.5s";
+                logoText.style.transform = "scale(0.1)";
+                logoText.style.opacity = 0;
+
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 1500);
+            });
         });
-    });
+    }
 }
 
 
@@ -174,11 +194,11 @@ if (pageIdentifier === 'index') {
     } else {
         // Mobile behavior
         landingLogoDiv.addEventListener('click', () => {
-            logoEyes.style.transition = "2s";
+            logoEyes.style.transition = "1.5s";
             logoEyes.style.opacity = 1;
-            logoText.style.transition = "2s";
+            logoText.style.transition = "1.5s";
             logoText.style.opacity = 1;
-            hiddenSubtitle.style.transition = "2s";
+            hiddenSubtitle.style.transition = "1.5s";
             hiddenSubtitle.style.opacity = 1;
 
             const footer = document.getElementById('footer');
@@ -186,22 +206,22 @@ if (pageIdentifier === 'index') {
 
             const owlLogoNavItem = document.getElementById('owl-logo-nav-item');
             if (owlLogoNavItem) {
-                owlLogoNavItem.style.transition = "2s";
+                owlLogoNavItem.style.transition = "1.5s";
                 owlLogoNavItem.style.opacity = 0;
                 owlLogoNavItem.style.zIndex = -1;
             }
 
             setTimeout(() => {
-                logoEyes.style.transition = "2s";
+                logoEyes.style.transition = "1.5s";
                 logoEyes.style.opacity = 0.15;
-                logoText.style.transition = "2s";
+                logoText.style.transition = "1.5s";
                 logoText.style.opacity = 0.15;
-                hiddenSubtitle.style.transition = "2s";
+                hiddenSubtitle.style.transition = "1.5s";
                 hiddenSubtitle.style.opacity = 0;
                 floatingForm.style.opacity = 1;
                 floatingForm.style.zIndex = 999;
                 landingLogoDiv.style.opacity = 0;
-            }, 2000)
+            }, 1500)
         })
     }
 
