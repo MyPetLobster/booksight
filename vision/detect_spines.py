@@ -243,7 +243,6 @@ def predict(model, img_tensor):
     return prediction
 
 
-
 def calculate_brightness(image):
     """
     This function calculates the average brightness of an image.
