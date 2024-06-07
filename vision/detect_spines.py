@@ -14,9 +14,11 @@ from django.conf import settings
 MEDIA_ROOT = settings.MEDIA_ROOT
 MEDIA_URL = settings.MEDIA_URL
 
+# Import the weights
+from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights
 
-# Load a pre-trained Faster R-CNN model
-model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
+# Load a pre-trained Faster R-CNN model with the specified weights
+model = models.detection.fasterrcnn_resnet50_fpn(weights=FasterRCNN_ResNet50_FPN_Weights.COCO_V1)
 model.eval()
 
 # Define the image transformation
@@ -25,6 +27,7 @@ transform = transforms.Compose([
 ])
 
 book_count = 0 
+
 
 
 def crop_detect_spines(jpeg_file, new_scan, torch_confidence):
