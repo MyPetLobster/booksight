@@ -53,18 +53,19 @@ def count_gemini_tokens(input, type):
     location = "us-central1"
     vertexai.init(project=project_id, location=location)
 
-    # Initialize Gemini Generative Model
-    model = GenerativeModel(model_name=model)
-
     # Load Vision Configuration
     config = vision_config.get_config()
-    model = config['ai_model']
+    config_model = config.ai_model
+
+    # Initialize Gemini Generative Model
+    model = GenerativeModel(model_name=config_model)
+
 
     # Process input based on type (prompt: str, response: object)
     if type == 'prompt':
         return count_gemini_prompt_tokens(input, model)
     elif type == 'response':
-        return count_gemini_response_tokens(input, model)
+        return count_gemini_response_tokens(input)
 
 
 def count_gemini_prompt_tokens(prompt: str, model: str="gemini-1.5-pro"):
@@ -86,7 +87,7 @@ def count_gemini_prompt_tokens(prompt: str, model: str="gemini-1.5-pro"):
     return prompt_token_count, prompt_character_count
 
 
-def count_gemini_response_tokens(response: object):
+def count_gemini_response_tokens(response):
     """
     This function counts the number of tokens in a given response based on the encoding of a specific Google Gemini model.
 

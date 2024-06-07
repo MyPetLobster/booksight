@@ -339,10 +339,11 @@ def identify_with_AI(prompt):
         gemini_start = time.time()
         log_print(f"Beginning identification with {ai_model}...\n")
         response = gemini.run_gemini(prompt, ai_model)
-        gemini_end = time.time()
         # Count Gemini response tokens
-        prompt_tokens, candidate_tokens, total_tokens = token_counter.count_gemini_tokens(response, 'response')
-        log_print(f"prompt token count: {prompt_tokens},\ncandidate token count: {candidate_tokens},\ntotal token count: {total_tokens}\n\n")
+        count_dict = token_counter.count_gemini_tokens(response, 'response')
+        response = response.text
+        gemini_end = time.time()
+        log_print(f"prompt token count: {count_dict["prompt_token_count"]},\ncandidate token count: {count_dict["candidates_token_count"]},\ntotal token count: {count_dict["total_token_count"]}\n\n")
         log_print(f"Identification with {ai_model} complete.\nTime elapsed: {round(gemini_end - gemini_start, 2)} seconds.\n")
     else:
         log_print("Invalid AI option. Please choose 'gpt' or 'gemini'.\n")
