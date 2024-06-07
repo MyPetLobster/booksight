@@ -59,7 +59,9 @@ window.onscroll = function(ev) {
 
 const pageIdentifierText = document.querySelector(".page-identifier").textContent;
 
-if (pageIdentifierText === "tips" || pageIdentifierText === "about") {
+const animatedPages = ["tips", "about", "vision-complete", "vision-failed"];
+
+if (animatedPages.includes(pageIdentifierText)) {
     const logoEyes = document.querySelector("#logo-eyes-vision");
     const logoText = document.querySelector("#logo-text-vision");
     const smallLogoElements = [logoEyes, logoText];
