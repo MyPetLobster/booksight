@@ -9,11 +9,28 @@ $accent-color-lighter: rgb(248, 248, 248);
 $accent-color-dark: rgb(151, 159, 164);
 $accent-color-darker: rgb(36, 69, 94);
 
+/* MIXINS */
 @mixin flex-center {
     display: flex;
     justify-content: center;
     align-items: center;
 }
+@mixin absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+@mixin max-80vw {
+    max-width: 80vw;
+    max-height: 80vh;
+}
+@mixin border-radius-shadow {
+    border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+
 
 
 /* GENERAL STYLES */
@@ -26,7 +43,6 @@ html, body {
     box-sizing: border-box;
     font-family: "Dosis", sans-serif;
 }
-
 a {
     color: $accent-color !important;
     text-decoration: none;
@@ -41,21 +57,21 @@ a:hover {
     display: none;
 }
 
-/* Alert Styles */
+
+/* ALERT STYLES */
 .alert-container {
+    @include flex-center;
     position: fixed;
     top: 0;
     right: 0;
     width: 100%;
     z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 .alert {
     width: 40%;
     text-align: center;
 }
+
 
 /* NAVBAR STYLES */
 .navbar {
@@ -122,12 +138,9 @@ a:hover {
 }
 .landing-logo-div {
     @include flex-center;
+    @include absolute-center;
     flex-direction: column;
     width: 400px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 
     *:hover {
         cursor: pointer;
@@ -157,7 +170,6 @@ a:hover {
     max-width: 100%;
     transition: 550ms;
 }
-
 .hidden-subtitle {
     font-size: 24px;
     transition: 6s;
@@ -172,14 +184,13 @@ a:hover {
     z-index: -1;
 }
 .floating-form {
+    @include border-radius-shadow;
     width: 450px;
     display: flex;
     flex-direction: column;
     gap: 16px;
     background-color: $accent-color-light;
     padding: 10px 20px 20px 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     margin: 60px;
 
     p, h3 {
@@ -245,8 +256,19 @@ a:hover {
     width: 25px !important;
     accent-color: $primary-color;
 }
+#user-email {
+    width: 60%;
+    border-radius: 6px;
+    padding: 4px;
+    border: 1px solid $secondary-color ;
+    outline: 1px solid $primary-white;
+}
+#user-email:focus {
+    border: 2px solid $primary-color;
+}
 
 
+/* UPLOAD FORM - Button Styles */
 .btn-box {
     margin: 10px;
     display: flex;
@@ -297,18 +319,6 @@ a:hover {
     background-color: rgb(129, 42, 42);
     color: $accent-color;
 }
-
-#user-email {
-    width: 60%;
-    border-radius: 6px;
-    padding: 4px;
-    border: 1px solid $secondary-color ;
-    outline: 1px solid $primary-white;
-}
-#user-email:focus {
-    border: 2px solid $primary-color;
-}
-
 #adv-options-button,
 #adv-options-close {
     width: 150px;
@@ -327,12 +337,12 @@ a:hover {
     align-items: center;
 }
 #image-preview {
+    @include border-radius-shadow;
     margin-top: 18px;
     max-width: 150px;
     max-height: 150px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
+
 
 
 
@@ -345,39 +355,28 @@ a:hover {
     width: 100%;
 }
 .uploaded-image {
-    max-width: 80vw;
-    max-height: 80vh;
+    @include border-radius-shadow;
     display: block;
-    border-radius: 12px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     margin-bottom: 20px;
 }
-.bbox-image {
-    max-width: 80vw;
-    max-height: 80vh;
+.bbox-image, 
+.uploaded-image {
+    @include max-80vw;
 }
+/* Expanded spine text image container */
 #full-size-image-div {
-    /* Expanded spine text image container */
     @include flex-center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    max-width: 80vw;
-    max-height: 80vh;
-    transform: translate(-50%, -50%);
+    @include absolute-center;
+    @include max-80vw;
+    @include border-radius-shadow;
     background-color: rgba(0, 0, 0, 0.8);
     z-index: 100;
-    border-radius: 12px;
-    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
-
 }
 .full-size-image {
+    @include max-80vw;
+    @include border-radius-shadow;
     cursor: pointer;
-    max-width: 80vw;
-    max-height: 80vh;
     display: block;
-    border-radius: 12px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     background-color: $primary-white; 
     padding: 10px;
     margin: auto;
@@ -392,12 +391,12 @@ a:hover {
     overflow-y: scroll;
 }
 #bbox-image {
+    @include border-radius-shadow;
     max-width: 100%;
     max-height: 100%;
-    border-radius: 12px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
 .spine-image-grid {
+    @include border-radius-shadow;
     width: 90%;
     height: 90%;
     display: grid;
@@ -409,16 +408,13 @@ a:hover {
     margin-bottom: 0px;
     padding: 10px;
     background-color: $accent-color-lighter;
-    border-radius: 12px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
 .spine-grid-element {
+    @include border-radius-shadow;
     cursor: pointer;
     max-width: 150px;
     max-height: 250px;
     display: block;
-    border-radius: 12px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     background-color: $primary-white;
     padding: 10px;
     margin: auto;
@@ -442,16 +438,15 @@ a:hover {
     display: none;
 }
 .terminal {
+    @include border-radius-shadow;
     margin-top: 20px;
     height: 48px;
     min-width: 666px;
-    border-radius: 12px;
     text-align: left;
     background-color: $accent-color-lighter;
     display: flex;
     align-items: center;
     padding: 2px 8px;
-    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
 }
 #progress-status {
     background-color: rgba(0, 0, 0, 0);
@@ -476,13 +471,12 @@ a:hover {
 }
 .tips-div {
     @include flex-center;
+    @include border-radius-shadow;
     flex-direction: column;
     gap: 20px;
     width: 60%;
     padding: 20px 40px;
     background-color: $accent-color-lighter;  // Light gray background for better visibility
-    border-radius: 12px;
-    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
 }
 .top-tips-div {
     margin-top: 20px;
@@ -502,14 +496,13 @@ a:hover {
 }   
 .about-div {
     @include flex-center;
+    @include border-radius-shadow;
     flex-direction: column;
     margin-top: 20px;
     gap: 20px;
     width: 60%;
     padding: 20px 40px;
-    background-color: $accent-color-lighter;  // Light gray background for better visibility
-    border-radius: 12px;
-    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.2);
+    background-color: $accent-color-lighter;
 }
 
 
@@ -536,14 +529,9 @@ a:hover {
 
 
 
-
-
-
-
-
 /* MEDIA QUERIES */
-
 @media screen and (max-width: 768px) {
+    /* Landing Page, Upload Form */
     .landing-logo-div {
         max-width: 300px;
     }
@@ -559,8 +547,6 @@ a:hover {
             font-size: 20px;
         }
     }
-
-
     .button {
         width: 90%;
     }
@@ -574,6 +560,8 @@ a:hover {
     #adv-options-div {
         width: 90%;
     }
+
+    /* Vision Page */
     .spine-image-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
@@ -596,14 +584,12 @@ a:hover {
     #progress-status {
         font-size: 10px;
     }
-
     .uploaded-image {
         max-width: 200px;
         max-height: 200px;
     }
 
-
-    /* ABOUT & TIPS MOBILE */
+    /* About & Tips Mobile */
     .about-div, .tips-div {
         width: 90%;
     }
