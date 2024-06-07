@@ -1,7 +1,9 @@
-from PIL import Image
-from sklearn.cluster import KMeans
 import matplotlib.image as mpimg
 import numpy as np
+from PIL import Image
+from sklearn.cluster import KMeans
+
+
 
 
 def analyze_spine(image_path):

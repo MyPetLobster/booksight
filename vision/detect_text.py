@@ -2,17 +2,18 @@ import os
 import time
 
 import cv2 as cv
-import numpy as np
 import easyocr as ocr
+import numpy as np
 
 import utility as util
-
 
 from django.conf import settings
 MEDIA_ROOT = settings.MEDIA_ROOT
 MEDIA_URL = settings.MEDIA_URL
 
 log_print = util.log_print
+
+
 
 
 def detect_text(image_path):

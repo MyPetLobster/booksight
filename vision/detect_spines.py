@@ -2,8 +2,8 @@ import os
 
 import cv2 as cv
 import matplotlib 
-import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import matplotlib.pyplot as plt
 import torch
 from torchvision import models, transforms
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
@@ -14,10 +14,8 @@ from django.conf import settings
 MEDIA_ROOT = settings.MEDIA_ROOT
 MEDIA_URL = settings.MEDIA_URL
 
-# Import the weights
+# Torch model for object detection
 from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights
-
-# Load a pre-trained Faster R-CNN model with the specified weights
 model = models.detection.fasterrcnn_resnet50_fpn(weights=FasterRCNN_ResNet50_FPN_Weights.COCO_V1)
 model.eval()
 
@@ -26,9 +24,10 @@ transform = transforms.Compose([
     transforms.ToTensor(),
 ])
 
+log_print = util.log_print
 book_count = 0 
 
-log_print = util.log_print
+
 
 
 def crop_detect_spines(jpeg_file, new_scan, torch_confidence):

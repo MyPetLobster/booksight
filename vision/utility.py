@@ -4,8 +4,9 @@ import time
 
 from rich import print as rprint
 
-
 date = time.strftime("%Y%m%d")
+
+
 
 
 def create_log_file():

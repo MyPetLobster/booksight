@@ -1,7 +1,3 @@
-# Before running the CLI, make sure to set the DJANGO_SETTINGS_MODULE and PYTHONPATH environment variables
-# export DJANGO_SETTINGS_MODULE=booksight.settings
-# export PYTHONPATH=/Users/corysuzuki/Documents/repos/booksight
-
 import argparse
 import os
 import time
@@ -11,11 +7,10 @@ from rich import box
 from rich.table import Table
 from rich.text import Text
 
-from vision import vision_core, create_scan
-
 import db_requests as dbr
 import utility as util
 import vision_config
+from vision import vision_core, create_scan
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -23,6 +18,9 @@ load_dotenv()
 log_print = util.log_print
 
 console = Console()
+
+
+
 
 def main():
     # Clear all temp directories

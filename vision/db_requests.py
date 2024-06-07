@@ -15,6 +15,8 @@ ISBN_COUNT_COMBINED = 15
 log_print = util.log_print
 
 
+
+
 # Get potential ISBNs from Open Library and Google Books
 def get_potential_isbns(title, author):
     """

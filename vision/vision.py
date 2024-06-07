@@ -4,6 +4,7 @@ import time
 import sys
 sys.path.append('/Users/corysuzuki/Documents/repos/booksight/vision')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'booksight.settings')
+os.environ.setdefault('PYTHONPATH', '/Users/corysuzuki/Documents/repos/booksight')
 
 import django
 django.setup()
@@ -22,6 +23,8 @@ from classes import Spine, Book
 from dashboard.models import Scan
 
 log_print = util.log_print
+
+
 
 
 def vision_core(image_path, new_scan, config):

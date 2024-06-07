@@ -2,6 +2,7 @@ import json
 import os
 import requests
 import time
+
 from PIL import Image
 from io import BytesIO
 
@@ -15,6 +16,8 @@ from classes import Spine, Book
 from token_counter import count_tokens
 
 log_print = util.log_print
+
+
 
 
 def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):

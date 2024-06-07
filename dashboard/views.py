@@ -16,6 +16,8 @@ load_dotenv()
 log_print = util.log_print
 
 
+
+
 def index(request):
     return render(request, 'index.html')
 
@@ -95,8 +97,16 @@ def vision(request):
 
 
 def vision_status(request):
-    """Query the status of the most recent Scan object and return the status as a JSON response.
-    Used to feed data to the pseudo-terminal in the frontend to display the status of the vision app."""
+    """
+    Query the status of the most recent Scan object and return the status as a JSON response.
+    Used to feed data to the pseudo-terminal in the frontend to display the status of the vision app.
+    
+    Args:
+        request (HttpRequest): The request object from the frontend.
+
+    Returns:
+        JsonResponse: A JSON response containing the status of the most recent Scan object.
+    """
     last_scan = Scan.objects.first()
     vision_status = last_scan.scan_status
     

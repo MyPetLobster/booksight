@@ -284,7 +284,9 @@ BookSight is built with Django, so you'll need to have Python installed on your 
 
 
 
-
+# Before running the CLI, make sure to set the DJANGO_SETTINGS_MODULE and PYTHONPATH environment variables
+# export DJANGO_SETTINGS_MODULE=booksight.settings
+# export PYTHONPATH=/Users/corysuzuki/Documents/repos/booksight
 
 
 
