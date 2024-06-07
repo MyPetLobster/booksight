@@ -317,16 +317,16 @@ a:hover {
     width: 100%;
 }
 .uploaded-image {
-    max-width: 600px;
-    max-height: 600px;
+    max-width: 80vw;
+    max-height: 80vh;
     display: block;
     border-radius: 12px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     margin-bottom: 20px;
 }
 .bbox-image {
-    max-width: 800px;
-    max-height: 800px;
+    max-width: 80vw;
+    max-height: 80vh;
 }
 #full-size-image-div {
     /* Expanded spine text image container */
@@ -382,6 +382,7 @@ a:hover {
     padding: 10px;
     background-color: $accent-color-lighter;
     border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
 .spine-grid-element {
     cursor: pointer;

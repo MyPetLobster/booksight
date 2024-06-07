@@ -16,12 +16,10 @@
             <pre id="progress-status"></pre>
         </div>
          
-
-            
             <div id="image-div">
                 <img class="uploaded-image" id="uploaded-image-raw" src="{{ image_path }}" alt="Uploaded Image">
             </div>
-        </br>
+
         <div class="vision-para-div">
             <p>
                 Your image is processing. Once complete, you will receive an email with a file in the format you specified.
@@ -94,12 +92,14 @@ function checkStatus() {
                     // add click event to show full size image
                     text_image_element.addEventListener("click", function() {
                         // if theres already a full size image, hide it
-                        const full_size_images = document.getElementsByClassName("full-size-image");
+                        const full_size_images = document.querySelectorAll(".full-size-image");
                         for (let i = 0; i < full_size_images.length; i++) {
                             full_size_images[i].style.display = "none";
                         }
 
+                        // show the full size image that was clicked and scroll to top of page with smooth scroll
                         full_size_image.style.display = "block";
+                        window.scrollTo({top: 0, behavior: "smooth"});
 
                         // add click event to hide full size image if anywhere on the page is clicked
                         full_size_image.addEventListener("click", function() {
