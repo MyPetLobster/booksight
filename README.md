@@ -2,10 +2,10 @@
 <br />
 <div align="center">
   <a href="https://github.com/MyPetLobster/booksight">
-    <img src="https://i.imgur.com/STBuqEM.png" alt="Logo" width="200px">
+    <img src="https://i.imgur.com/KobQZAx.png" alt="Logo" width="200px">
+    <br>
+    <img src="https://i.imgur.com/zsoNMos.png" alt="BookSight" width="200px">
   </a>
-
-  <h3 align="center">BookSight</h3>
 
   <p align="center">
     A web application that identifies the specific ISBNs of all books in a given image.
