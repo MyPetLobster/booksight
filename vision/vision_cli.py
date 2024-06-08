@@ -251,11 +251,11 @@ def main():
 
     # EMAIL SETUP
     console.print("[bold dark_turquoise]One last thing, do you want to receive an email with the results?[/bold dark_turquoise]\n")
-    time.sleep(1)
+    time.sleep(0.5)
     console.print("[bold light_sea_green]You must have a Gmail account and generate an 'app password' for this to work.[/bold light_sea_green]\n")
-    time.sleep(1)
+    time.sleep(0.5)
     console.print("[italic dark_cyan]If you know your way around Python, you can modify the Django project settings to use the email provider of your choice.[/italic dark_cyan]\n\n")
-    time.sleep(1)
+    time.sleep(0.2)
 
     send_email = console.input("[bold]Send email? To skip, hit 'Enter'. ([chartreuse3]y[/chartreuse3]/[red1]n[/red1]): [/bold]") 
     if send_email.lower() == 'y':
