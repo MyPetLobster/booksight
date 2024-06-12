@@ -86,6 +86,7 @@ def vision_core(image_path, new_scan, config):
     spines = []
     i = 0
 
+    start_basic_analysis = time.time()
     for image in spine_images:
         # Get the color data and dimensions of the spine
         log_print(f"Analyzing detected_spine_{i}. Extracting color data and dimensions.\n")
@@ -104,6 +105,9 @@ def vision_core(image_path, new_scan, config):
         log_print(f"Spine_{i} Details: {spine}\n")
 
         i += 1
+
+    basic_analysis_end = time.time()
+    log_print(f"\nBasic spine analysis complete.\nTime taken: {round(basic_analysis_end - start_basic_analysis, 2)} seconds\n")
 
     spine_object_end = time.time()
     spine_object_count = len(spines)
@@ -205,7 +209,7 @@ def vision_core(image_path, new_scan, config):
     log_print("\n\n**************** PHASE THREE - EXPORTING RESULTS *****************\n\n")
 
     # Export the results to a text file and email to user
-
+    export_start = time.time()
     log_file_path = util.retrieve_last_log_file()
     sent = export.export_books(books, output_formats, email_address, log_file_path)
 
@@ -217,7 +221,7 @@ def vision_core(image_path, new_scan, config):
         new_scan.scan_status = "failed"
         new_scan.save()
         log_print("\nExport failed. Results not sent to user.\n")
-
+    log_print(f"Total time taken for export: {round(time.time() - export_start, 2)} seconds\n")
     log_print("\nAll processes complete. Thank you for using Booksight.\n\n")
 
     return True

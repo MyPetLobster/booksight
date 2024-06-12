@@ -1,14 +1,13 @@
-Django==5.0.1
 Django==5.0.4
 easyocr==1.7.1
-google-generativeai==0.5.2
+google_cloud_aiplatform==1.54.0
 matplotlib==3.8.4
 numpy==1.26.4
-openai==1.30.4
+openai==1.33.0
 opencv_python==4.9.0.80
 opencv_python_headless==4.9.0.80
 Pillow==10.3.0
-protobuf==5.27.0
+protobuf==5.27.1
 python-dotenv==1.0.1
 Requests==2.32.3
 rich==13.7.1

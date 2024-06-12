@@ -53,9 +53,37 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-### Desktop/Mobile Landing Pages
+### Desktop Screenshots/GIFs
 
-<div style="display:flex; gap:40px"><img src="https://i.imgur.com/bWEa4Q8.png" alt="Desktop Landing Page" height="400px"><img src="https://i.imgur.com/MOvQ5Gl.png" alt="Mobile Landing Page" height="400px"></div>
+<img src="media/readme_media/landing-animation-fast.gif" alt="Desktop Landing Page" width="100%">
+
+<div style="width=100%; display:flex; justify-content:space-between;">
+  <img src="#" alt="Desktop Landing Page" width="33%">
+  <img src="#" alt="Desktop Tips" width="33%">
+  <img src="#" alt="Desktop About" width="33%">
+</div
+
+<div style="width=100%; display:flex; justify-content:space-between;">
+  <img src="#" alt="Desktop Vision 1" width="33%">
+  <img src="#" alt="Desktop Vision 2" width="33%">
+  <img src="#" alt="Desktop Vision 3" width="33%">
+</div>
+
+<hr/>
+
+### Mobile Screenshots/GIFs
+
+<div style="width:100%; display:flex, gap:12px; justify-content:space-between">
+  <img src="#" alt="Mobile Landing Page GIF" height="400px">
+  <img src="#" alt="Mobile Tips Page" height="400px">
+  <img src="#" alt="Mobile About Page" height="400px">
+</div>
+
+<div style="width:100%; display:flex, gap:12px; justify-content:space-between">
+  <img src="#" alt="Mobile Vision Page 1" height="400px">
+  <img src="#" alt="Mobile Vision Page 2" height="400px">
+  <img src="#" alt="Mobile Vision Page 3" height="400px">
+</div>
 
 <br />
 
@@ -101,23 +129,27 @@ Languages, frameworks, and libraries used in the project.
 * [![OpenAI][OpenAI.shield]][OpenAI.url]
 * [![Google Gemini API][Google.shield]][Google.url]
 
-#### Other Python Libraries Used (see requirements.txt for full list)
+#### Python Libraries Used (see requirements.txt for full list)
 * EasyOCR
+* Google Cloud AI Platform
+* Google Gemini
 * Matplotlib
 * Numpy
+* OpenAI
 * OpenCV
 * Pillow
+* PyTorch/Torchvision
 * Requests
 * Rich
 * Scikit-learn
 * Tiktoken
-* Torch
-* Torchvision
+* VertexAI
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 ## Project logic, flow and structure
+<img src="https://i.imgur.com/5rutsPc.png" style="width:100%">
 
 
 

@@ -176,3 +176,7 @@ scan_images/
 
 # log dir
 logs/
+
+
+# Ignore dev/ that includes test data
+dev/
