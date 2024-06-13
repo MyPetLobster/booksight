@@ -62,8 +62,6 @@ def get_potential_isbns(title, author):
                 log_print(f"ISBN-13 not in list. Adding to list.\nRemoving ISBN-10: {isbn10}\n")
                 isbn_13s.append(match["isbn13"])
                 isbn_10s.remove(isbn10)
-                log_print(f"Current ISBN-13s: {isbn_13s}")
-                log_print(f"Current ISBN-10s: {filtered_isbn_10s}")
             # If the ISBN-10 has a corresponding ISBN-13, remove the ISBN-10
             else:
                 log_print(f"ISBN-13 already in list. Removing ISBN-10: {isbn10}\n")

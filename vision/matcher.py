@@ -39,8 +39,11 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
     confidence = 0
     p_match = dbr.get_isbn_info(isbn)
 
-    # Check if english language
-    # TODO: Add language detection
+    if not p_match:
+        log_print(f"ISBNdb data not found for {isbn}. Skipping match process.\n")
+        return confidence, color_filter, px_to_inches, second_pass, isbn
+
+    # Filter out non-English books
     if p_match and p_match["language"].lower().strip() not in ["en", "eng", "english", "English", "EN", "ENG", "ENGLISH", "En"]:
         log_print(f"Language: {p_match['language']}")
         log_print("Booksight only supports English books at this time.\n")
@@ -53,26 +56,18 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
         confidence = 34
         return confidence, color_filter, px_to_inches, second_pass, isbn
 
-    # Try to get an isbn13 if the provided isbn is not 13 digits
-    if len(isbn) != 13:
-        p_match_isbn13 = p_match["isbn13"] if p_match else None
-        if p_match_isbn13 != None:
-            isbn = p_match["isbn13"]
-            p_match = dbr.get_isbn_info(isbn)
-
     # Confirm that spine.title is included in p_match title
     if p_match:
         if spine.title.lower().strip() in p_match["title"].lower().strip() or p_match["title"].lower().strip() in spine.title.lower().strip():
             log_print(f"Title match: '{p_match['title']}' -- '{spine.title}'\n")
-        pass
-    else:
-        p_match_title = p_match["title"] if p_match else None
-        if p_match_title != None:
-            log_print(f"Title mismatch: '{p_match['title']}' -- '{spine.title}'\n")
-            return confidence, color_filter, px_to_inches, second_pass, isbn
         else:
-            log_print(f"Title not found in ISBNdb data.\n")
-            return confidence, color_filter, px_to_inches, second_pass, isbn
+            p_match_title = p_match["title"] if p_match else None
+            if p_match_title != None:
+                log_print(f"Title mismatch: '{p_match['title']}' -- '{spine.title}'\n")
+                return confidence, color_filter, px_to_inches, second_pass, isbn
+            else:
+                log_print(f"Title not found in ISBNdb data.\n")
+                return confidence, color_filter, px_to_inches, second_pass, isbn
         
     # Confirm that the binding is not "Audio Cassette" or "Audio CD"
     if p_match["binding"]:
@@ -80,14 +75,14 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
             log_print(f"Audio binding detected: '{p_match['binding']}'\nSkipping match process for isbn - {isbn}.\n")
             return confidence, color_filter, px_to_inches, second_pass, isbn
 
-    # Check if essential data is missing or incorrect
+    
     set_local_img = False
+
+    # If second pass, that means none of isbns returned a high enough confidence in first pass,
     if second_pass:
         log_print("\nSecond pass, skipping dimension checks.\n")
-        # If second pass, that means none of isbns returned a high enough confidence in first pass,
-        # so if no p_match at this point, we create a fake p_match with the spine dimensions and extracted spine image.
         if not p_match:
-            # Create a fake p_match with the spine dimensions
+            # Create a fake p_match with the spine dimensions and assign spine image as cover
             p_match = {
                 "height": spine.height * px_to_inches if px_to_inches else spine.height,
                 "width": spine.width * px_to_inches if px_to_inches else spine.width,

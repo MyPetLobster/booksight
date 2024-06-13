@@ -62,9 +62,9 @@ def main():
     # PARSE ARGS and SETUP SETTINGS
     parser = argparse.ArgumentParser(description='Booksight Vision CLI')
     parser.add_argument('image_path', type=str, help='Path to the image to be processed')
-    parser.add_argument('--ai-model', type=str, default='gemini-1.5-pro', help='AI model to use for image classification')
-    parser.add_argument('--ai-temp', type=float, default=0.0, help='Temperature parameter for the AI model')
-    parser.add_argument('--torch-confidence', type=float, default=0.79, help='Confidence threshold for TorchVision')
+    parser.add_argument('--ai-model', type=str, default='gpt-4o', help='AI model to use for image classification')
+    parser.add_argument('--ai-temp', type=float, default=0.3, help='Temperature parameter for the AI model')
+    parser.add_argument('--torch-confidence', type=float, default=0.78, help='Confidence threshold for TorchVision')
     args = parser.parse_args()
 
     image_path = args.image_path.strip()
