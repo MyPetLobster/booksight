@@ -67,7 +67,7 @@ def main():
     parser.add_argument('--torch-confidence', type=float, default=0.79, help='Confidence threshold for TorchVision')
     args = parser.parse_args()
 
-    image_path = args.image_path
+    image_path = args.image_path.strip()
     ai_model = args.ai_model
     ai_temp = args.ai_temp
     torch_confidence = args.torch_confidence
@@ -257,7 +257,7 @@ def main():
     console.print("[italic dark_cyan]If you know your way around Python, you can modify the Django project settings to use the email provider of your choice.[/italic dark_cyan]\n\n")
     time.sleep(0.2)
 
-    send_email = console.input("[bold]Send email? To skip, hit 'Enter'. ([chartreuse3]y[/chartreuse3]/[red1]n[/red1]): [/bold]") 
+    send_email = console.input("[bold]Send email? ([chartreuse3]y[/chartreuse3]/[red1]n[/red1]): [/bold]") 
     if send_email.lower() == 'y':
         valid_email = False
         i = 0
