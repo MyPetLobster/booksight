@@ -286,6 +286,7 @@ def id_possible_matches(spines, full_img_text):
 
     log_print(f"\nAI processing complete. Time elapsed: {round(end_ai_process - start_ai_process, 2)} seconds.\n")
 
+    start_isbn_retrieval = time.time()
     log_print("\nRetrieving potential ISBN's from OpenLibrary and Google Books...\nUpdating Spine objects with title, author, and possible ISBNs...\n")
 
     spine_count = len(spines)
@@ -303,7 +304,9 @@ def id_possible_matches(spines, full_img_text):
     # Retrieve potential ISBN's from OpenLibrary/Google Books and update spine.possible_matches with list of ISBN's
     for spine in spines:
         spine.possible_matches = dbr.get_potential_isbns(spine.title, spine.author)
-        
+    
+    end_isbn_retrieval = time.time()
+    log_print(f"\nISBN retrieval complete. Time elapsed: {round(end_isbn_retrieval - start_isbn_retrieval, 2)} seconds.\n")
     return spines
 
 
