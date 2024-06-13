@@ -200,8 +200,13 @@ def vision_core(image_path, new_scan, config):
     total_time = end_time - start
     time_per_book = total_time / total_books
 
+    # Find average confidence of all identified books. Do not include books with confidence 0 (ie books undetected by torchvision)
+    total_confidence = sum([book.confidence for book in books if book.confidence > 0])
+    average_confidence = total_confidence / total_confident_books
+
     log_print(f"Total books identified: {total_books}")
     log_print(f"Total books with precise identification: {total_confident_books}")
+    log_print(f"Average confidence of all Torchvision-detected books: {round(average_confidence, 2)}")
     log_print(f"Time taken per book: {round(time_per_book, 2)} seconds")
     log_print(f"Total time taken to complete Booksight Vision process: {round(time.time() - start, 2)} seconds\n")
 
