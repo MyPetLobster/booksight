@@ -293,7 +293,14 @@ def match_spines_to_books(spines):
             log_print(f"Book object for {spine.title}: {book}\n")
             return True
         elif confidence > threshold:
+            # Add the ISBN to a dictionary of potential matches
             potential_matches[isbn] = confidence
+
+            log_print("*********** DEBUG ***********\n")
+            log_print(f"Adding {isbn} to potential matches with confidence: {confidence}\n")
+            log_print(f"Current potential matches: {potential_matches}\n")
+            log_print("*********** DEBUG ***********\n")
+
             log_print(f"\n{spine.title} identified with ISBN: {isbn}")
             log_print(f"Identification confidence: {confidence}\n")
         return False
@@ -314,9 +321,12 @@ def match_spines_to_books(spines):
         # will be created after the loop has checked all possible ISBNs and compared confidence levels.
 
         # Check each possible ISBN for a match
+        log_print(f"Possible ISBNs to check for {spine.title}: {possible_isbns}\n")
         for isbn in possible_isbns:
             confidence, color_filter, px_to_inches, second_pass, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass)
             book_created = confidence_check(confidence, spine, isbn, 0.2)
+            log_print(f"Just checked isbn: {isbn}\n")
+            log_print(f"Updated potential_matches dict: {potential_matches}\n")
             if book_created:
                 break
 
@@ -347,6 +357,7 @@ def match_spines_to_books(spines):
             log_print(f"\nBook object for {spine.title}: {book}\n")
         else:
             # If potential matches were found, create a Book object with the best match
+            log_print(f"Potential matches for {spine.title}: {potential_matches}\n")
             best_match = max(potential_matches, key=potential_matches.get)
             log_print(f"\n{spine.title} identified with ISBN: {best_match}\n")
             log_print(f"Identification confidence: {potential_matches[best_match]}\n")

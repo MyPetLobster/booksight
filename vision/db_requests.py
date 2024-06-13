@@ -1,6 +1,7 @@
 import os
 import time
 import requests
+from collections import OrderedDict
 
 import gemini
 import gpt
@@ -33,8 +34,45 @@ def get_potential_isbns(title, author):
     openlibrary_isbns = get_isbns_openlibrary(title, author)
     google_isbns = get_isbns_google_books(title, author)
     
-    all_isbns = openlibrary_isbns + google_isbns
-    
+    isbn_10s = []
+    isbn_13s = []
+
+    isbn_10s += [isbn for isbn in openlibrary_isbns if len(isbn) == 10]
+    isbn_13s += [isbn for isbn in openlibrary_isbns if len(isbn) == 13]
+    isbn_10s += [isbn for isbn in google_isbns if len(isbn) == 10]
+    isbn_13s += [isbn for isbn in google_isbns if len(isbn) == 13]
+
+    # Create a set of the last 10 digits of the ISBN-13s
+    isbn_10_equivalents = {isbn13[-10:] for isbn13 in isbn_13s}
+
+    # Filter out the ISBN-10s that are already present in the ISBN-13s
+    filtered_isbn_10s = [isbn10 for isbn10 in isbn_10s if isbn10 not in isbn_10_equivalents]
+
+    # Remove remaining duplicate identifiers
+    isbn_10s_copy = filtered_isbn_10s.copy()
+    log_print(f"Filtered ISBN-10s: {filtered_isbn_10s}\n")
+    for isbn10 in isbn_10s_copy:
+        log_print(f"Checking ISBN-10: {isbn10}")
+        match = get_isbn_info(isbn10)
+
+        if match and match["isbn13"]:
+            log_print(f"Match found ISBN-13: {match['isbn13']}\n")
+            # If the ISBN-13 is not already in the list, add it and remove the ISBN-10
+            if match["isbn13"] not in isbn_13s:
+                log_print(f"ISBN-13 not in list. Adding to list.\nRemoving ISBN-10: {isbn10}\n")
+                isbn_13s.append(match["isbn13"])
+                isbn_10s.remove(isbn10)
+                log_print(f"Current ISBN-13s: {isbn_13s}")
+                log_print(f"Current ISBN-10s: {filtered_isbn_10s}")
+            # If the ISBN-10 has a corresponding ISBN-13, remove the ISBN-10
+            else:
+                log_print(f"ISBN-13 already in list. Removing ISBN-10: {isbn10}\n")
+                filtered_isbn_10s.remove(isbn10)
+
+
+    # Combine the ISBN-13s and filtered ISBN-10s and remove duplicates
+    all_isbns = list(OrderedDict.fromkeys(isbn_13s + filtered_isbn_10s)) 
+
     log_print(f"{title} - {author} all ISBNS: {all_isbns[:ISBN_COUNT_COMBINED]}\n")
 
     return all_isbns[:ISBN_COUNT_COMBINED]
@@ -126,7 +164,7 @@ def get_isbn_info(isbn):
         # Get the 'Height' and 'Width' of the book
         book_info = response.json()
 
-        log_print(f"ISBNdb Data for {isbn}:\n{book_info}\n")
+        log_print(f"ISBNdb Data for {isbn}:\n{book_info}")
 
         height, width = get_dimensions(book_info)
         language, cover = get_language_and_cover(book_info)
