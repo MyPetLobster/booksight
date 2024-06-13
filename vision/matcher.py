@@ -61,7 +61,9 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
             p_match = dbr.get_isbn_info(isbn)
 
     # Confirm that spine.title is included in p_match title
-    if p_match and spine.title.lower().strip() in p_match["title"].lower().strip():
+    if p_match:
+        if spine.title.lower().strip() in p_match["title"].lower().strip() or p_match["title"].lower().strip() in spine.title.lower().strip():
+            log_print(f"Title match: '{p_match['title']}' -- '{spine.title}'\n")
         pass
     else:
         p_match_title = p_match["title"] if p_match else None
