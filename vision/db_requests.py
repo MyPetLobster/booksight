@@ -10,8 +10,8 @@ import utility as util
 from dotenv import load_dotenv
 load_dotenv()
 
-ISBN_COUNT = 10
-ISBN_COUNT_COMBINED = 15
+ISBN_COUNT = 15
+ISBN_COUNT_COMBINED = 20
 
 log_print = util.log_print
 
@@ -56,7 +56,7 @@ def get_potential_isbns(title, author):
         match = get_isbn_info(isbn10)
 
         if match and match["isbn13"]:
-            log_print(f"Match found ISBN-13: {match['isbn13']}\n")
+            log_print(f"Match found ISBN-13: {match['isbn13']}")
             # If the ISBN-13 is not already in the list, add it and remove the ISBN-10
             if match["isbn13"] not in isbn_13s:
                 log_print(f"ISBN-13 not in list. Adding to list.\nRemoving ISBN-10: {isbn10}\n")
