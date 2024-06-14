@@ -2,9 +2,9 @@ import os
 import time
 
 import sys
-sys.path.append('/Users/corysuzuki/Documents/repos/booksight/vision')
+sys.path.append('/Users/corysuzuki/Documents/repos/booksight')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'booksight.settings')
-os.environ.setdefault('PYTHONPATH', '/Users/corysuzuki/Documents/repos/booksight')
+
 
 import django
 django.setup()
