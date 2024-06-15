@@ -1,4 +1,5 @@
 import json 
+import math
 import os
 import requests
 import time
@@ -20,7 +21,7 @@ log_print = util.log_print
 
 
 
-def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
+def check_for_match(spine, isbn, color_filter, px_to_inches, nada=False):
     """
     Check for a positive match using dimension ratio comparison, average color, dominant color, and color palette
     comparisons. If a match is found, update the color filter and pixel-to-inch ratio and return a confidence score.
@@ -30,191 +31,277 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, second_pass=False):
         isbn (str): The ISBN of the book.
         color_filter (list): A list of RGB values to filter colors.
         px_to_inches (float): The pixel-to-inch ratio.
-        second_pass (bool): Whether to skip dimension checks.
+        nada (bool): Whether to skip dimension checks.
 
     Returns:
         tuple: A tuple containing the confidence score, updated color filter, updated pixel-to-inch ratio, and whether it's a second pass.
     """
     # Assign confidence of 0 and get isbn info for this potential match
     confidence = 0
+
+    # Flags for missing data (skip comps)
+    missing_dimensions = False
+    missing_image = False
+
+    
+
+    # Fetch ISBNdb data for comparison
     p_match = dbr.get_isbn_info(isbn)
 
-    if not p_match:
-        log_print(f"ISBNdb data not found for {isbn}. Skipping match process.\n")
-        return confidence, color_filter, px_to_inches, second_pass, isbn
+    # Check if spine data is incomplete, return only if nada is True
+    if not nada:
+        # Check if ISBNdb data is found
+        if not p_match:
+            log_print(f"ISBNdb data not found for {isbn}. Skipping match process.\n")
+            return confidence, color_filter, px_to_inches, nada, isbn
+        # Check if essential dimension data is missing
+        if "height" not in p_match or "width" not in p_match:
+            log_print("\nEssential dimension data is missing or zero, skipping match checks for this ISBN.\n")
+            return confidence, color_filter, px_to_inches, nada, isbn
 
     # Filter out non-English books
-    if p_match and p_match["language"].lower().strip() not in ["en", "eng", "english", "English", "EN", "ENG", "ENGLISH", "En"]:
+    if p_match["language"].lower().strip() not in ["en", "eng", "english"]:
         log_print(f"Language: {p_match['language']}")
         log_print("Booksight only supports English books at this time.\n")
-        return confidence, color_filter, px_to_inches, second_pass, isbn
+        return confidence, color_filter, px_to_inches, nada, isbn
 
     # Handle spines undetected by torchvision
-    if spine.height == None or spine.width == None or spine.text == None:
+    if spine.height is None or spine.width is None or spine.text is None:
         log_print(f"\nSpine data is incomplete. This book likely went undetected by torchvision and was picked up by AI in full image OCR text.\n")
         log_print(f"\nPopulating Book Object with general data and skipping match process.\n")
         confidence = 34
-        return confidence, color_filter, px_to_inches, second_pass, isbn
+        return confidence, color_filter, px_to_inches, nada, isbn
 
     # Confirm that spine.title is included in p_match title
-    if p_match:
-        if spine.title.lower().strip() in p_match["title"].lower().strip() or p_match["title"].lower().strip() in spine.title.lower().strip():
-            log_print(f"Title match: '{p_match['title']}' -- '{spine.title}'\n")
+    if spine.title.lower().strip() not in p_match["title"].lower().strip() and p_match["title"].lower().strip() not in spine.title.lower().strip():
+        p_match_title = p_match["title"] if p_match else None
+        if p_match_title != None:
+            log_print(f"Title mismatch: '{p_match['title']}' -- '{spine.title}'\n")
+            return confidence, color_filter, px_to_inches, nada, isbn
         else:
-            p_match_title = p_match["title"] if p_match else None
-            if p_match_title != None:
-                log_print(f"Title mismatch: '{p_match['title']}' -- '{spine.title}'\n")
-                return confidence, color_filter, px_to_inches, second_pass, isbn
-            else:
-                log_print(f"Title not found in ISBNdb data.\n")
-                return confidence, color_filter, px_to_inches, second_pass, isbn
+            log_print(f"Title not found in ISBNdb data.\n")
+            return confidence, color_filter, px_to_inches, nada, isbn
+    
+    # Declare match if spine.title is included in p_match title or vice versa
+    log_print(f"Title match: '{p_match['title']}' -- '{spine.title}'\n")
         
     # Confirm that the binding is not "Audio Cassette" or "Audio CD"
     if p_match["binding"]:
         if p_match and p_match["binding"].lower().strip() in ["audio cassette", "audio cd"]:
             log_print(f"Audio binding detected: '{p_match['binding']}'\nSkipping match process for isbn - {isbn}.\n")
-            return confidence, color_filter, px_to_inches, second_pass, isbn
+            return confidence, color_filter, px_to_inches, nada, isbn
 
-    
-    set_local_img = False
 
-    # If second pass, that means none of isbns returned a high enough confidence in first pass,
-    if second_pass:
-        log_print("\nSecond pass, skipping dimension checks.\n")
+    # If 'nada', that means none of isbns returned a high enough confidence in first pass.
+    if nada:
         if not p_match:
-            # Create a fake p_match with the spine dimensions and assign spine image as cover
-            p_match = {
-                "height": spine.height * px_to_inches if px_to_inches else spine.height,
-                "width": spine.width * px_to_inches if px_to_inches else spine.width,
-                "cover": spine.image_path
-            }
-            set_local_img = True
+            # Flag to disregard dimension and color checks
+            missing_dimensions = True
+            missing_image = True
+            log_print(f"\nMissing data for {isbn}. Skipping dimension and color checks.\n")
         else:
             # Handle cases where p_match is missing essential data
-            if "height" not in p_match or "width" not in p_match or not p_match["height"] or not p_match["width"]:
-                p_match["height"] = spine.height * px_to_inches if px_to_inches else spine.height
-                p_match["width"] = spine.width * px_to_inches if px_to_inches else spine.width
+            if "height" not in p_match or "width" not in p_match:
+                missing_dimensions = True
+                log_print(f"\nMissing dimension data for {isbn}. Skipping dimension checks.\n")
             if "cover" not in p_match:
-                p_match["cover"] = spine.image_path
-                set_local_img = True
-    else:
-        if not p_match or "height" not in p_match or "width" not in p_match or not p_match["height"] or not p_match["width"]:
-            log_print("\nEssential dimension data is missing or zero, skipping match checks for this ISBN.\n")
-            return confidence, color_filter, px_to_inches, second_pass, isbn
+                missing_image = True
+                log_print(f"\nMissing cover image for {isbn}. Skipping color comparison.\n")
 
 
-    # DIMENSION DATA COMPARISON
+    # BEGIN MATCHING - Max potential confidence is 3.4
+    log_print(f"Data validated, beginning comparison for {isbn}...\n")
 
-    # Calculate ratios if dimensions are valid
-    p_match_height = p_match["height"]
-    p_match_width = p_match["width"]
-    p_match_ratio = p_match_height / p_match_width if p_match_width else 0
-    log_print(f"p_match dimensions:\nheight: {p_match_height}, width: {p_match_width}, ratio: {p_match_ratio}\n")
+    # DIMENSION DATA COMPARISON - Max potential confidence is 1.4
+    if not missing_dimensions:
+        # Calculate ratios if dimensions are valid
+        p_match_height = p_match["height"]
+        p_match_width = p_match["width"]
+        p_match_ratio = p_match_height / p_match_width if p_match_width else 0
+        log_print(f"p_match dimensions:\nheight: {p_match_height}, width: {p_match_width}, ratio: {p_match_ratio}\n")
 
-    spine_height = spine.height * px_to_inches if px_to_inches else spine.height
-    spine_width = spine.width * px_to_inches if px_to_inches else spine.width
-    spine_ratio = spine_height / spine_width if spine_width else 0
-    log_print(f"spine dimensions:\nheight: {spine_height}, width: {spine_width}, ratio: {spine_ratio}\n")
+        spine_height = spine.height * px_to_inches
+        spine_width = spine.width * px_to_inches
+        spine_ratio = spine_height / spine_width if spine_width else 0
 
-    if not second_pass:
-        if px_to_inches != 1:
-            if 0.7 * spine_height <= p_match_height <= 1.3 * spine_height:
-                # Update confidence and set px_to_inches to the average of the current and p_match height ratio
-                confidence += 0.3
-                px_to_inches = (px_to_inches + (p_match["height"] / spine.height)) / 2
-                log_print("\np_match height match within 20%, confidence + 0.25\n")
-            if 0.8 * spine_width <= p_match_width <= 1.2 * spine_width:
-                # Update confidence and px_to_inches again, but this time double the weight of the current height ratio
-                confidence += 0.2
-                px_to_inches = ((px_to_inches * 2) + (p_match["height"] / spine.height)) / 3
-                log_print("\np_match width match within 20%, confidence + 0.25\n")
+        if px_to_inches == 1:
+            log_print(f"Spine dimensions:\nheight: {spine_height}px,\nwidth: {spine_width}px,\nratio: {spine_ratio}\n")
         else:
-            if p_match_ratio and 0.7 * p_match_ratio <= spine_ratio <= 1.3 * p_match_ratio:
-                # Update confidence and set px_to_inches to the ratio of the spine and p_match height
-                confidence += 0.3
-                px_to_inches = (p_match["height"] / spine.height) / 2
-                log_print(f"\np_match ratio match within 30% , confidence + 0.3\n\npx_to_inches updated to: {px_to_inches}\n")
-                if 0.8 * p_match_ratio <= spine_ratio <= 1.2 * p_match_ratio:
-                    confidence += 0.2
-                    log_print("\np_match ratio match within 20%, confidence + 0.2\n")
+            log_print(f"spine dimensions (adjusted):\nheight: {spine_height}in\nwidth: {spine_width}in\nratio: {spine_ratio}\n")
+
+        # Confidence Calculations
+        if not nada:
+            if px_to_inches != 1:
+                confidence, px_to_inches = calculate_confidence_dimensions(spine_height, spine_width, p_match_height, p_match_width, confidence, px_to_inches, isbn)
+            else:
+                confidence, px_to_inches = calculate_confidence_ratios(p_match, p_match_ratio, spine_ratio, spine_height, confidence, px_to_inches, isbn)
 
 
-    # COLOR DATA COMPARISON
-
-    # Download cover image for potential match
-    p_match_cover_url = p_match["cover"]
-
-    if not set_local_img:
-        p_match_cover_path = download_image(p_match_cover_url, isbn)
-
-        # Validate that the cover image was downloaded
+    # COLOR DATA COMPARISON - Max potential confidence is 2.0
+    if not missing_image: 
+        # Download cover image for color comparison
+        p_match_cover_path = download_image(p_match["cover"], isbn)
         if p_match_cover_path == None:
             log_print(f"Failed to download cover image for {isbn}. Skipping color comparison.\n")
-            return confidence, color_filter, px_to_inches, second_pass, isbn
-
-        # Retrieve color data for cover image
-        p_avg_color = asp.find_average_color_simple(p_match_cover_path)
-        p_dom_color, p_color_palette, h, w = asp.find_color_palette(p_match_cover_path)
-        avg_color, dom_color, color_palette = spine.avg_color, spine.dominant_color, spine.color_palette
-
-        log_print(f"p_match_color_data:\navg:{p_avg_color},\n{p_dom_color},\n{p_color_palette}\n")
-        log_print(f"spine_color_data:\navg:{avg_color},\n{dom_color},\n{color_palette}\n")
-
-        # Apply color filter
-        avg_color = tuple([avg_color[i] * color_filter[i] for i in range(3)])
-        dom_color = tuple([dom_color[i] * color_filter[i] for i in range(3)])
-        color_palette = [tuple([color_palette[i][j] * color_filter[j] for j in range(3)]) for i in range(6)]
-
-        # Compare average color
-        avg_color_diff = sum([abs(avg_color[i] - p_avg_color[i]) for i in range(3)]) / 3
-        log_print(f"avg_color_diff: {avg_color_diff} for {isbn}\n")
-        if avg_color_diff < 100:
-            confidence += 0.2
-            # if color_filter not 1, 1, 1 find average color filter
-            if color_filter != [1, 1, 1]:
-                old_filter = color_filter
-                new_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
-                color_filter = [(new_filter[i] + old_filter[i]) / 2 for i in range(3)]
-            else:
-                color_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
-
-            # dilute the filter to avoid overfitting, 80% dilution
-            color_filter = [(color_filter[i] + 4) / 5 for i in range(3)]
-
-            log_print(f"avg color match, confidence + 0.2\nColor filter set to: {color_filter}\n ")
-        if avg_color_diff < 50:
-            confidence += 0.3
-            log_print("avg color match, confidence + 0.3\n")
-        # Compare dominant color
-        dom_color_diff = sum([abs(dom_color[i] - p_dom_color[i]) for i in range(3)]) / 3
-        log_print(f"dom_color_diff: {dom_color_diff} for {isbn}\n")
-        if dom_color_diff < 100:
-            confidence += 0.2
-            log_print("dom color match, confidence + 0.2\n")
-        if dom_color_diff < 50:
-            confidence += 0.3
-            log_print("dom color match, confidence + 0.3\n")
-
-        # Compare color palette
-        palette_diff = 0
-        for i in range(6):
-            palette_diff += sum([abs(color_palette[i][j] - p_color_palette[i][j]) for j in range(3)]) / 3
-
-        log_print(f"palette_diff: {palette_diff} for {isbn}\n")
-        if palette_diff < 600:
-            confidence += 0.2
-            log_print("palette match, confidence + 0.2\n")
-        if palette_diff < 300:
-            confidence += 0.3
-            log_print("palette match, confidence + 0.3\n")
+            return confidence, color_filter, px_to_inches, nada, isbn
+        confidence, color_filter = compare_colors(spine, p_match_cover_path, confidence, color_filter, isbn)
     else: 
         log_print(f"Local image set for {isbn}. Skipping color comparison.\n")
 
+    
+    # Max potential confidence is 3.4
     confidence = round(confidence, 2)
-        
+    
+    log_print(f"Comparisons for {isbn} complete.\n")
     log_print(f"Match confidence: {confidence}\ncolor_filter: {color_filter}\npx_to_inches: {px_to_inches}\n")
 
-    return confidence, color_filter, px_to_inches, second_pass, isbn
+    return confidence, color_filter, px_to_inches, nada, isbn
+
+
+def calculate_confidence_dimensions(spine_height, spine_width, p_match_height, p_match_width, confidence, px_to_inches, isbn):
+    log_print(f"\nDimension comparison for {isbn}\nCurrent confidence: {confidence}.\nCurrent px_to_inches: {px_to_inches}\n")
+    thresholds = [
+        (0.7, 0.1),
+        (0.8, 0.2),
+        (0.9, 0.3),
+        (0.95, 0.1)
+    ]
+
+    for threshold, increment in thresholds:
+        if threshold * spine_height <= p_match_height <= (2 - threshold) * spine_height:
+            confidence += increment
+            log_print(f"\np_match height match within {math.ceil(((1 - threshold) * 100))}%, confidence + {increment}\n")
+        if threshold * spine_width <= p_match_width <= (2 - threshold) * spine_width:
+            confidence += increment
+            log_print(f"\np_match width match within {int((1 - threshold) * 100)}%, confidence + {increment}\n")
+
+    if confidence >= 0.5:
+        confidence_multiplier = [
+            (0.5, 5.5),
+            (0.6, 5),
+            (0.7, 4.5),
+            (0.8, 4),
+            (0.9, 3.5),
+            (1, 3),
+            (1.1, 2.5),
+            (1.2, 2),
+            (1.3, 1.5),
+            (1.4, 1)
+        ]
+
+        # Find the closest multiplier for the current confidence
+        mp = min(confidence_multiplier, key=lambda x: abs(x[0] - confidence))[1]
+        px_to_inches = ((px_to_inches * mp) + (p_match_height / spine_height)) / (mp + 1)
+
+    return confidence, px_to_inches
+
+    
+def calculate_confidence_ratios(p_match, p_match_ratio, spine_ratio, spine_height, confidence, px_to_inches, isbn):
+    log_print(f"Dimension ratio comparison for {isbn}\nCurrent confidence: {confidence}.\nCurrent px_to_inches: {px_to_inches}\n\n")
+    thresholds = [
+        (0.7, 0.2),
+        (0.8, 0.4),
+        (0.9, 0.6),
+        (0.95, 0.2)
+    ]
+
+    for threshold, increment in thresholds:
+        if threshold * spine_ratio <= p_match_ratio <= (2 - threshold) * spine_ratio:
+            confidence += increment
+            log_print(f"p_match ratio match within {int((1 - threshold) * 100)}%, confidence + {increment}")
+        if confidence >= 0.5:
+            px_to_inches = p_match["height"] / spine_height
+
+    return confidence, px_to_inches
+
+
+def compare_colors(spine, p_match_cover_path, confidence, color_filter, isbn):
+    log_print(f"\nComparing colors for {isbn}...\nCurrent confidence: {confidence}.\nCurrent color filter: {color_filter}\n")
+
+    # Retrieve color data for cover image
+    p_avg_color = asp.find_average_color_simple(p_match_cover_path)
+    p_dom_color, p_color_palette, h, w = asp.find_color_palette(p_match_cover_path)
+    avg_color, dom_color, color_palette = spine.avg_color, spine.dominant_color, spine.color_palette
+
+    log_print(f"p_match_color_data:\navg:{p_avg_color},\ndom:{p_dom_color},\npalette:{p_color_palette}\n")
+    log_print(f"spine_color_data:\navg:{avg_color},\ndom:{dom_color},\npalette:{color_palette}\n")
+
+    # Apply color filter
+    avg_color = tuple([avg_color[i] * color_filter[i] for i in range(3)])
+    dom_color = tuple([dom_color[i] * color_filter[i] for i in range(3)])
+    color_palette = [tuple([color_palette[i][j] * color_filter[j] for j in range(3)]) for i in range(6)]
+
+
+    # Compare average color
+    diluted_color_filter = color_filter
+    avg_color_diff = sum([abs(avg_color[i] - p_avg_color[i]) for i in range(3)]) / 3
+    log_print(f"avg_color_diff: {avg_color_diff} for {isbn}\n")
+    if avg_color_diff < 180:
+        confidence += 0.2
+        # If color_filter not 1, 1, 1 find average color filter
+        if color_filter != [1, 1, 1]:
+            old_filter = color_filter
+            new_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
+            color_filter = [(new_filter[i] + old_filter[i]) / 2 for i in range(3)]
+        else:
+            color_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
+
+        # Dilute the filter to avoid overfitting, 80% dilution
+        diluted_color_filter = [(color_filter[i] + 4) / 5 for i in range(3)]
+        log_print(f"Avg color match. Diff < 100.\nConfidence + 0.2\nColor filter set to: {color_filter}. 80% dilution")
+    
+    if avg_color_diff < 120:
+        confidence += 0.3
+        # 66% dilution
+        diluted_color_filter = [(color_filter[i] + 2) / 3 for i in range(3)]
+        log_print(f"Avg color match. Diff < 50.\nConfidence + 0.3.\nFilter updated with 66% dilution.")
+
+    if avg_color_diff < 60:
+        confidence += 0.5
+        # 50% dilution
+        diluted_color_filter = [(color_filter[i] + 1) / 2 for i in range(3)]
+        log_print(f"Avg color match. Diff < 25.\nConfidence + 0.5.\nFilter updated with 50% dilution.")
+    
+    color_filter = diluted_color_filter
+
+    # Compare dominant color
+    dom_color_diff = sum([abs(dom_color[i] - p_dom_color[i]) for i in range(3)]) / 3
+    log_print(f"\ndom_color_diff: {dom_color_diff} for {isbn}\n")
+
+    if dom_color_diff < 100:
+        confidence += 0.2
+        # No change to filter
+        log_print("Dom color match. Diff < 100.\nConfidence + 0.2.\nNo change to color filter.\n")
+    if dom_color_diff < 50:
+        confidence += 0.3
+        # Update color filter by dividing p_dom_color by dom_color and averaging with current filter
+        color_filter = [(p_dom_color[i] / dom_color[i] + color_filter[i]) / 2 for i in range(3)]
+        log_print("Dom color match. Diff < 50.\nConfidence + 0.3.\nColor filter updated with dom color data.\n")
+
+    # Compare color palette
+    palette_diff = 0
+    for i in range(6):
+        for j in range(3):
+            palette_diff += abs(color_palette[i][j] - p_color_palette[i][j])
+    palette_diff /= 18  
+
+    log_print(f"palette_diff: {palette_diff} for {isbn}\n")
+
+    if palette_diff < 600:
+        confidence += 0.2
+        log_print("Palette weak match. Diff < 600.\nConfidence + 0.2\nNo change to color filter.\n")
+    if palette_diff < 400:
+        confidence += 0.3
+        # Update color_filter for each color component separately
+        for i in range(3):  # for R, G, B
+            for j in range(6):  # for each of the 6 colors
+                color_filter[i] = (p_color_palette[j][i] / color_palette[j][i] + color_filter[i]) / 2
+        log_print("Palette strong match. Diff < 400.\nConfidence + 0.3\nColor filter updated with palette data.\n")
+
+    return confidence, color_filter
+
+
+
 
 
 def download_image(url, isbn):
@@ -284,7 +371,7 @@ def id_possible_matches(spines, full_img_text):
     log_print(f"\nAI processing complete. Time elapsed: {round(end_ai_process - start_ai_process, 2)} seconds.\n")
 
     start_isbn_retrieval = time.time()
-    log_print("\nRetrieving potential ISBN's from OpenLibrary and Google Books...\nUpdating Spine objects with title, author, and possible ISBNs...\n")
+    log_print("\nRetrieving potential ISBNs from OpenLibrary and Google Books...\nUpdating Spine objects with title, author, and possible ISBNs...\n")
 
     spine_count = len(spines)
     if book_count > spine_count:

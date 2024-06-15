@@ -31,6 +31,7 @@ def get_potential_isbns(title, author):
     Returns:
         list: A list of ISBNs associated with the book.
     """
+    log_print(f"Getting potential ISBNs for {title} - {author}\n")
     openlibrary_isbns = get_isbns_openlibrary(title, author)
     google_isbns = get_isbns_google_books(title, author)
     
@@ -71,7 +72,7 @@ def get_potential_isbns(title, author):
     # Combine the ISBN-13s and filtered ISBN-10s and remove duplicates
     all_isbns = list(OrderedDict.fromkeys(isbn_13s + filtered_isbn_10s)) 
 
-    log_print(f"{title} - {author} all ISBNS: {all_isbns[:ISBN_COUNT_COMBINED]}\n")
+    log_print(f"{title} - {author} all ISBNS: {all_isbns[:ISBN_COUNT_COMBINED]}\n\n")
 
     return all_isbns[:ISBN_COUNT_COMBINED]
 

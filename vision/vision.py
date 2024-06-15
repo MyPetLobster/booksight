@@ -155,7 +155,7 @@ def vision_core(image_path, new_scan, config):
 
     ### BOOK IDENTIFICATION ###
     log_print("\n\n************** PHASE TWO - BOOK IDENTIFICATION & MATCHING **************\n\n")
-    log_print("\nBegin precise book identification process...\n")
+    log_print("\nBeginning precise book identification process...\n")
     
     # Clean up text data using AI and retrieve potential ISBNs for each spine
     log_print("Cleaning up text data and making preliminary title/author identification with AI model...\n")
@@ -175,14 +175,14 @@ def vision_core(image_path, new_scan, config):
     new_scan.scan_status = "ai-complete"
     new_scan.save()
 
-    log_print("\nAll updated Spine objects:\n")
+    log_print("\nAll updated Spine objects: ")
     for spine in spines:
         log_print(spine)
-        log_print("\n")
+        log_print(" ")
 
 
     ### BOOK MATCHING ###
-    log_print("\nBegin precise book identification process.\nThis may take a while...\n")
+    log_print("\nBeginning detail matching process.\nThis may take a while...\n")
     books = match_spines_to_books(spines)
     match_end = time.time()
     log_print(f"\nBook identification process complete.\n\nTotal time taken for book identification: {round(match_end - ai_end, 2)} seconds\n")
@@ -300,11 +300,8 @@ def match_spines_to_books(spines):
         elif confidence > threshold:
             # Add the ISBN to a dictionary of potential matches
             potential_matches[isbn] = confidence
-
-            log_print("*********** DEBUG ***********\n")
-            log_print(f"Adding {isbn} to potential matches with confidence: {confidence}\n")
-            log_print(f"Current potential matches: {potential_matches}\n")
-            log_print("*********** DEBUG ***********\n")
+            log_print(f"Adding {isbn} to potential matches with confidence: {confidence}")
+            log_print(f"Current potential matches: {potential_matches}")
 
             log_print(f"\n{spine.title} identified with ISBN: {isbn}")
             log_print(f"Identification confidence: {confidence}\n")
@@ -314,7 +311,7 @@ def match_spines_to_books(spines):
     # Iterate through each spine and check for matches
     for spine in spines:
         book_created = False  
-        second_pass = False
+        nada = False
         possible_isbns = spine.possible_matches
         potential_matches = {}
 
@@ -326,32 +323,49 @@ def match_spines_to_books(spines):
         # will be created after the loop has checked all possible ISBNs and compared confidence levels.
 
         # Check each possible ISBN for a match
-        log_print(f"Possible ISBNs to check for {spine.title}: {possible_isbns}\n")
+        log_print(f"\nPossible ISBNs to check for {spine.title}: {possible_isbns}")
+
+        filtered_isbns = []
         for isbn in possible_isbns:
-            confidence, color_filter, px_to_inches, second_pass, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass)
+            log_print(f"\nChecking for match with ISBN: {isbn}\n")
+            confidence, color_filter, px_to_inches, nada, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, nada)
+            # Prepare second pass ISBNs for re-checking if constants change
+            if confidence > 0 and confidence != 34:
+                filtered_isbns.append(isbn)
+            # Update potential_matches and check for confidence 34 books
             book_created = confidence_check(confidence, spine, isbn, 0.2)
-            log_print(f"Just checked isbn: {isbn}\n")
             log_print(f"Updated potential_matches dict: {potential_matches}\n")
             if book_created:
                 break
+        
+        # If a color filter or px_to_inches change is detected, update the values and re-check the filtered ISBNs
+        if color_filter != (1, 1, 1) or px_to_inches != 1:
+            log_print(f"Detected change in color filter or px_to_inches. Updating values.\n")
+            log_print(f"Making second pass over filtered ISBNs: {filtered_isbns}\n")
+            for isbn in filtered_isbns:
+                confidence, color_filter, px_to_inches, nada, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, nada)
+                book_created = confidence_check(confidence, spine, isbn, 1.5)
+                log_print(f"Updated potential_matches dict after second pass: {potential_matches}\n")
+                if book_created:
+                    break
 
         if book_created:
-            # Skip to the next spine if a book has been created
+            # Skip to the next spine if a book has been created (handles confidence 34 books)
             continue
         
         # If no potential matches were found in the first pass, run a second pass with a lower threshold.
         if len(potential_matches) == 0:
-            second_pass = True
+            nada = True
             for isbn in possible_isbns:
-                confidence, color_filter, px_to_inches, second_pass, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, second_pass)
-                book_created = confidence_check(confidence, spine, isbn, 0.0)
+                confidence, color_filter, px_to_inches, nada, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, nada)
+                book_created = confidence_check(confidence, spine, isbn, 0.5)
                 if book_created:
                     break
 
         if book_created:
             continue
 
-        if len(potential_matches) == 0 and second_pass:
+        if len(potential_matches) == 0 and nada:
             # This is for the scenario where a spine WAS detected, but no matches were found in either pass
             log_print(f"\nWe're sorry! '{spine.title}' could not be identified. Book object created using only detected title and authors.\n")
             book = Book()
