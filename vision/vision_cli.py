@@ -48,15 +48,15 @@ def main():
     intro_table.add_row("My GitHub: https://github.com/MyPetLobster", style="thistle3")
     intro_table.add_row(" ")
     console.print(intro_table, justify="center")
+    time.sleep(2)
 
-    time.sleep(1.5)
     console.print("\n\n[bold thistle1]Initializing the CLI setup...[/bold thistle1]\n", justify="left")
-    time.sleep(1)
+    time.sleep(0.3)
 
     # silly_tricks()
 
     console.print("[bold pink3]Parsing arguments...[/bold pink3]", justify="left")
-    time.sleep(1)
+    time.sleep(0.3)
 
 
     # PARSE ARGS and SETUP SETTINGS
@@ -82,7 +82,7 @@ def main():
         settings_table.add_row("AI Temp:", str(ai_temp), style="light_pink3")
         settings_table.add_row("Torch Confidence:", str(torch_confidence), style="light_salmon3")
         console.print(settings_table, justify="center")
-        time.sleep(0.5)
+        time.sleep(0.3)
 
         settings_okay = console.input("\n[bold]Are these settings okay? ([chartreuse3]y[/chartreuse3]/[red1]n[/red1]):[/bold] ")
         settings_okay = settings_okay[0].lower()
@@ -216,12 +216,12 @@ def main():
     console.print("\n[bold light_slate_blue]Validating API keys...[/bold light_slate_blue]", justify="left")
     dbr.validate_api_keys()
     console.print("[bold medium_purple3]API keys have been validated successfully.[/bold medium_purple3]", justify="left")
-    time.sleep(0.7)
+    time.sleep(0.5)
 
     console.print("\n\n[bold dodger_blue1]Wonderful! API keys have been set up successfully.[/bold dodger_blue1]\n\n", justify="left")
 
     console.print("[bold sky_blue1]Choose what format(s) you would like to export the results in.[/bold sky_blue1]\n", justify="left")
-    time.sleep(0.6)
+    time.sleep(0.3)
     console.print("[bold dark_slate_gray3]Valid options: json, csv, txt, xml, all[/bold dark_slate_gray3]\n", justify="left")
     time.sleep(0.6)
     console.print("[bold aquamarine3]You can choose multiple formats by separating them with a comma [/bold aquamarine3](e.g. [italic]Enter the format(s) you want: json, csv[/italic])\n", justify="left")
@@ -309,6 +309,8 @@ def main():
             time.sleep(1)
         console.print("\n[bold steel_blue1]If you have any questions or feedback, please reach out to me at BookcaseDatabase@gmail.com[/bold steel_blue1]\n\n")
         console.print("\n\n[bold medium_turquoise]Thank you for using the Booksight Vision CLI app![/bold medium_turquoise]\n\n")
+        time.sleep(2.5)
+        draw_ascii_owl()
         return
     else:
         console.print("\n\n[bold red]We're Sorry! There was an error processing the image. Please check the logs for more information.[/bold red]\n\n")
@@ -378,6 +380,109 @@ def silly_tricks():
     # Begin CLI setup for real
     console.print("\n\n\n[bold orchid1]Ok for real now. Let's get started with the CLI setup...[/bold orchid1]\n\n", justify="left")
     time.sleep(2)
+      
+
+def draw_ascii_eyes():
+    console.print("\n")
+    console.print("""
+                       #@@@@@@@@@@@@@#+                      *@@@@@@@@@@@@@%*                       
+                   #@@@@@@@%##%@@@@@@@@@@#                %@@@@@@@@@@##%@@@@@@@%*                   
+                 %%*  =#%@@@@@@@@%*  *@@@@@%           %@@@@@#  +#@@@@@@@@@%+  *%@+                 
+               + %@@@@@@@@@%%@%@@@@@@@@##%@@@*        @@@@#*%@@@@@@@@@%%@@@@@@@@@%++                
+             *%@@@@%+ %%%%@@@@@%#%* #@@@@@*%@@#     *@@@ #@@@@%= %%%@@@@@%%#%* #@@@@@#              
+           =@@@# +%@@@@@@@@@@@@@@@@@@@# %@@% @@*    @@##@@%# %@@@@@@@@@@@@@@@@@@@# #@@@#            
+          %@% #@@@@@@@@%%*#+*%#%%@@@@@@@@##@@=%@   @@ @@#*%@@@@@@@@%%#*+*##%%@@@@@@@% #@@           
+         @*#@@@%* #%#%@@@@@@@@@@@%## %@@@@@#%@ #*  % %%%@@@@@%* %#%@@@@@@@@@@@%## +%@@@# @#         
+         #@#* #@@@@@@%#%@@@#**%@@@@@@@% #@@@@ = =  =- @@@@% #@@@@@@@%#+#@@@@%%@@@@@@%  #@#          
+       -# *@@@%#+     %@@%#@@@@@@@@@@@@@@%#@@@*      @@@%*@@@@@@@@@@@%@@%#@@@*     #%@@@# #+        
+        *%           %@@@%@@@@@@@@  %@@%@@@*#@@     @@% @@@%@@@@@@@@*  %@##@@%           #*         
+              *      %@@#%@@@@@@@@@@@@@% %@@@ %%   -@*%@@@#*@@@@@@@@@@@@@@:@@@      ++              
+             +@#     %@@%#@@@@@@@@@@@@@%  #@@@+=   * @@@%  #@@@@@@@@@@@@@%*@@@     #@%              
+             +@@%+    %@@*#@@@@@@@@@@@@    +@@@     @@@#    %@@@@@@@@@@@%+@@@#    @@@#              
+              @#%@@*   @@@@*%%@@@@@@@@*     *@@@   %@@#      %@@@@@@@@%=%@@@#   %@@*@%              
+              @@#%@@@%* #@@@@@@@@@@@#        #@@+  @@#        *@@@@@@@@@@@%  %@@@@*@@               
+               @@%-%@@@@@#  +*%**             #@% #@@             =%##*  *%@@@@@=#@@#               
+               *@@@% %@@@@@@@@@@@@@@@@@@% *%  #@@ =@%  #% #@@@@@@@@@@@@@@@@@@@##@@@#                
+                 %@@@@# %@@@@@@@@@@@@# #@@%    %#  @+   #@@%*#@@@@@@@@@@@@%**%@@@@+                 
+                   @@@@@@@#+     :#%@@@@@      *   %      %@@@@%*+     +*@@@@@@@+                   
+                     %@@@@@@@@@@@@@@@@%                     #%@@@@@@@@@@@@@@@%*                     
+                         +%%@@@@%#*                             +%@@@@@%%*                      
+                    
+""", style="steel_blue")
+
+
+def draw_ascii_owl():
+    console.print("\n\n")
+    time.sleep(0.05)
+    console.print("                           [light_goldenrod1]################[/light_goldenrod1]                               ")
+    time.sleep(0.05)
+    console.print("                       [light_goldenrod1]########################[/light_goldenrod1]                           ")
+    time.sleep(0.05)
+    console.print("                   [light_goldenrod1]######################[/light_goldenrod1]                                 ")
+    time.sleep(0.05)
+    console.print("                [light_goldenrod1]#############[/light_goldenrod1]                                     [pale_turquoise4]##[/pale_turquoise4]       ")
+    time.sleep(0.05)
+    console.print("             [light_goldenrod1]############[/light_goldenrod1]                                       [pale_turquoise4]#######    ")
+    time.sleep(0.05)
+    console.print("           [light_goldenrod1]############[/light_goldenrod1]                         [light_goldenrod1]##[/light_goldenrod1]             [pale_turquoise4]############ ")
+    time.sleep(0.05)
+    console.print("          [light_goldenrod1]###########[/light_goldenrod1]    [pale_turquoise4]##[/pale_turquoise4]                    [light_goldenrod1]####[/light_goldenrod1]           [pale_turquoise4]#############[/pale_turquoise4]   ")
+    time.sleep(0.05)
+    console.print("        [light_goldenrod1]###########[/light_goldenrod1]       [pale_turquoise4]######[/pale_turquoise4]                [light_goldenrod1]###[/light_goldenrod1]         [pale_turquoise4]#################[/pale_turquoise4] ")
+    time.sleep(0.05)
+    console.print("       [light_goldenrod1]###########[/light_goldenrod1]        [pale_turquoise4]##########                   ###################[/pale_turquoise4]  ")
+    time.sleep(0.05)
+    console.print("      [light_goldenrod1]##########[/light_goldenrod1]           [pale_turquoise4]############               ####################[/pale_turquoise4]  ")
+    time.sleep(0.05)
+    console.print("     [light_goldenrod1]##########[/light_goldenrod1]            [pale_turquoise4]###############          #####################[/pale_turquoise4]   ")
+    time.sleep(0.05)
+    console.print("    [light_goldenrod1]###########[/light_goldenrod1]             [pale_turquoise4]################       ######################[/pale_turquoise4]   ")
+    time.sleep(0.05)
+    console.print("    [light_goldenrod1]##########[/light_goldenrod1]                [pale_turquoise4]###############      #####################[/pale_turquoise4]    ")
+    time.sleep(0.05)
+    console.print("   [light_goldenrod1]###########[/light_goldenrod1]                  [pale_turquoise4]###############   #####################[/pale_turquoise4]     ")
+    time.sleep(0.05)
+    console.print("   [light_goldenrod1]##########[/light_goldenrod1]                     [pale_turquoise4]####   ######## ####################[/pale_turquoise4]      ")
+    time.sleep(0.05)
+    console.print("   [light_goldenrod1]##########[/light_goldenrod1]                     [pale_turquoise4]#   #### ##########################[/pale_turquoise4]       ")
+    time.sleep(0.05)
+    console.print("  [light_goldenrod1]###########[/light_goldenrod1]                     [pale_turquoise4]####### #########################[/pale_turquoise4]         ")
+    time.sleep(0.05)
+    console.print("  [light_goldenrod1]###########[/light_goldenrod1]                     [pale_turquoise4]###     #######################[/pale_turquoise4]           ")
+    time.sleep(0.05)
+    console.print("   [light_goldenrod1]###########[/light_goldenrod1]                    [pale_turquoise4]#     ########################[/pale_turquoise4]            ")
+    time.sleep(0.05)
+    console.print("   [light_goldenrod1]###########[/light_goldenrod1]                     [pale_turquoise4]##########################[/pale_turquoise4]               ")
+    time.sleep(0.05)
+    console.print("   [light_goldenrod1]###########[/light_goldenrod1]                       [pale_turquoise4]##############################[/pale_turquoise4]         ")
+    time.sleep(0.05)
+    console.print("    [light_goldenrod1]###########[/light_goldenrod1]                        [pale_turquoise4]#############################[/pale_turquoise4]        ")
+    time.sleep(0.05)
+    console.print("    [light_goldenrod1]############[/light_goldenrod1]                         [pale_turquoise4]##############################[/pale_turquoise4]     ")
+    time.sleep(0.05)
+    console.print("     [light_goldenrod1]############[/light_goldenrod1]                            [pale_turquoise4]#########################[/pale_turquoise4]     ")
+    time.sleep(0.05)
+    console.print("      [light_goldenrod1]#############[/light_goldenrod1]                                  [pale_turquoise4]#################[/pale_turquoise4]      ")
+    time.sleep(0.05)
+    console.print("       [light_goldenrod1]#############[/light_goldenrod1]                                   [pale_turquoise4]# ##########[/pale_turquoise4]         ")
+    time.sleep(0.05)
+    console.print("        [light_goldenrod1]##############[/light_goldenrod1]                                                     ")
+    time.sleep(0.05)
+    console.print("         [light_goldenrod1]###############                               ##[/light_goldenrod1]                   ")
+    time.sleep(0.05)
+    console.print("           [light_goldenrod1]################                       #####[/light_goldenrod1]                    ")
+    time.sleep(0.05)
+    console.print("            [light_goldenrod1]####################              #######[/light_goldenrod1]                      ")
+    time.sleep(0.05)
+    console.print("               [light_goldenrod1]####################################[/light_goldenrod1]                        ")
+    time.sleep(0.05)
+    console.print("                 [light_goldenrod1]################################[/light_goldenrod1]                          ")
+    time.sleep(0.05)
+    console.print("                     [light_goldenrod1]########################[/light_goldenrod1]                              ")
+    time.sleep(0.05)
+    console.print("                         [light_goldenrod1]################[/light_goldenrod1]                                   ")
+    time.sleep(0.5)
+    console.print("\n\n")
 
 if __name__ == '__main__':
     main()

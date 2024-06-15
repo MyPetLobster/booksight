@@ -274,7 +274,6 @@ def match_spines_to_books(spines):
 
     # Initialize constants/multipliers for spine matching
     color_filter = (1, 1, 1)
-    px_to_inches = 1
 
     def confidence_check(confidence, spine, isbn, threshold):
         """
@@ -333,7 +332,7 @@ def match_spines_to_books(spines):
         filtered_isbns = []
         for isbn in possible_isbns:
             log_print(f"\nChecking for match with ISBN: {isbn}\n")
-            confidence, color_filter, px_to_inches, nada, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, nada)
+            confidence, color_filter, nada, isbn = match.check_for_match(spine, isbn, color_filter, nada)
             # Prepare second pass ISBNs for re-checking if constants change
             if confidence > 0 and confidence != 34:
                 filtered_isbns.append(isbn)
@@ -343,16 +342,16 @@ def match_spines_to_books(spines):
             if book_created:
                 break
         
-        # If a color filter or px_to_inches change is detected, update the values and re-check the filtered ISBNs
-        if color_filter != (1, 1, 1) or px_to_inches != 1:
-            log_print(f"Detected change in color filter or px_to_inches. Updating values.\n")
-            log_print(f"Making second pass over filtered ISBNs: {filtered_isbns}\n")
-            for isbn in filtered_isbns:
-                confidence, color_filter, px_to_inches, nada, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, nada)
-                book_created = confidence_check(confidence, spine, isbn, 1.5)
-                log_print(f"Updated potential_matches dict after second pass: {potential_matches}\n")
-                if book_created:
-                    break
+        # If a color filter change is detected, update the values and re-check the filtered ISBNs
+        # if color_filter != (1, 1, 1):
+        #     log_print(f"Detected change in color filter. Updating values.\n")
+        #     log_print(f"Making second pass over filtered ISBNs: {filtered_isbns}\n")
+        #     for isbn in filtered_isbns:
+        #         confidence, color_filter, nada, isbn = match.check_for_match(spine, isbn, color_filter, nada)
+        #         book_created = confidence_check(confidence, spine, isbn, 1.5)
+        #         log_print(f"Updated potential_matches dict after second pass: {potential_matches}\n")
+        #         if book_created:
+        #             break
 
         if book_created:
             # Skip to the next spine if a book has been created (handles confidence 34 books)
@@ -362,7 +361,7 @@ def match_spines_to_books(spines):
         if len(potential_matches) == 0:
             nada = True
             for isbn in possible_isbns:
-                confidence, color_filter, px_to_inches, nada, isbn = match.check_for_match(spine, isbn, color_filter, px_to_inches, nada)
+                confidence, color_filter, nada, isbn = match.check_for_match(spine, isbn, color_filter, nada)
                 book_created = confidence_check(confidence, spine, isbn, 0.5)
                 if book_created:
                     break
