@@ -2,7 +2,12 @@ import os
 import time
 
 import sys
+
+# Path for CLI access to vision modules
 sys.path.append('/Users/corysuzuki/Documents/repos/booksight')
+# Path for web app access to vision modules
+sys.path.append('/Users/corysuzuki/Documents/repos/booksight/vision')
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'booksight.settings')
 
 

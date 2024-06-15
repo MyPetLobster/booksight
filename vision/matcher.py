@@ -109,7 +109,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, nada=False):
                 log_print(f"\nMissing cover image for {isbn}. Skipping color comparison.\n")
 
 
-    # BEGIN MATCHING - Max potential confidence is 3.4
+    # BEGIN MATCHING - Max potential confidence is 30
     log_print(f"Data validated, beginning comparison for {isbn}...\n")
 
     # DIMENSION DATA COMPARISON - Max potential confidence is 1.4
@@ -137,7 +137,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, nada=False):
                 confidence, px_to_inches = calculate_confidence_ratios(p_match, p_match_ratio, spine_ratio, spine_height, confidence, px_to_inches, isbn)
 
 
-    # COLOR DATA COMPARISON - Max potential confidence is 2.0
+    # COLOR DATA COMPARISON - Max potential confidence is 1.5
     if not missing_image: 
         # Download cover image for color comparison
         p_match_cover_path = download_image(p_match["cover"], isbn)
@@ -149,7 +149,7 @@ def check_for_match(spine, isbn, color_filter, px_to_inches, nada=False):
         log_print(f"Local image set for {isbn}. Skipping color comparison.\n")
 
     
-    # Max potential confidence is 3.4
+    # Max potential confidence is 3.0
     confidence = round(confidence, 2)
     
     log_print(f"Comparisons for {isbn} complete.\n")
@@ -193,6 +193,9 @@ def calculate_confidence_dimensions(spine_height, spine_width, p_match_height, p
         mp = min(confidence_multiplier, key=lambda x: abs(x[0] - confidence))[1]
         px_to_inches = ((px_to_inches * mp) + (p_match_height / spine_height)) / (mp + 1)
 
+        if confidence == 1.4:
+            confidence += .1
+
     return confidence, px_to_inches
 
     
@@ -202,7 +205,7 @@ def calculate_confidence_ratios(p_match, p_match_ratio, spine_ratio, spine_heigh
         (0.7, 0.2),
         (0.8, 0.4),
         (0.9, 0.6),
-        (0.95, 0.2)
+        (0.95, 0.3)
     ]
 
     for threshold, increment in thresholds:
@@ -231,40 +234,37 @@ def compare_colors(spine, p_match_cover_path, confidence, color_filter, isbn):
     dom_color = tuple([dom_color[i] * color_filter[i] for i in range(3)])
     color_palette = [tuple([color_palette[i][j] * color_filter[j] for j in range(3)]) for i in range(6)]
 
+    log_print(f"Color filter applied to spine data:\navg:{avg_color},\ndom:{dom_color},\npalette:{color_palette}\n")
 
-    # Compare average color
-    diluted_color_filter = color_filter
+
+    # Compare average color - Max potential confidence is 0.5
+    log_print(f"Avg Color Comparison for {isbn}...\n(max potential confidence: 0.5)") 
     avg_color_diff = sum([abs(avg_color[i] - p_avg_color[i]) for i in range(3)]) / 3
     log_print(f"avg_color_diff: {avg_color_diff} for {isbn}\n")
     if avg_color_diff < 100:
-        confidence += 0.05
-        # If color_filter not 1, 1, 1 find average color filter
-        if color_filter != [1, 1, 1]:
-            old_filter = color_filter
-            new_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
-            color_filter = [(new_filter[i] + old_filter[i]) / 2 for i in range(3)]
-        else:
-            color_filter = [p_avg_color[i] / avg_color[i] for i in range(3)]
+        confidence + 0.1
+        log_print("Avg color weak match. Diff < 100.\nConfidence + 0.05.\nNo change to color filter.\n")
 
-        # Dilute the filter to avoid overfitting, 80% dilution
-        diluted_color_filter = [(color_filter[i] + 4) / 5 for i in range(3)]
-        log_print(f"Avg color match. Diff < 100.\nConfidence + 0.05\nColor filter set to: {color_filter}. 80% dilution")
-    
-    if avg_color_diff < 80:
-        confidence += 0.05
-        # 66% dilution
-        diluted_color_filter = [(color_filter[i] + 2) / 3 for i in range(3)]
-        log_print(f"Avg color match. Diff < 80.\nConfidence + 0.05.\nFilter updated with 66% dilution.")
+    if avg_color_diff < 40:
+        confidence += 0.2
+        log_print("Avg color match. Diff < 40.\nConfidence + 0.15.\nNo change to color filter.\n")
+    elif avg_color_diff < 60:
+        confidence += 0.1
+        log_print("Avg color match. Diff < 60.\nConfidence + 0.1.\nNo change to color filter.\n")
+    elif avg_color_diff < 80:
+        confidence += 0.05 
+        log_print("Avg color match. Diff < 80.\nConfidence + 0.05.\nNo change to color filter.\n")
 
-    if avg_color_diff < 60:
-        confidence += 0.05
-        # 50% dilution
-        diluted_color_filter = [(color_filter[i] + 1) / 2 for i in range(3)]
-        log_print(f"Avg color match. Diff < 60.\nConfidence + 0.05.\nFilter updated with 50% dilution.")
-    
-    color_filter = diluted_color_filter
+    if avg_color_diff < 20:
+        confidence += 0.2
+        color_filter = [(p_avg_color[i] / avg_color[i] + (color_filter[i] * 3)) / 4 for i in range(3)]
+        log_print("Avg color strong match. Diff < 20.\nConfidence + 0.2.\nColor filter updated with avg color data.\n")
 
-    # Compare dominant color
+    log_print(f"Avg Color comparison complete.\nColor filter updated to: {color_filter}\n")
+
+
+    # Compare dominant color - Max potential confidence is 0.5
+    log_print(f"Dom Color Comparison for {isbn}...\n(max potential confidence: 0.5)")
     dom_color_diff = sum([abs(dom_color[i] - p_dom_color[i]) for i in range(3)]) / 3
     log_print(f"\ndom_color_diff: {dom_color_diff} for {isbn}\n")
 
@@ -274,54 +274,44 @@ def compare_colors(spine, p_match_cover_path, confidence, color_filter, isbn):
         log_print("Dom color weak match. Diff < 150.\nConfidence + 0.1.\nNo change to color filter.\n")
     if dom_color_diff < 100:
         confidence += 0.1
+        log_print("Dom color match. Diff < 100.\nConfidence + 0.1.\nNo change to color filter.\n")
+    if dom_color_diff < 50:
+        confidence += 0.15
+        # Update color filter by dividing p_dom_color by dom_color and averaging with current filter
+        color_filter = [(p_dom_color[i] / dom_color[i] + (color_filter[i] * 4)) / 5 for i in range(3)]
+        log_print("Dom color strong match. Diff < 65.\nConfidence + 0.15.\nColor filter updated with dom color data.\n")
+    if dom_color_diff < 30:
+        confidence += 0.15
         # Update color filter by dividing p_dom_color by dom_color and averaging with current filter
         color_filter = [(p_dom_color[i] / dom_color[i] + (color_filter[i] * 3)) / 4 for i in range(3)]
-        log_print("Dom color match. Diff < 100.\nConfidence + 0.1.\nColor filter updated with dom color data.\n")
-    if dom_color_diff < 65:
-        confidence += 0.15
-        # Update color filter by dividing p_dom_color by dom_color and averaging with current filter
-        color_filter = [(p_dom_color[i] / dom_color[i] + (color_filter[i] * 2)) / 3 for i in range(3)]
-        log_print("Dom color strong match. Diff < 75.\nConfidence + 0.15.\nColor filter updated with dom color data.\n")
-    if dom_color_diff < 35:
-        confidence += 0.15
-        # Update color filter by dividing p_dom_color by dom_color and averaging with current filter
-        color_filter = [(p_dom_color[i] / dom_color[i] + (color_filter[i] * 2)) / 3 for i in range(3)]
-        log_print("Dom color match. Diff < 50.\nConfidence + .15.\nColor filter updated with dom color data.\n")
+        log_print("Dom color match. Diff < 35.\nConfidence + .15.\nColor filter updated with dom color data.\n")
 
+    log_print(f"Dom Color comparison complete.\nColor filter updated to: {color_filter}\n")
 
-    # Compare color palette
+    # Compare color palette - Max potential confidence is 0.5
+    log_print(f"Color Palette Comparison for {isbn} - will NOT affect color filter\n(max potential confidence: 0.5)")
     palette_diff = 0
     for i in range(6):
         for j in range(3):
             palette_diff += abs(color_palette[i][j] - p_color_palette[i][j])
     palette_diff /= 18  
 
-    log_print(f"palette_diff: {palette_diff} for {isbn}\n")
+    log_print(f"\npalette_diff: {palette_diff} for {isbn}\n")
 
     if palette_diff < 300:
         confidence += 0.1
-        log_print("Palette weak match. Diff < 300.\nConfidence + 0.1\nNo change to color filter.\n")
+        log_print("Palette weak match. Diff < 300.\nConfidence + 0.1\n")
     if palette_diff < 200:
         confidence += 0.1
-        # Update color_filter for each color component separately
-        for i in range(3):  # for R, G, B
-            for j in range(6):  # for each of the 6 colors
-                color_filter[i] = (p_color_palette[j][i] / color_palette[j][i] + (color_filter[i] * 3)) / 4
-        log_print("Palette weak match. Diff < 200.\nConfidence + 0.1\nColor filter updated with palette data.\n")
+        log_print("Palette weak match. Diff < 200.\nConfidence + 0.1\n")
     if palette_diff < 150:
         confidence += 0.15
-        # Update color_filter for each color component separately
-        for i in range(3):
-            for j in range(6):
-                color_filter[i] = (p_color_palette[j][i] / color_palette[j][i] + (color_filter[i] * 2)) / 3
-        log_print("Palette match. Diff < 150.\nConfidence + 0.15\nColor filter updated with palette data.\n")
+        log_print("Palette match. Diff < 150.\nConfidence + 0.15\n")
     if palette_diff < 75:
         confidence += 0.15
-        # Update color_filter for each color component separately
-        for i in range(3):
-            for j in range(6):
-                color_filter[i] = (p_color_palette[j][i] / color_palette[j][i] + (color_filter[i] * 2)) / 3
-        log_print("Palette match. Diff < 150.\nConfidence + 0.15\nColor filter updated with palette data.\n")
+        log_print("Palette match. Diff < 75.\nConfidence + 0.15\n")
+
+    log_print(f"Color Palette comparison complete.\nColor filter updated to: {color_filter}\n")
     return confidence, color_filter
 
 
