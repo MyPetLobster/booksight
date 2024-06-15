@@ -390,8 +390,12 @@ def match_spines_to_books(spines):
 
     end_spine_match = time.time()
     log_print(f"Spine matching complete. Time taken: {round(end_spine_match - start_spine_match, 2)} seconds")
-    log_print(f"Total spines checked: {total_spines}")
-    log_print(f"Time taken per spine: {round((end_spine_match - start_spine_match) / total_spines, 2)} seconds")
+
+    zero_confidence_books = [book for book in books if book.confidence == 0]
+    count_zero_confidence_books = len(zero_confidence_books)
+    log_print(f"Total spines checked: {total_spines - count_zero_confidence_books}")
+    log_print(f"Total spines undetected by torchvision: {count_zero_confidence_books}")
+    log_print(f"Time taken per spine: {round((end_spine_match - start_spine_match) / (total_spines - count_zero_confidence_books), 2)} seconds")
     log_print(f"Total potential ISBNs checked: {total_potential_isbns}")
     log_print(f"Time taken per potential ISBN: {round((end_spine_match - start_spine_match) / total_potential_isbns, 2)} seconds\n")
 
