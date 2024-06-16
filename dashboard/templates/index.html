@@ -25,7 +25,7 @@
                 <div class="form-div">
                     <h4>Email Address</h4>
                     <input type="email" id="user-email" name="user-email" placeholder="Enter your email">
-                    <p style="margin-top:8px">(Leave empty if you just want the files saved locally.)</p>
+                    <p id="leave-empty-email" style="margin-top:8px">(Leave empty if you just want the files saved locally.)</p>
                 </div>
 
                 <div class="form-div">
@@ -117,8 +117,13 @@
             } else {
                 imagePreview.classList.add("hidden");
             }
-            
         }
+
+        const leaveEmptyEmail = document.getElementById("leave-empty-email");
+        if (window.innerWidth < 600) {
+            leaveEmptyEmail.style.display = "none";
+        }
+
     </script>
 {% endblock %}
 
