@@ -317,6 +317,8 @@ def match_spines_to_books(spines):
         book_created = False  
         nada = False
         possible_isbns = spine.possible_matches
+        if possible_isbns == None:
+            possible_isbns = []
         potential_matches = {}
 
         # Global tracking of isbn count for logging purposes outside of loop

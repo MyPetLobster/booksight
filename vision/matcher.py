@@ -289,6 +289,8 @@ def download_image(url, isbn):
     if response.status_code == 200:
         # Open the image and save it to the file, BytesIO is used to handle the image as a file-like object
         image = Image.open(BytesIO(response.content))
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
         image.save(image_path)
         log_print(f"Image saved to {image_path}")
         return image_path
@@ -347,7 +349,11 @@ def id_possible_matches(spines, full_img_text):
 
     # Retrieve potential ISBN's from OpenLibrary/Google Books and update spine.possible_matches with list of ISBN's
     for spine in spines:
-        spine.possible_matches = dbr.get_potential_isbns(spine.title, spine.author)
+        if spine.title in ["", "Unknown", None] or spine.author in ["", "Unknown", None]:
+            spine.title = "Undetected"
+            spine.author = "Undetected"
+        else:
+            spine.possible_matches = dbr.get_potential_isbns(spine.title, spine.author)
     
     end_isbn_retrieval = time.time()
     log_print(f"\nISBN retrieval complete. Time elapsed: {round(end_isbn_retrieval - start_isbn_retrieval, 2)} seconds.\n")

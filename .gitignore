@@ -167,6 +167,7 @@ cython_debug/
 spines/
 debug_images/
 test_images/
+new_test_images/
 downloaded_images/
 exports/
 
