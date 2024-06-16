@@ -53,54 +53,20 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-### Desktop Screenshots/GIFs
+My first 'real' project was my final project for CS50x which I completed in January of this year (it's May 29th, 2024 as I type this). That project is called Bookcase Database. It's a simple web application that allows users to search for books, add books to their bookcase, and rate books. The application uses the Google Books API to search for books and retrieve book information and stores the user's bookcase, ratings, etc. in a SQLite database. 
 
-<img src="media/readme_media/landing-animation-fast.gif" alt="Desktop Landing Page" width="100%">
+I was pleased with the final result, but the initial idea that I had to make Bookcase Database into a tool I'd actually use over something like Goodreads or LibraryThing was never realized. I wanted the ability to take a picture of a bookshelf then have an application identify all the books in the photo by the spines alone. And not just the title and author, but all the details unique to each particular edition of each book. That was the spark/exciting idea that inspired me to create Bookcase Database originally. I was quickly humbled and made aware of how far I was from being able to create such a tool. I had no idea where to even start. That was my first time really working on anything that wasn't a simple web page or one of CS50's assigned projects. So I decided to build a strong foundation first and return to the idea when I felt I might be ready. 
 
-<div style="width=100%; display:flex; justify-content:space-between;">
-  <img src="#" alt="Desktop Landing Page" width="33%">
-  <img src="#" alt="Desktop Tips" width="33%">
-  <img src="#" alt="Desktop About" width="33%">
-</div
+So here I am several months later. Since finishing Bookcase Database, I've completed CS50 Python, CS50 SQL, Odin Foundations, and spent every free moment I have working on personal coding projects, reading about coding, or working on coding challenges. I've learned a lot and I'm ready to take on the challenge of creating BookSight.
 
-<div style="width=100%; display:flex; justify-content:space-between;">
-  <img src="#" alt="Desktop Vision 1" width="33%">
-  <img src="#" alt="Desktop Vision 2" width="33%">
-  <img src="#" alt="Desktop Vision 3" width="33%">
-</div>
 
-<hr/>
-
-### Mobile Screenshots/GIFs
-
-<div style="width:100%; display:flex, gap:12px; justify-content:space-between">
-  <img src="#" alt="Mobile Landing Page GIF" height="400px">
-  <img src="#" alt="Mobile Tips Page" height="400px">
-  <img src="#" alt="Mobile About Page" height="400px">
-</div>
-
-<div style="width:100%; display:flex, gap:12px; justify-content:space-between">
-  <img src="#" alt="Mobile Vision Page 1" height="400px">
-  <img src="#" alt="Mobile Vision Page 2" height="400px">
-  <img src="#" alt="Mobile Vision Page 3" height="400px">
-</div>
-
-<br />
-
-My first 'real' project was my final project for CS50x which I completed in January of this year (it's May 29th, 2024 as I type this). That project is called Bookcase Database. It's a simple web application that allows users to search for books, add books to their bookcase, and rate books. The application uses the Google Books API to search for books and retrieve book information. The application also uses a SQLite database to store user information, book information, and book ratings. 
-
-I was pleased with the final result, but the initial idea that I had to make Bookcase Database a tool I'd actually use over something like Goodreads or LibraryThing was never realized. I wanted the ability to take a picture of a bookshelf then have an application identify all the books in the photo by the spine alone. And not just the title and author, but all the details unique to each particular
-edition of each book. So that was the spark/exciting idea that inspired me to create Bookcase Database originally. I was quickly humbled and made aware of how far I was from being able to create such a tool. I had no idea where to even start. That was my first time really working on anything that wasn't a simple single web page or one of CS50's assigned projects. So I decided to build a strong foundation first and return to the idea when I felt I might be ready. 
-
-So here I am. Since finishing Bookcase Database, I've completed CS50 Python, CS50 SQL, Odin Foundations, and spent every free moment I have working on personal coding projects, reading about coding, or working on coding challenges. I've learned a lot and I'm ready to take on the challenge of creating BookSight.
-
-Project Goals:
+**Project Goals:**
 * Create a terminal application that can identify the ISBNs of all books in a given image.
 * Incorporate the logic of the core functionality of the terminal application into a web application.
 * Create a web application that allows users to upload an image of a bookshelf and receive a list of all the books in the image.
-* Export the list of books and details to CSV, JSON, XML, and/or TXT.
+* Export the list of books and details to CSV, JSON, XML, and/or TXT. 
 
-Personal Learning Goals:
+**Personal Learning Goals:**
 * How to process/edit images with Python.
 * What is OCR and how to do I use it to extract text from images?
 * How does computer vision work? How do I use it to implement object detection?
@@ -115,7 +81,120 @@ Personal Learning Goals:
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+<br />
 
+### Screenshots/GIFs
+
+#### Desktop Landing Page: 
+<img src="https://i.imgur.com/A8hQTne.gif" alt="Desktop Landing Page" width="100%">
+
+<div style="width=100%; display:flex; justify-content:space-between;">
+  <a href="https://i.imgur.com/gqzU6pR.png" width="33%">
+    <img src="https://i.imgur.com/gqzU6pR.png" alt="Desktop Landing Page">
+  </a>
+  <a href="https://i.imgur.com/Am0EaLB.png" width="33%">
+    <img src="https://i.imgur.com/Am0EaLB.png" alt="Desktop Upload Form">
+  </a>
+  <a href="https://i.imgur.com/UwMRJGb.png" width="33%">
+    <img src="https://i.imgur.com/UwMRJGb.png" alt="Desktop About">
+  </a>
+</div>
+</br>
+
+#### Desktop Vision Process:
+<div style="width=100%; display:flex; justify-content:space-between;">
+  <a href="https://i.imgur.com/DokvKTO.png" width="50%">
+    <img src="https://i.imgur.com/DokvKTO.png" alt="Desktop Vision 1">
+  </a>
+  <a href="https://i.imgur.com/L1PJDjx.png" width="50%">
+    <img src="https://i.imgur.com/L1PJDjx.png" alt="Desktop Vision 2">
+  </a>
+</div>
+
+<div style="width=100%; display:flex; justify-content:space-between;">
+  <a href="https://i.imgur.com/49iW24T.png" width="50%">
+    <img src="https://i.imgur.com/49iW24T.png" alt="Desktop Vision 3">
+  </a>
+  <a href="https://i.imgur.com/qc56jzE.png" width="50%">
+    <img src="https://i.imgur.com/qc56jzE.png" alt="Desktop Vision 4">
+  </a>
+</div>
+
+<div style="width=100%; display:flex; justify-content:space-between;">
+  <a href="https://i.imgur.com/DhJqb1n.png" width="50%">
+    <img src="https://i.imgur.com/DhJqb1n.png" alt="Desktop Vision 5">
+  </a>
+  <a href="https://i.imgur.com/5yCE9dq.png" width="50%">
+    <img src="https://i.imgur.com/5yCE9dq.png" alt="Desktop Vision 6">
+  </a>
+</div>
+
+<div>
+  <a href="https://i.imgur.com/1qpiA5M.png" style="width=50%; display:flex; justify-content:center;">
+    <img src="https://i.imgur.com/1qpiA5M.png" alt="Desktop Vision 7" width="50%">
+  </a>
+</div>
+
+</br>
+<hr/>
+</br>
+
+#### CLI Vision App:
+
+<div style="width=100%; display:flex; justify-content:space-between;">
+  <a href="https://i.imgur.com/2g14eNb.png" width="50%">
+    <img src="https://i.imgur.com/2g14eNb.png" alt="CLI Process 01">
+  </a>
+  <a href="https://i.imgur.com/ooYlVpF.png" width="50%">
+    <img src="https://i.imgur.com/ooYlVpF.png" alt="CLI Process 02">
+  </a>
+</div>
+<div style="width=100%; display:flex; justify-content:space-between;">
+  <a href="https://i.imgur.com/vfW1wfk.png" width="50%">
+    <img src="https://i.imgur.com/vfW1wfk.png" alt="CLI Process 03">
+  </a>
+  <a href="https://i.imgur.com/6rAWCyy.png" width="50%">
+    <img src="https://i.imgur.com/6rAWCyy.png" alt="CLI Process 04">
+  </a>
+</div>
+<div style="width=100%; display:flex; justify-content:space-between;">
+  <a href="https://i.imgur.com/2ocOZIa.png" width="50%">
+    <img src="https://i.imgur.com/2ocOZIa.png" alt="CLI Process 05">
+  </a>
+  <a href="https://i.imgur.com/oT1jwDB.png" width="50%">
+    <img src="https://i.imgur.com/oT1jwDB.png" alt="CLI Process 06">
+  </a>
+</div>
+<div style="width=100%; display:flex; justify-content:space-between;">
+  <a href="https://i.imgur.com/wBVWet1.png" width="50%">
+    <img src="https://i.imgur.com/wBVWet1.png" alt="CLI Process 07">
+  </a>
+  <a href="https://i.imgur.com/Qo2jYCy.png" width="50%">
+    <img src="https://i.imgur.com/Qo2jYCy.png" alt="CLI Process 08">
+  </a>
+</div>
+
+</br>
+<hr/>
+</br>
+
+#### Mobile:
+
+<div style="width:100%; display:flex, gap:12px; justify-content:space-between">
+  <img src="#" alt="Mobile Landing Page GIF" height="400px">
+  <img src="#" alt="Mobile Tips Page" height="400px">
+  <img src="#" alt="Mobile About Page" height="400px">
+</div>
+
+<div style="width:100%; display:flex, gap:12px; justify-content:space-between">
+  <img src="#" alt="Mobile Vision Page 1" height="400px">
+  <img src="#" alt="Mobile Vision Page 2" height="400px">
+  <img src="#" alt="Mobile Vision Page 3" height="400px">
+</div>
+
+</br>
+<hr/>
+</br>
 
 
 ### Built With

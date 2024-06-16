@@ -53,6 +53,13 @@ a:hover {
     color: $primary-black !important;
     text-decoration: none !important;
 }
+.dark-link {
+    color: $accent-color-dark !important;
+}
+.dark-link:hover {
+    color: $accent-color-darker !important;
+    font-weight: bold;
+}
 .hidden {
     display: none;
 }
@@ -473,6 +480,7 @@ a:hover {
 .tips-div {
     @include flex-center;
     @include border-radius-shadow;
+    max-width: 800px;
     flex-direction: column;
     gap: 20px;
     width: 60%;
@@ -498,12 +506,17 @@ a:hover {
 .about-div {
     @include flex-center;
     @include border-radius-shadow;
+    max-width: 800px;
     flex-direction: column;
     margin-top: 20px;
+    margin-bottom: 40px;
     gap: 20px;
     width: 60%;
     padding: 20px 40px;
     background-color: $accent-color-lighter;
+    p {
+        text-align: center;
+    }
 }
 
 

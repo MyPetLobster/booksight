@@ -24,6 +24,15 @@ a:hover {
   text-decoration: none !important;
 }
 
+.dark-link {
+  color: rgb(151, 159, 164) !important;
+}
+
+.dark-link:hover {
+  color: rgb(36, 69, 94) !important;
+  font-weight: bold;
+}
+
 .hidden {
   display: none;
 }
@@ -512,6 +521,7 @@ a:hover {
   align-items: center;
   border-radius: 12px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  max-width: 800px;
   flex-direction: column;
   gap: 20px;
   width: 60%;
@@ -541,12 +551,17 @@ a:hover {
   align-items: center;
   border-radius: 12px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  max-width: 800px;
   flex-direction: column;
   margin-top: 20px;
+  margin-bottom: 40px;
   gap: 20px;
   width: 60%;
   padding: 20px 40px;
   background-color: rgb(248, 248, 248);
+}
+.about-div p {
+  text-align: center;
 }
 
 /* VISION COMPLETE PAGE */
