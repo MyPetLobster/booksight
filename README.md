@@ -251,7 +251,7 @@ Languages, frameworks, and libraries used in the project.
 </br>
 
 ## CLI Booksight Application (Vision CLI):
-<img src="https://i.imgur.com/88hmmHL.gif" alt="CLI Process Gif" width="66%">
+![cli-full-run-fast-ezgif com-optimize](https://github.com/MyPetLobster/booksight/assets/6979547/b7dcfd9e-e019-4978-a71c-31eb0609b754)
 <img src="https://i.imgur.com/2g14eNb.png" alt="CLI Process 01" width="45%">
 <img src="https://i.imgur.com/ooYlVpF.png" alt="CLI Process 02" width="45%">
 <img src="https://i.imgur.com/vfW1wfk.png" alt="CLI Process 03" width="45%">
@@ -266,18 +266,19 @@ Languages, frameworks, and libraries used in the project.
 
 ### Landing, About, and Tips Pages:
 
-<img src="https://i.imgur.com/Tbk0Fl7.gif" alt="Mobile Landing Page" height="600px">
-<img src="https://i.imgur.com/vIl7xA8.gif" alt="Mobile Tips Page" height="600px">
-<img src="https://i.imgur.com/7ko9m3T.gif" alt="Mobile About Page" height="600px">
+![mobile-landing-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/2822aba5-c3f1-4d7d-8be2-3a8bc7f7ab43)
+![mobile-tips-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/7d563ad1-adac-439a-b599-3182d6e5458c)
+![mobile-about-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/08e2e15e-c491-4dcc-9b58-c2f45b89f6bd)
+
 
 
 ### Full Process (5 Parts):
 
-<img src="https://i.imgur.com/eTcwHJB.gif" alt="Mobile Process Part 1" height="600px">
-<img src="https://i.imgur.com/10utTdC.gif" alt="Mobile Process Part 2" height="600px">
-<img src="https://i.imgur.com/gRxZIU1.gif" alt="Mobile Process Part 3" height="600px">
-<img src="https://i.imgur.com/MdBCbG5.gif" alt="Mobile Process Part 4" height="600px">
-<img src="https://i.imgur.com/2SB7vcI.gif" alt="Mobile Process Part 5" height="600px">
+![mobile-full-part-01-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/9c2dc6ca-9d75-414c-93fd-651ddbb06ceb)
+![mobile-full-part-02-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/2208104d-b0f3-4ffe-b766-5cb6dd775748)
+![mobile-full-part-03-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/a20e86ff-4757-4aaa-af0f-ac53632e753e)
+![mobile-full-part-04-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/5f38fee9-34e7-48f1-a116-c6aa83eb4e05)
+![mobile-full-part-05-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/8e1bbb7b-fd21-42d5-9533-b100a76b264a)
 
 
 # Getting Started
