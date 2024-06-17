@@ -20,7 +20,8 @@
   </p>
 </div>
 
-
+<!-- PROJECT STATUS -->
+**Project Status - 6/17/2024 - Pre-Alpha, Submitted for Review for CS50w**
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -72,20 +73,37 @@
 <!-- ABOUT THE PROJECT -->
 # About The Project
 
-My first 'real' project was my final project for CS50x which I completed in January of this year (it's May 29th, 2024 as I type this). That project is called Bookcase Database. It's a simple web application that allows users to search for books, add books to their bookcase, and rate books. The application uses the Google Books API to search for books and retrieve book information and stores the user's bookcase, ratings, etc. in a SQLite database. 
+**Note:** Much of this README is here for my own benefit. I like to be able to look back at my projects to see how much I've progressed and what I've learned. All the standard stuff you'd expect to find in a README file is here, but you might need to scroll through basically my diary to get to it. Thanks for even being curious enough to check out my project!
 
-I was pleased with the final result, but the initial idea that I had to make Bookcase Database into a tool I'd actually use over something like Goodreads or LibraryThing was never realized. I wanted the ability to take a picture of a bookshelf then have an application identify all the books in the photo by the spines alone. And not just the title and author, but all the details unique to each particular edition of each book. That was the spark/exciting idea that inspired me to create Bookcase Database originally. I was quickly humbled and made aware of how far I was from being able to create such a tool. I had no idea where to even start. That was my first time really working on anything that wasn't a simple web page or one of CS50's assigned projects. So I decided to build a strong foundation first and return to the idea when I felt I might be ready. 
+## Background 
+My first substantial project was my final project for CS50x, which I completed in January of this year (currently, it's May 29th, 2024). That project, called Bookcase Database, is a simple web application that lets users search for books, add them to their bookcase, and rate them. It utilizes the Google Books API to fetch book information and stores user data, such as bookcase content and ratings, in a SQLite database.
 
-So here I am several months later. Since finishing Bookcase Database, I've completed CS50 Python, CS50 SQL, Odin Foundations, and spent every free moment I have working on personal coding projects, reading about coding, or working on coding challenges. I've learned a lot and I'm ready to take on the challenge of creating BookSight.
+While I was pleased with the outcome, the initial vision for Bookcase Database—transforming it into a tool I'd use over Goodreads or LibraryThing—wasn't fully realized. I envisioned an application that could identify books in a photo just by their spines, including all the specific details of each edition. This exciting idea was the driving force behind Bookcase Database. However, I quickly realized I wasn't yet equipped to create such a tool and decided to build a stronger foundation first.
+
+Fast forward several months, and I've since completed CS50 Python, CS50 SQL, Odin Foundations, and spent countless hours on personal coding projects, reading about coding, and tackling coding challenges. With all I've learned, I'm now ready to take on the challenge of creating BookSight.
+
+## Building Process
+The process began with extensive research and experimentation with various technologies and techniques. I had no prior experience working with any kind of computer vision or OCR technology, so I spent a significant amount of time just reading about how all of that works. Throughout the entire process, I've continued to learn more about Python, Django, and web development in general, while also exploring a whole different side of programming with things like PyTorch and OpenCV. 
+
+### Here’s a breakdown of the main steps:
+* **Image Processing and OCR:** I started by learning how to process and edit images using Python libraries like OpenCV and Pillow. Understanding how Optical Character Recognition (OCR) works was crucial, so I experimented with EasyOCR to extract text from images.
+* **Computer Vision for Object Detection:** To identify book spines in images, I delved into computer vision concepts and used PyTorch and Torchvision for object detection. This involved training and fine-tuning models to accurately detect book spines.
+* **Integrating Multiple Book Databases:** I integrated several book databases, including Google Books, Open Library, and ISBNdb, to enhance the accuracy of book identification. This required handling API requests and combining data from multiple sources.
+* **Building the Web Application:**I chose Django for the web application, setting up both front-end and back-end components. This involved creating models, views, and templates, as well as implementing user authentication and image upload functionality.
+* **Asynchronous Processing and Logging:** Given the potentially long-running nature of the book identification process, I implemented asynchronous processing using Django’s background task handling. Custom log files were created to track the identification process step-by-step.
+* **Front-End Enhancements:** To improve user experience, I used AJAX to update the front-end with real-time progress updates. This way, users could see the status of their book identification without refreshing the page.
+* **Multiple Export Formats:** I implemented functionality to export the identified book data in various formats, including CSV, JSON, XML, and TXT. This required careful formatting and data handling to ensure compatibility and usability.
+* **AI Integration:** For initial book identification and cleaning up OCR results, I incorporated AI models from OpenAI and explored other models for comparison. Implementing a token counter for API calls helped manage usage and costs.
+This project has been an incredible learning experience, and I'm excited to see how it continues to evolve.
 
 
-### **Project Goals:**
+### **Project Goals (04/29/2024):**
 * Create a terminal application that can identify the ISBNs of all books in a given image.
 * Incorporate the logic of the core functionality of the terminal application into a web application.
 * Create a web application that allows users to upload an image of a bookshelf and receive a list of all the books in the image.
 * Export the list of books and details to CSV, JSON, XML, and/or TXT. 
 
-### **Personal Learning Goals:**
+### **Personal Learning Goals (5/15/2024):**
 * How to process/edit images with Python.
 * What is OCR and how to do I use it to extract text from images?
 * How does computer vision work? How do I use it to implement object detection?
@@ -98,6 +116,21 @@ So here I am several months later. Since finishing Bookcase Database, I've compl
 * Explore and compare other AI models.
 * Implement token counter for AI API calls.
 
+
+### **Reflections (6/17/2024 (GO CELTICS!)):**
+* I actually achieved all of my personal learning goals and project goals. I'm really proud of that. There is, however, a small caveat. The overall accuracy of Booksight is...well, let's just say it's not 20/20. I'm still working on improving the accuracy of the book identification process and intend to continue to work on this project after it's been submitted. I had to force myself to stop working on it for now and finish up this README. My next step will be to dive deeper into the math of it all and really try to understand how I can improve my matching algorithms as well as the image pre-processing and OCR settings. 
+* Some specific areas where the application struggles -- 
+    - Reflective spines are a nightmare. Any preprocessing that solves that issue only cause more issues with other spines. I've accepted defeat here for now. I scan all the spine images for OCR, then I also scan the entire original image for OCR. This picks up the text from any missing spines and 9/10 times the AI can suss that out and I'm able to create a spine object for that book. However, it is missing the color and dimensions of the spine, so I can only provide basic/generic data for those books. (I may look into training my own model to detect reflective spines in the future, or supplementing the AI models with a model that can detect reflective spines.)
+    - Differentiating between the hardcover and paperback versions of the same book if the book covers are identical and the proportions are roughly the same. (I'm not sure where to start solving this issue honestly. Early in the process I was converting pixels to inches if I found a confident match, but to keep things balanced while tracking confidence scores, that meant I had to run the entire matching process again if the px_to_inches multiplier changed. I decided to just use the ratios for dimension matching. But I guess if I did have a way to get the actual dimensions, I could differentiate between the two versions of the book. I'll have to look into that.)
+    - Reading text if the spines are not very close to perfectly upright or flat. If not at 90 or 180 degrees, the OCR results are often pretty terrible. At one point, I had this solved by rotating the images multiple times and scanning each one, but that was too slow and I had to abandon that idea. (One possible solution is to train a model to detect the angle of the spine and rotate the image accordingly before scanning for text....Just thought of that while typing this.)
+    - The entire process is bottlenecked by ISBNdb's rate limiting. One call per second when I have to check 10+ ISBNs per book means the process can take forever. (I am definitely going to figure out an alternative to using ISBNdb. I may be able to use Open Library and Google Books combined to get all the data that I need from the ISBNs.)
+
+* It's wild how fast AI models are changing. In the two months or so I've been working on the project, I've had to update my OpenAI model options twice and Gemini models once. I made that aspect of the code more modular so that I can easily update the models in the future. It's really so exciting to be working with these tools and to be starting my coding journey at a time when AI is advancing so rapidly. I was pleased with how I incorporated the AI models into the project, and quite proud of the token counter I created to keep track of usage for all the different models.
+* I'm really happy with the web application. I think it looks great and it's very simple/user friendly. I'm especially proud of the AJAX implementation. I had never used AJAX before, and I was able to figure it out and implement it in a way that I think really enhances the user experience by continuously updating a pseudo-terminal with the progress of the book identification process. This includes photos of the bounding boxes around books and individua spine OCR results. 
+* Like I said, the interface is very simple in design. But I feel like the elements all work together seamlessly and I love how the animations came out across the site. Little things like the navbar icon disappearing when the user scrolls down and the footer only fading into existence when the user hits the bottom of the page, are things that would have been impossible for me to do just a few months ago. I'm really proud of the way the site looks and feels. This was by far the quickest and easiest part of the project for me. 
+* The mobile styling was also a breeze. I remember being overwhelmed trying to setup media queries for my CS50x project. This time around, I was able to do it quickly with no stress at all.
+* I set up my own logging system for the project. It records all the steps of the process and doubles as what the user sees in the CLI version of the application. It's very detailed and I think it's very clear and easy to read. The log files have been a lifesaver many times throughout the coding process and I think some people would be interested in  reading through some of the process. The log files are included along with the export files in the email that the user receives when the book identification process is complete.
+* The CLI version of the application also came out great. I created that after the web app, so it was a good learning process to translate things like the web app submission form and image uploading process into a CLI. The CLI version is a fun way to experience Booksight. It's a little more interactive than the web app, and I think it's a great way to show off the core functionality of the project. I'm really happy with how it came out.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -238,7 +271,7 @@ Languages, frameworks, and libraries used in the project.
   <img src="https://i.imgur.com/Am0EaLB.png" alt="Desktop Upload Form" width="32%">
   <img src="https://i.imgur.com/UwMRJGb.png" alt="Desktop About" width="32%">
 </p>
-</br>
+
 </br>
 
 ### Desktop Vision Process:
@@ -253,7 +286,6 @@ Languages, frameworks, and libraries used in the project.
 </p>
 
 </br>
-</br>
 
 ## CLI Booksight Application (Vision CLI):
 ![cli-full-run-fast-ezgif com-optimize](https://github.com/MyPetLobster/booksight/assets/6979547/b7dcfd9e-e019-4978-a71c-31eb0609b754)
@@ -267,7 +299,6 @@ Languages, frameworks, and libraries used in the project.
 <img src="https://i.imgur.com/Qo2jYCy.png" alt="CLI Process 08" width="48%">
 
 </br>
-</br>
 
 ## Booksight Mobile Application:
 
@@ -277,8 +308,6 @@ Languages, frameworks, and libraries used in the project.
 <img src="https://github.com/MyPetLobster/booksight/assets/6979547/7d563ad1-adac-439a-b599-3182d6e5458c" width="32%">
 <img src="https://github.com/MyPetLobster/booksight/assets/6979547/08e2e15e-c491-4dcc-9b58-c2f45b89f6bd" width="32%">
 
-</br>
-
 ### Full Process (5 Parts):
 <img src="https://github.com/MyPetLobster/booksight/assets/6979547/9c2dc6ca-9d75-414c-93fd-651ddbb06ceb" width="32%">
 <img src="https://github.com/MyPetLobster/booksight/assets/6979547/2208104d-b0f3-4ffe-b766-5cb6dd775748" width="32%">
@@ -286,7 +315,6 @@ Languages, frameworks, and libraries used in the project.
 <img src="https://github.com/MyPetLobster/booksight/assets/6979547/5f38fee9-34e7-48f1-a116-c6aa83eb4e05" width="32%">
 <img src="https://github.com/MyPetLobster/booksight/assets/6979547/8e1bbb7b-fd21-42d5-9533-b100a76b264a" width="32%">
 
-</br>
 </br>
 
 # Getting Started
@@ -297,12 +325,16 @@ BookSight is built with Django, so you'll need to have Python installed on your 
 
 
 ## Installation
-* API Keys Required for BookSight
-    - OpenAI API Key
-    - Google Gemini API Key
-    - Open Library API Key
-    - ISBNdb API Key 
 
+**Note:** As of 6/17/2024, I have started using the Google Console API to access the Google Books and Google Gemini APIs. And the Gemini token counter uses Vertex AI, which also uses Google Console. This all requires a billing account to be set up. I've done a ton of testing and have yet to actually be charged for anything, so you should be able to mess around without incurring any charges. The only API key that you will have to shell out at least one month of fees for is ISBNdb. The rate limit is very strict and calls are limited to between 1,000 and 10,000 per day depending on the plan you choose. For reference -- on average, it takes Booksight about 10 calls to ISBNdb to identify EACH book in an image.
+
+* API Keys Required for BookSight
+    - OpenAI API Key (paid - free credits often available)
+    - Google Gemini API Key (available for free as of 5/31/2024)
+    - Open Library API Key
+    - ISBNdb API Key  (paid)
+
+    </br>
 1. Clone the repo
    ```sh
    git clone http-or-ssh-link
@@ -329,14 +361,7 @@ BookSight is built with Django, so you'll need to have Python installed on your 
     export GMAIL_PASSWORD = "your-gmail-password"
     export GMAIL_USERNAME = "your-gmail-username"
     ```
-    **Note:** The GMAIL_USERNAME and GMAIL_PASSWORD are used to send emails to users when their book identification process is complete.
-    Feel free to modify the email settings to use the email service of your choice. If you use google, you will need to setup an app password for your gmail account.
-
-    **Note:** ISBNdb has a monthly fee and a strict rate limit. This is the biggest bottleneck in the project. I'm currently looking for a better alternative.
-
-    **Note:** At the time of this writing (5/31/2024), Google's Generative AI API does not require an API key.
-
-    **Note:** OpenAI's API requires an API key. You can get one [here](https://beta.openai.com/signup/). The latest model used in the project is GPT-4o. 
+    **Note:** The GMAIL_USERNAME and GMAIL_PASSWORD are used to send emails to users when their book identification process is complete. Feel free to modify the email settings to use the email service of your choice. If you use google, you will need to setup an app password for your gmail account. Remember to change the code that retrieves the email and password from the .env file to match the variable names you choose. That can be found in 'booksight/booksight/settings.py'.
 
 6. Run the server
     ```sh
@@ -349,13 +374,12 @@ BookSight is built with Django, so you'll need to have Python installed on your 
     python manage.py runserver 0.0.0.0:8000
     ```
 
-
 Then you can access the web application on your mobile device by typing in your local IP address followed by :8000 in the browser. For example, if your local IP address is 555.555.55.55, you would type in 555.555.55.55:8000 in the browser on your mobile device. With this method, you can still access the web application on your computer by typing in localhost:8000 in the browser. 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 </br>
-</br>
+
 
 # Usage
 
@@ -385,7 +409,7 @@ Then you can access the web application on your mobile device by typing in your 
  <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 </br>
-</br>
+
 
 <!-- CONTACT -->
 # Contact
@@ -397,12 +421,14 @@ Project Link: [https://github.com/MyPetLobster/booksight](https://github.com/MyP
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 </br>
-</br>
+
 
 <!-- ACKNOWLEDGMENTS -->
 # Acknowledgments
 
 * [Img Shields](https://shields.io)
+* [OpenCV Docs](https://docs.opencv.org/master/index.html)
+
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
