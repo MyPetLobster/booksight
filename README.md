@@ -232,10 +232,13 @@ Languages, frameworks, and libraries used in the project.
 # Screenshots/GIFs
 
 ## Booksight Web Application: 
-<img src="https://i.imgur.com/A8hQTne.gif" alt="CLI Process Gif" width="66%">
+<img src="https://i.imgur.com/A8hQTne.gif" alt="CLI Process Gif">
 <img src="https://i.imgur.com/gqzU6pR.png" alt="Desktop Landing Page" width="33%">
 <img src="https://i.imgur.com/Am0EaLB.png" alt="Desktop Upload Form" width="33%">
 <img src="https://i.imgur.com/UwMRJGb.png" alt="Desktop About" width="33%">
+
+</br>
+</br>
 
 ### Desktop Vision Process:
 
@@ -261,6 +264,8 @@ Languages, frameworks, and libraries used in the project.
 <img src="https://i.imgur.com/wBVWet1.png" alt="CLI Process 07" width="45%">
 <img src="https://i.imgur.com/Qo2jYCy.png" alt="CLI Process 08" width="45%">
 
+</br>
+</br>
 
 ## Booksight Mobile Application:
 
@@ -270,7 +275,7 @@ Languages, frameworks, and libraries used in the project.
 ![mobile-tips-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/7d563ad1-adac-439a-b599-3182d6e5458c)
 ![mobile-about-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/08e2e15e-c491-4dcc-9b58-c2f45b89f6bd)
 
-
+</br>
 
 ### Full Process (5 Parts):
 
