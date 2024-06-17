@@ -280,11 +280,11 @@ Languages, frameworks, and libraries used in the project.
 
 ### Full Process (5 Parts):
 
-  <img src="https://i.imgur.com/eTcwHJB.gif" alt="Mobile Process Part 1" width="19%">
-  <img src="https://i.imgur.com/10utTdC.gif" alt="Mobile Process Part 2" width="19%">
-  <img src="https://i.imgur.com/gRxZIU1.gif" alt="Mobile Process Part 3" width="19%">
-  <img src="https://i.imgur.com/MdBCbG5.gif" alt="Mobile Process Part 4" width="19%">
-  <img src="https://i.imgur.com/2SB7vcI.gif" alt="Mobile Process Part 5" width="19%">
+<img src="https://i.imgur.com/eTcwHJB.gif" alt="Mobile Process Part 1" height="600px">
+<img src="https://i.imgur.com/10utTdC.gif" alt="Mobile Process Part 2" height="600px">
+<img src="https://i.imgur.com/gRxZIU1.gif" alt="Mobile Process Part 3" height="600px">
+<img src="https://i.imgur.com/MdBCbG5.gif" alt="Mobile Process Part 4" height="600px">
+<img src="https://i.imgur.com/2SB7vcI.gif" alt="Mobile Process Part 5" height="600px">
 
 
 
