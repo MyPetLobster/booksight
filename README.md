@@ -145,35 +145,35 @@ So here I am several months later. Since finishing Bookcase Database, I've compl
 <div style="width:100%; display:flex; justify-content:center; margin-bottom:12px;">
   <img src="https://i.imgur.com/88hmmHL.gif" alt="CLI Process Gif" width="66%">
 </div>
-<div style="width=100%; display:flex; justify-content:space-between; gap:6px;">
-  <a href="https://i.imgur.com/2g14eNb.png">
+<div style="width=100%; display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap;">
+  <a href="https://i.imgur.com/2g14eNb.png" style="width:49%">
     <img src="https://i.imgur.com/2g14eNb.png" alt="CLI Process 01">
   </a>
-  <a href="https://i.imgur.com/ooYlVpF.png">
+  <a href="https://i.imgur.com/ooYlVpF.png" style="width:49%">
     <img src="https://i.imgur.com/ooYlVpF.png" alt="CLI Process 02">
   </a>
 </div>
-<div style="width=100%; display:flex; justify-content:space-between; gap:6px;">
-  <a href="https://i.imgur.com/vfW1wfk.png">
+<div style="width=100%; display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap;">
+  <a href="https://i.imgur.com/vfW1wfk.png" style="width:49%">
     <img src="https://i.imgur.com/vfW1wfk.png" alt="CLI Process 03">
   </a>
-  <a href="https://i.imgur.com/6rAWCyy.png">
+  <a href="https://i.imgur.com/6rAWCyy.png" style="width:49%">
     <img src="https://i.imgur.com/6rAWCyy.png" alt="CLI Process 04">
   </a>
 </div>
-<div style="width=100%; display:flex; justify-content:space-between; gap:6px;">
-  <a href="https://i.imgur.com/2ocOZIa.png">
+<div style="width=100%; display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap;">
+  <a href="https://i.imgur.com/2ocOZIa.png" style="width:49%">
     <img src="https://i.imgur.com/2ocOZIa.png" alt="CLI Process 05">
   </a>
-  <a href="https://i.imgur.com/oT1jwDB.png">
+  <a href="https://i.imgur.com/oT1jwDB.png" style="width:49%">
     <img src="https://i.imgur.com/oT1jwDB.png" alt="CLI Process 06">
   </a>
 </div>
-<div style="width=100%; display:flex; justify-content:space-between; gap:6px;">
-  <a href="https://i.imgur.com/wBVWet1.png">
+<div style="width=100%; display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap;">
+  <a href="https://i.imgur.com/wBVWet1.png" style="width:49%">
     <img src="https://i.imgur.com/wBVWet1.png" alt="CLI Process 07">
   </a>
-  <a href="https://i.imgur.com/Qo2jYCy.png">
+  <a href="https://i.imgur.com/Qo2jYCy.png" style="width:49%">
     <img src="https://i.imgur.com/Qo2jYCy.png" alt="CLI Process 08">
   </a>
 </div>
@@ -184,17 +184,29 @@ So here I am several months later. Since finishing Bookcase Database, I've compl
 
 ### Booksight Mobile Application:
 
-<div style="width:100%; display:flex, gap:12px; justify-content:space-between">
-  <img src="#" alt="Mobile Landing Page GIF" height="400px">
-  <img src="#" alt="Mobile Tips Page" height="400px">
-  <img src="#" alt="Mobile About Page" height="400px">
+#### Landing, About, and Tips Pages:
+<div style="width:100%; display:flex; justify-content:space-around; flex-wrap:wrap;">
+  <img src="https://i.imgur.com/Tbk0Fl7.gif" alt="Mobile Landing Page" height="600px">
+  <img src="https://i.imgur.com/vIl7xA8.gif" alt="Mobile Tips Page" height="600px">
+  <img src="https://i.imgur.com/7ko9m3T.gif" alt="Mobile About Page" height="600px">
 </div>
 
-<div style="width:100%; display:flex, gap:12px; justify-content:space-between">
-  <img src="#" alt="Mobile Vision Page 1" height="400px">
-  <img src="#" alt="Mobile Vision Page 2" height="400px">
-  <img src="#" alt="Mobile Vision Page 3" height="400px">
+<hr>
+
+#### Full Process (5 Parts):
+<div style="width:100%; display:flex; justify-content:center; gap:16px; flex-wrap:wrap">
+  <img src="https://i.imgur.com/eTcwHJB.gif" alt="Mobile Process Part 1" height="700px">
+  <img src="https://i.imgur.com/10utTdC.gif" alt="Mobile Process Part 2" height="700px">
+  <img src="https://i.imgur.com/gRxZIU1.gif" alt="Mobile Process Part 3" height="700px">
 </div>
+</br>
+<div style="width:100%; display:flex; justify-content:center; gap:16px; flex-wrap:wrap">
+  <img src="https://i.imgur.com/MdBCbG5.gif" alt="Mobile Process Part 4" height="700px">
+  <img src="https://i.imgur.com/2SB7vcI.gif" alt="Mobile Process Part 5" height="700px">
+</div>
+
+
+
 
 </br>
 <hr/>

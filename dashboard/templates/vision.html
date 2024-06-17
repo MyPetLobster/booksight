@@ -22,19 +22,26 @@
 
         <div class="vision-para-div">
             <p>
-                Your image is processing. Once complete, you will receive an email with a file in the format you specified.
+                Your image is processing. Once complete, your files will be exported locally and emailed<sup style="font-size:6px; font-weight:bold;">&nbsp;*</sup>. Feel free to navigate away from this page anytime!
             </p>
-            <p>
-                If you want to see the process in detail, you can visit the <a class="vision-link" href="https://github.com/MyPetLobster/booksight">Booksight GitHub repository</a> to download the project and 
-                run the terminal-based version of the Vision application to see the process in action.
+            <p id="vision-subtext">
+                If you are interested in seeing the process in more detail, check out our Booksight 'Vision CLI' application.
             </p>
             <p>
                 <a class="vision-link" href="{% url 'index' %}">Return to the home page</a>
             </p>
         </div>
+        <p class="vision-footnote">* See the project README for help setting up Django email settings.</p>
     </div>
 
 <script>
+const visionParaDiv = document.querySelectorAll(".vision-para-div");
+// if screen is less than 600px wide shrink the font size of the subtext
+if (window.innerWidth < 600) {
+    for (let i = 0; i < visionParaDiv.length; i++) {
+        visionParaDiv[i].style.fontSize = "12px";
+    }
+}
 
 let stage_three_started = false;
 let stage_four_started = false;
@@ -167,8 +174,8 @@ function updateStatusStageTwo() {
 function updateStatusStageThree() {
     stage_three_started = true;
     var status = document.getElementById("progress-status");
-    status.innerHTML = "All image processing and OCR operations complete. Beginning book identification...";
-    var status_text = ["Preparing text for AI input and running AI model..."]
+    status.innerHTML = "All image processing and OCR operations complete.";
+    var status_text = ["Beginning preliminary book identification...", "Preparing prompt for AI model...", "AI response received. Processing results...", "Cleaning up ISBN data, removing ISBN-10 duplicates..."]
     
     var i = 0;
     var interval = setInterval(function() {
@@ -177,14 +184,14 @@ function updateStatusStageThree() {
         if (i == status_text.length) {
             clearInterval(interval);
         }
-    }, 3500);
+    }, Math.floor(Math.random() * 3000) + 3000);
 }
 
 function updateStatusStageFour() {
     stage_four_started = true;
     var status = document.getElementById("progress-status");
-    status.innerHTML = "$ AI model response received. Processing results...";
-    var status_text = ["Beginning book matching processes...", "Retrieving potential ISBNs from Google Books and Open Library APIs...", "Beginning precise matching process using ISBNdb...", "This process may take a while...", "...", "[awkward eye contact] 👁️👄👁️ shouldn't be too much longer...", "...", "🎶 elevator music 🎶", "Sooo...oh, here's something! Why did the data analyst go to the zoo?", "To see the pandas!", "Ok I've got nothing else...it'll be done soon™  I swear."];
+    status.innerHTML = "$ ISBN data formatted and ready for matching.";
+    var status_text = ["Beginning book matching processes...", "Fetching potential ISBN data...", "Response received from Google Books & OpenLib...", "Beginning precise matching process using ISBNdb...", "This process may take a while...", "...", "[awkward eye contact] 👁️👄👁️ shouldn't be too much longer...", "...", "🎶 elevator music 🎶", "Why did the data analyst go to the zoo?", "To see the pandas! 🐼", "Why should you look for a partner who uses git?", "You know they're not afraid to commit!", "Ok I've got nothing else...well I do. But I'll stop.", "It'll be done soon™  I swear..."];
     
     var i = 0;
     var interval = setInterval(function() {
@@ -193,7 +200,7 @@ function updateStatusStageFour() {
         if (i == status_text.length) {
             clearInterval(interval);
         }
-    }, Math.floor(Math.random() * 6000) + 6000);
+    }, Math.floor(Math.random() * 3000) + 3500);
 
 }
 

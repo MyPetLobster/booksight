@@ -436,6 +436,13 @@ a:hover {
     text-align: center;
     margin-bottom: 60px;
 }
+.vision-footnote {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    font-size: 8px;
+    font-weight: bold;
+}
 .vision-link {
     color: rgb(120, 157, 183) !important;
 }
@@ -587,7 +594,7 @@ a:hover {
         width: 90%;
     }
     .vision-para-div * {
-        margin-bottom: 40px;
+        margin-bottom: 20px;
     }
     .terminal {
         min-width: 90%;
