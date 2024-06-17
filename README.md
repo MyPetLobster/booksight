@@ -273,20 +273,21 @@ Languages, frameworks, and libraries used in the project.
 
 ### Landing, About, and Tips Pages:
 
-![mobile-landing-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/2822aba5-c3f1-4d7d-8be2-3a8bc7f7ab43)
-![mobile-tips-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/7d563ad1-adac-439a-b599-3182d6e5458c)
-![mobile-about-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/08e2e15e-c491-4dcc-9b58-c2f45b89f6bd)
+<img src="https://github.com/MyPetLobster/booksight/assets/6979547/2822aba5-c3f1-4d7d-8be2-3a8bc7f7ab43" width="32%">
+<img src="https://github.com/MyPetLobster/booksight/assets/6979547/7d563ad1-adac-439a-b599-3182d6e5458c" width="32%">
+<img src="https://github.com/MyPetLobster/booksight/assets/6979547/08e2e15e-c491-4dcc-9b58-c2f45b89f6bd" width="32%">
 
 </br>
 
 ### Full Process (5 Parts):
+<img src="https://github.com/MyPetLobster/booksight/assets/6979547/9c2dc6ca-9d75-414c-93fd-651ddbb06ceb" width="32%">
+<img src="https://github.com/MyPetLobster/booksight/assets/6979547/2208104d-b0f3-4ffe-b766-5cb6dd775748" width="32%">
+<img src="https://github.com/MyPetLobster/booksight/assets/6979547/a20e86ff-4757-4aaa-af0f-ac53632e753e" width="32%">
+<img src="https://github.com/MyPetLobster/booksight/assets/6979547/5f38fee9-34e7-48f1-a116-c6aa83eb4e05" width="32%">
+<img src="https://github.com/MyPetLobster/booksight/assets/6979547/8e1bbb7b-fd21-42d5-9533-b100a76b264a" width="32%">
 
-![mobile-full-part-01-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/9c2dc6ca-9d75-414c-93fd-651ddbb06ceb)
-![mobile-full-part-02-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/2208104d-b0f3-4ffe-b766-5cb6dd775748)
-![mobile-full-part-03-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/a20e86ff-4757-4aaa-af0f-ac53632e753e)
-![mobile-full-part-04-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/5f38fee9-34e7-48f1-a116-c6aa83eb4e05)
-![mobile-full-part-05-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/8e1bbb7b-fd21-42d5-9533-b100a76b264a)
-
+</br>
+</br>
 
 # Getting Started
 To get a local copy up and running follow these steps.
@@ -353,6 +354,8 @@ Then you can access the web application on your mobile device by typing in your 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+</br>
+</br>
 
 # Usage
 
@@ -361,6 +364,7 @@ Then you can access the web application on your mobile device by typing in your 
 2. Submit the form.
 3. Sit back and relax while the application identifies all the books in the image. You will receive an email when the process is complete.
 
+</br>
 
 ## Terminal Application
 
@@ -380,6 +384,8 @@ Then you can access the web application on your mobile device by typing in your 
 
  <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+</br>
+</br>
 
 <!-- CONTACT -->
 # Contact
@@ -390,7 +396,8 @@ Project Link: [https://github.com/MyPetLobster/booksight](https://github.com/MyP
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
+</br>
+</br>
 
 <!-- ACKNOWLEDGMENTS -->
 # Acknowledgments
