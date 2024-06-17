@@ -233,11 +233,9 @@ Languages, frameworks, and libraries used in the project.
 
 ## Booksight Web Application: 
 <img src="https://i.imgur.com/A8hQTne.gif" alt="CLI Process Gif" width="66%">
-</br>
 <img src="https://i.imgur.com/gqzU6pR.png" alt="Desktop Landing Page" width="33%">
 <img src="https://i.imgur.com/Am0EaLB.png" alt="Desktop Upload Form" width="33%">
 <img src="https://i.imgur.com/UwMRJGb.png" alt="Desktop About" width="33%">
-</br>
 
 ### Desktop Vision Process:
 
@@ -254,7 +252,6 @@ Languages, frameworks, and libraries used in the project.
 
 ## CLI Booksight Application (Vision CLI):
 <img src="https://i.imgur.com/88hmmHL.gif" alt="CLI Process Gif" width="66%">
-</br>
 <img src="https://i.imgur.com/2g14eNb.png" alt="CLI Process 01" width="45%">
 <img src="https://i.imgur.com/ooYlVpF.png" alt="CLI Process 02" width="45%">
 <img src="https://i.imgur.com/vfW1wfk.png" alt="CLI Process 03" width="45%">
@@ -264,8 +261,6 @@ Languages, frameworks, and libraries used in the project.
 <img src="https://i.imgur.com/wBVWet1.png" alt="CLI Process 07" width="45%">
 <img src="https://i.imgur.com/Qo2jYCy.png" alt="CLI Process 08" width="45%">
 
-</br>
-</br>
 
 ## Booksight Mobile Application:
 
@@ -276,8 +271,6 @@ Languages, frameworks, and libraries used in the project.
 <img src="https://i.imgur.com/7ko9m3T.gif" alt="Mobile About Page" height="600px">
 
 
-</br>
-
 ### Full Process (5 Parts):
 
 <img src="https://i.imgur.com/eTcwHJB.gif" alt="Mobile Process Part 1" height="600px">
@@ -285,12 +278,6 @@ Languages, frameworks, and libraries used in the project.
 <img src="https://i.imgur.com/gRxZIU1.gif" alt="Mobile Process Part 3" height="600px">
 <img src="https://i.imgur.com/MdBCbG5.gif" alt="Mobile Process Part 4" height="600px">
 <img src="https://i.imgur.com/2SB7vcI.gif" alt="Mobile Process Part 5" height="600px">
-
-
-
-</br>
-<hr/>
-</br>
 
 
 # Getting Started
