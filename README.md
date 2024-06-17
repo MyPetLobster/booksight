@@ -232,96 +232,37 @@ Languages, frameworks, and libraries used in the project.
 # Screenshots/GIFs
 
 ## Booksight Web Application: 
-<div style="width:100%; display:flex; justify-content:center; margin-bottom:12px;">
-  <img src="https://i.imgur.com/A8hQTne.gif" alt="CLI Process Gif" width="66%">
-</div>
-
-<div style="width:100%; display:flex; justify-content:space-between; gap: 6px;">
-  <a href="https://i.imgur.com/gqzU6pR.png">
-    <img src="https://i.imgur.com/gqzU6pR.png" alt="Desktop Landing Page">
-  </a>
-  <a href="https://i.imgur.com/Am0EaLB.png">
-    <img src="https://i.imgur.com/Am0EaLB.png" alt="Desktop Upload Form">
-  </a>
-  <a href="https://i.imgur.com/UwMRJGb.png">
-    <img src="https://i.imgur.com/UwMRJGb.png" alt="Desktop About">
-  </a>
-</div>
+<img src="https://i.imgur.com/A8hQTne.gif" alt="CLI Process Gif" width="66%">
+</br>
+<img src="https://i.imgur.com/gqzU6pR.png" alt="Desktop Landing Page" width="33%">
+<img src="https://i.imgur.com/Am0EaLB.png" alt="Desktop Upload Form" width="33%">
+<img src="https://i.imgur.com/UwMRJGb.png" alt="Desktop About" width="33%">
 </br>
 
 ### Desktop Vision Process:
-<div style="width=100%; display:flex; justify-content:space-between; gap:6px;">
-  <a href="https://i.imgur.com/DokvKTO.png" width="50%">
-    <img src="https://i.imgur.com/DokvKTO.png" alt="Desktop Vision 1">
-  </a>
-  <a href="https://i.imgur.com/L1PJDjx.png" width="50%">
-    <img src="https://i.imgur.com/L1PJDjx.png" alt="Desktop Vision 2">
-  </a>
-</div>
 
-<div style="width=100%; display:flex; justify-content:space-between; gap:6px;">
-  <a href="https://i.imgur.com/49iW24T.png">
-    <img src="https://i.imgur.com/49iW24T.png" alt="Desktop Vision 3">
-  </a>
-  <a href="https://i.imgur.com/qc56jzE.png">
-    <img src="https://i.imgur.com/qc56jzE.png" alt="Desktop Vision 4">
-  </a>
-</div>
-
-<div style="width=100%; display:flex; justify-content:space-between; gap:6px;">
-  <a href="https://i.imgur.com/DhJqb1n.png" width="50%">
-    <img src="https://i.imgur.com/DhJqb1n.png" alt="Desktop Vision 5">
-  </a>
-  <a href="https://i.imgur.com/5yCE9dq.png" width="50%">
-    <img src="https://i.imgur.com/5yCE9dq.png" alt="Desktop Vision 6">
-  </a>
-</div>
-
-<div>
-  <a href="https://i.imgur.com/1qpiA5M.png" style="width=50%; display:flex; justify-content:center;">
-    <img src="https://i.imgur.com/1qpiA5M.png" alt="Desktop Vision 7" width="50%">
-  </a>
-</div>
+<img src="https://i.imgur.com/DokvKTO.png" alt="Desktop Vision 1" width="45%">
+<img src="https://i.imgur.com/L1PJDjx.png" alt="Desktop Vision 2" width="45%"
+<img src="https://i.imgur.com/49iW24T.png" alt="Desktop Vision 3" width="45%">
+<img src="https://i.imgur.com/qc56jzE.png" alt="Desktop Vision 4" width="45%">
+<img src="https://i.imgur.com/DhJqb1n.png" alt="Desktop Vision 5" width="45%">
+<img src="https://i.imgur.com/5yCE9dq.png" alt="Desktop Vision 6" width="45%">
+<img src="https://i.imgur.com/1qpiA5M.png" alt="Desktop Vision 7" width="45%">
 
 </br>
 </br>
 
 ## CLI Booksight Application (Vision CLI):
-<div style="width:100%; display:flex; justify-content:center; margin-bottom:12px;">
-  <img src="https://i.imgur.com/88hmmHL.gif" alt="CLI Process Gif" width="66%">
-</div>
-<div style="width=100%; display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap;">
-  <a href="https://i.imgur.com/2g14eNb.png" style="width:49%">
-    <img src="https://i.imgur.com/2g14eNb.png" alt="CLI Process 01">
-  </a>
-  <a href="https://i.imgur.com/ooYlVpF.png" style="width:49%">
-    <img src="https://i.imgur.com/ooYlVpF.png" alt="CLI Process 02">
-  </a>
-</div>
-<div style="width=100%; display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap;">
-  <a href="https://i.imgur.com/vfW1wfk.png" style="width:49%">
-    <img src="https://i.imgur.com/vfW1wfk.png" alt="CLI Process 03">
-  </a>
-  <a href="https://i.imgur.com/6rAWCyy.png" style="width:49%">
-    <img src="https://i.imgur.com/6rAWCyy.png" alt="CLI Process 04">
-  </a>
-</div>
-<div style="width=100%; display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap;">
-  <a href="https://i.imgur.com/2ocOZIa.png" style="width:49%">
-    <img src="https://i.imgur.com/2ocOZIa.png" alt="CLI Process 05">
-  </a>
-  <a href="https://i.imgur.com/oT1jwDB.png" style="width:49%">
-    <img src="https://i.imgur.com/oT1jwDB.png" alt="CLI Process 06">
-  </a>
-</div>
-<div style="width=100%; display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap;">
-  <a href="https://i.imgur.com/wBVWet1.png" style="width:49%">
-    <img src="https://i.imgur.com/wBVWet1.png" alt="CLI Process 07">
-  </a>
-  <a href="https://i.imgur.com/Qo2jYCy.png" style="width:49%">
-    <img src="https://i.imgur.com/Qo2jYCy.png" alt="CLI Process 08">
-  </a>
-</div>
+<img src="https://i.imgur.com/88hmmHL.gif" alt="CLI Process Gif" width="66%">
+</br>
+<img src="https://i.imgur.com/2g14eNb.png" alt="CLI Process 01" width="45%">
+<img src="https://i.imgur.com/ooYlVpF.png" alt="CLI Process 02" width="45%">
+<img src="https://i.imgur.com/vfW1wfk.png" alt="CLI Process 03" width="45%">
+<img src="https://i.imgur.com/6rAWCyy.png" alt="CLI Process 04" width="45%">
+<img src="https://i.imgur.com/2ocOZIa.png" alt="CLI Process 05" width="45%">
+<img src="https://i.imgur.com/oT1jwDB.png" alt="CLI Process 06" width="45%">
+<img src="https://i.imgur.com/wBVWet1.png" alt="CLI Process 07" width="45%">
+<img src="https://i.imgur.com/Qo2jYCy.png" alt="CLI Process 08" width="45%">
 
 </br>
 </br>
@@ -329,25 +270,22 @@ Languages, frameworks, and libraries used in the project.
 ## Booksight Mobile Application:
 
 ### Landing, About, and Tips Pages:
-<div style="width:100%; display:flex; justify-content:space-around; flex-wrap:wrap;">
-  <img src="https://i.imgur.com/Tbk0Fl7.gif" alt="Mobile Landing Page" height="600px">
-  <img src="https://i.imgur.com/vIl7xA8.gif" alt="Mobile Tips Page" height="600px">
-  <img src="https://i.imgur.com/7ko9m3T.gif" alt="Mobile About Page" height="600px">
-</div>
+
+<img src="https://i.imgur.com/Tbk0Fl7.gif" alt="Mobile Landing Page" height="600px">
+<img src="https://i.imgur.com/vIl7xA8.gif" alt="Mobile Tips Page" height="600px">
+<img src="https://i.imgur.com/7ko9m3T.gif" alt="Mobile About Page" height="600px">
+
 
 </br>
 
 ### Full Process (5 Parts):
-<div style="width:100%; display:flex; justify-content:center; gap:16px; flex-wrap:wrap">
-  <img src="https://i.imgur.com/eTcwHJB.gif" alt="Mobile Process Part 1" height="700px">
-  <img src="https://i.imgur.com/10utTdC.gif" alt="Mobile Process Part 2" height="700px">
-  <img src="https://i.imgur.com/gRxZIU1.gif" alt="Mobile Process Part 3" height="700px">
-</div>
-</br>
-<div style="width:100%; display:flex; justify-content:center; gap:16px; flex-wrap:wrap">
-  <img src="https://i.imgur.com/MdBCbG5.gif" alt="Mobile Process Part 4" height="700px">
-  <img src="https://i.imgur.com/2SB7vcI.gif" alt="Mobile Process Part 5" height="700px">
-</div>
+
+  <img src="https://i.imgur.com/eTcwHJB.gif" alt="Mobile Process Part 1" width="19%">
+  <img src="https://i.imgur.com/10utTdC.gif" alt="Mobile Process Part 2" width="19%">
+  <img src="https://i.imgur.com/gRxZIU1.gif" alt="Mobile Process Part 3" width="19%">
+  <img src="https://i.imgur.com/MdBCbG5.gif" alt="Mobile Process Part 4" width="19%">
+  <img src="https://i.imgur.com/2SB7vcI.gif" alt="Mobile Process Part 5" width="19%">
+
 
 
 </br>
