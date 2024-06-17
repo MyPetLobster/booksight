@@ -242,7 +242,7 @@ Languages, frameworks, and libraries used in the project.
 ### Desktop Vision Process:
 
 <img src="https://i.imgur.com/DokvKTO.png" alt="Desktop Vision 1" width="45%">
-<img src="https://i.imgur.com/L1PJDjx.png" alt="Desktop Vision 2" width="45%"
+<img src="https://i.imgur.com/L1PJDjx.png" alt="Desktop Vision 2" width="45%">
 <img src="https://i.imgur.com/49iW24T.png" alt="Desktop Vision 3" width="45%">
 <img src="https://i.imgur.com/qc56jzE.png" alt="Desktop Vision 4" width="45%">
 <img src="https://i.imgur.com/DhJqb1n.png" alt="Desktop Vision 5" width="45%">
