@@ -552,6 +552,8 @@ def create_book_object(isbn, confidence):
             book.isbn = book.isbn13 or book.isbn10
         if book.pages == 0 or book.pages is None:
             book.pages = isbndb_data.get('pages', 0)
+        if book.image_path == "" or book.image_path is None:
+            book.image_path = isbndb_data.get('image', "")
         book.binding = isbndb_data.get('binding', "Unknown")
     
     # Set the confidence
