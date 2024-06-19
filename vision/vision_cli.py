@@ -137,8 +137,8 @@ def main():
 
     is_valid_floats = False
     while not is_valid_floats:
-        if ai_temp < 0 or ai_temp > 1:
-            ai_temp = float(console.input("\n[bold]Invalid AI temperature entered. Please enter a value between 0.00 and 1.00:[/bold] "))
+        if ai_temp < 0 or ai_temp > 2:
+            ai_temp = float(console.input("\n[bold]Invalid AI temperature entered. Please enter a value between 0.0 and 2.0:[/bold] "))
         elif torch_confidence < 0 or torch_confidence > 1:
             torch_confidence = float(console.input("\n[bold]Invalid Torch confidence entered. Please enter a value between 0.00 and 1.00:[/bold] "))
         else:
@@ -287,7 +287,7 @@ def main():
     if email:
         console.print("\n[bold sea_green3]Email has been set up successfully.[/bold sea_green3]\n", justify="left")
         time.sleep(2)
-        console.print(f"\n[bold chartreuse3]An email with the attached files you requested will be sent to {email} once the process is complete.[/bold chartreuse3]\n", justify="left")
+        console.print(f"\n[bold dark_slate_gray3]An email with the attached files you requested will be sent to {email} once the process is complete.[/bold dark_slate_gray3]\n", justify="left")
         time.sleep(1)
     config_data_terminal = vision_config.VisionConfig(email, formats, ai_model, ai_temp, torch_confidence)
 
@@ -297,6 +297,12 @@ def main():
 
     console.print("\n\n[bold chartreuse1]Now sit back and watch the magic happen (or not, it's a WIP)...[/bold chartreuse1]\n\n")
     time.sleep(2)
+
+    draw_ascii_eyes()
+    console.print("\n")
+
+    time.sleep(1)
+
     # Run the vision_core function
     vision_processed = vision_core(image_path, new_scan, config_data_terminal)
 
@@ -383,34 +389,81 @@ def silly_tricks():
       
 
 def draw_ascii_eyes():
-    console.print("\n")
-    console.print("""
-                       #@@@@@@@@@@@@@#+                      *@@@@@@@@@@@@@%*                       
-                   #@@@@@@@%##%@@@@@@@@@@#                %@@@@@@@@@@##%@@@@@@@%*                   
-                 %%*  =#%@@@@@@@@%*  *@@@@@%           %@@@@@#  +#@@@@@@@@@%+  *%@+                 
-               + %@@@@@@@@@%%@%@@@@@@@@##%@@@*        @@@@#*%@@@@@@@@@%%@@@@@@@@@%++                
-             *%@@@@%+ %%%%@@@@@%#%* #@@@@@*%@@#     *@@@ #@@@@%= %%%@@@@@%%#%* #@@@@@#              
-           =@@@# +%@@@@@@@@@@@@@@@@@@@# %@@% @@*    @@##@@%# %@@@@@@@@@@@@@@@@@@@# #@@@#            
-          %@% #@@@@@@@@%%*#+*%#%%@@@@@@@@##@@=%@   @@ @@#*%@@@@@@@@%%#*+*##%%@@@@@@@% #@@           
-         @*#@@@%* #%#%@@@@@@@@@@@%## %@@@@@#%@ #*  % %%%@@@@@%* %#%@@@@@@@@@@@%## +%@@@# @#         
-         #@#* #@@@@@@%#%@@@#**%@@@@@@@% #@@@@ = =  =- @@@@% #@@@@@@@%#+#@@@@%%@@@@@@%  #@#          
-       -# *@@@%#+     %@@%#@@@@@@@@@@@@@@%#@@@*      @@@%*@@@@@@@@@@@%@@%#@@@*     #%@@@# #+        
-        *%           %@@@%@@@@@@@@  %@@%@@@*#@@     @@% @@@%@@@@@@@@*  %@##@@%           #*         
-              *      %@@#%@@@@@@@@@@@@@% %@@@ %%   -@*%@@@#*@@@@@@@@@@@@@@:@@@      ++              
-             +@#     %@@%#@@@@@@@@@@@@@%  #@@@+=   * @@@%  #@@@@@@@@@@@@@%*@@@     #@%              
-             +@@%+    %@@*#@@@@@@@@@@@@    +@@@     @@@#    %@@@@@@@@@@@%+@@@#    @@@#              
-              @#%@@*   @@@@*%%@@@@@@@@*     *@@@   %@@#      %@@@@@@@@%=%@@@#   %@@*@%              
-              @@#%@@@%* #@@@@@@@@@@@#        #@@+  @@#        *@@@@@@@@@@@%  %@@@@*@@               
-               @@%-%@@@@@#  +*%**             #@% #@@             =%##*  *%@@@@@=#@@#               
-               *@@@% %@@@@@@@@@@@@@@@@@@% *%  #@@ =@%  #% #@@@@@@@@@@@@@@@@@@@##@@@#                
-                 %@@@@# %@@@@@@@@@@@@# #@@%    %#  @+   #@@%*#@@@@@@@@@@@@%**%@@@@+                 
-                   @@@@@@@#+     :#%@@@@@      *   %      %@@@@%*+     +*@@@@@@@+                   
-                     %@@@@@@@@@@@@@@@@%                     #%@@@@@@@@@@@@@@@%*                     
-                         +%%@@@@%#*                             +%@@@@@%%*                      
-                    
-""", style="steel_blue")
+    console.print("                       #@@@@@@@@@@@@@#+                      *@@@@@@@@@@@@@%*                      ")
+    time.sleep(0.05)
+    console.print("                    #@@@@@@@%##%@@@@@@@@@@#                %@@@@@@@@@@##%@@@@@@@%*                  ")
+    time.sleep(0.05)
+    console.print("                  %%*  =#%@@@@@@@@%*  *@@@@@%           %@@@@@#  +#@@@@@@@@@%+  *%@+                ")
+    time.sleep(0.05)
+    console.print("                + %@@@@@@@@@%%@%@@@@@@@@##%@@@*        @@@@#*%@@@@@@@@@%%@@@@@@@@@%++               ")
+    time.sleep(0.05)
+    console.print("              *%@@@@%+ %%%%@@@@@%#%* #@@@@@*%@@#     *@@@ #@@@@%= %%%@@@@@%%#%* #@@@@@#             ")
+    time.sleep(0.05)
+    console.print("            =@@@# +%@@@@@@@@@@@@@@@@@@@# %@@% @@*    @@##@@%# %@@@@@@@@@@@@@@@@@@@# #@@@#           ")
+    time.sleep(0.05)
+    console.print("           %@% #@@@@@@@@%%*#+*%#%%@@@@@@@@##@@=%@   @@ @@#*%@@@@@@@@%%#*+*##%%@@@@@@@% #@@          ")
+    time.sleep(0.05)
+    console.print("          @*#@@@%* #%#%@@@@@@@@@@@%## %@@@@@#%@ #*  % %%%@@@@@%* %#%@@@@@@@@@@@%## +%@@@# @#        ")
+    time.sleep(0.05)
+    console.print("          #@#* #@@@@@@%#%@@@#**%@@@@@@@% #@@@@ = =  =- @@@@% #@@@@@@@%#+#@@@@%%@@@@@@%  #@#         ")
+    time.sleep(0.05)
+    console.print("        -# *@@@%#+     %@@%#@@@@@@@@@@@@@@%#@@@*      @@@%*@@@@@@@@@@@%@@%#@@@*     #%@@@# #+       ")
+    time.sleep(0.05)
+    console.print("         *%           %@@@%@@@@@@@@  %@@%@@@*#@@     @@% @@@%@@@@@@@@*  %@##@@%           #*        ")
+    time.sleep(0.05)
+    console.print("               *      %@@#%@@@@@@@@@@@@@% %@@@ %%   -@*%@@@#*@@@@@@@@@@@@@@:@@@      ++             ")
+    time.sleep(0.05)
+    console.print("              +@#     %@@%#@@@@@@@@@@@@@%  #@@@+=   * @@@%  #@@@@@@@@@@@@@%*@@@     #@%             ")
+    time.sleep(0.05)
+    console.print("             +@@%+    %@@*#@@@@@@@@@@@@      +@@@   @@@#    %@@@@@@@@@@@%+@@@#    @@@#             ")
+    time.sleep(0.05)
+    console.print("               @#%@@*   @@@@*%%@@@@@@@@*     *@@@   %@@#      %@@@@@@@@%=%@@@#   %@@*@%             ")
+    time.sleep(0.05)
+    console.print("               @@#%@@@%* #@@@@@@@@@@@#        #@@+  @@#        *@@@@@@@@@@@%  %@@@@*@@              ")
+    time.sleep(0.05)
+    console.print("               @@%-%@@@@@#  +*%**             #@% #@@             =%##*  *%@@@@@=#@@#               ")
+    time.sleep(0.05)
+    console.print("               *@@@% %@@@@@@@@@@@@@@@@@@% *%  #@@ =@%  #% #@@@@@@@@@@@@@@@@@@@##@@@#                ")
+    time.sleep(0.05)
+    console.print("                 %@@@@# %@@@@@@@@@@@@# #@@%    %#  @+   #@@%*#@@@@@@@@@@@@%**%@@@@+                ")
+    time.sleep(0.05)
+    console.print("                   @@@@@@@#+     :#%@@@@@      *   %      %@@@@%*+     +*@@@@@@@+                  ")
+    time.sleep(0.05)
+    console.print("                     %@@@@@@@@@@@@@@@@%                     #%@@@@@@@@@@@@@@@%*                    ")
+    time.sleep(0.05)
+    console.print("                         +%%@@@@%#*                             +%@@@@@%%*                         ")
+    time.sleep(0.25)
+    console.print("\n\n")
+    
+    console.print("                ██████╗  ██████╗  ██████╗ ██╗  ██╗███████╗██╗ ██████╗ ██╗  ██╗████████╗")
+    time.sleep(0.1)
+    console.print("                ██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝██║██╔════╝ ██║  ██║╚══██╔══╝")
+    time.sleep(0.1)
+    console.print("                ██████╔╝██║   ██║██║   ██║█████╔╝ ███████╗██║██║  ███╗███████║   ██║   ")
+    time.sleep(0.1)
+    console.print("                ██╔══██╗██║   ██║██║   ██║██╔═██╗ ╚════██║██║██║   ██║██╔══██║   ██║   ")
+    time.sleep(0.1)
+    console.print("                ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗███████║██║╚██████╔╝██║  ██║   ██║   ")
+    time.sleep(0.1)
+    console.print("                ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ")
+    time.sleep(0.25)
+
+    console.print("                 ___________________________________________________________________", highlight=False)
+    time.sleep(0.1)
+    console.print("                   _    _                                        __      _        __", highlight=False)
+    time.sleep(0.1)
+    console.print("                   |   /     ,          ,                      /    )    /        / ", highlight=False)
+    time.sleep(0.1)
+    console.print("                 --|--/----------__----------__-----__--------/---------/--------/--", highlight=False)
+    time.sleep(0.1)
+    console.print("                   | /     /    (_ `  /    /   )  /   )      /         /        /   ", highlight=False)
+    time.sleep(0.1)
+    console.print("                 __|/_____/____(__)__/____(___/__/___/______(____/____/____/_ _/_ __", highlight=False)
+    time.sleep(0.5)
+    console.print("\n\n")
 
 
+    
 def draw_ascii_owl():
     console.print("\n\n")
     time.sleep(0.05)
