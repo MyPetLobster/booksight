@@ -93,7 +93,7 @@ def main():
             console.print("\n[bold red]WARNING: [/bold red][red]If you are not sure about the settings, please refer to the README or stick with the defaults.[/red]\n")
             time.sleep(1.5)
             image_path = console.input("\n[dark_sea_green2][bold]Image path[/bold] must be valid absolute or relative path to the image file.[/dark_sea_green2]\n\n[bold]Enter the path to the image to be processed: [/bold]")
-            ai_model = console.input("\n\n[pale_green1]Choose the [bold]AI model[/bold] to use for image classification\n[italic]Valid options: gpt-4o, gpt-3.5-turbo, gemini-1.5-pro, gemini-1.5-flash, gemini-1.0-pro[/italic][/pale_green1]\n\n[bold]Enter the model name: [/bold]")
+            ai_model = console.input("\n\n[pale_green1]Choose the [bold]AI model[/bold] to use for image classification\n[italic]Valid options: gpt-4o, gpt-3.5-turbo, gemini-1.5-pro, gemini-1.5-flash[/italic][/pale_green1]\n\n[bold]Enter the model name: [/bold]")
             ai_temp = float(console.input("\n\n[dark_olive_green2][bold]Temperature[/bold] is a setting used for OpenAI GPT models to determine the randomness of a response.\nValid range: 0.0 to 2.0\nBookSight recommended temperature is [bold]0.3[/bold]\n[italic]If you are not using an OpenAi model, enter 0 for temperature.[/italic][/dark_olive_green2]\n\n[bold]Enter the temperature parameter for the AI model:[/bold] "))
             torch_confidence = float(console.input("\n\n[green_yellow][bold]Torchvision confidence threshold[/bold]. Valid range: 0.00 to 1.00\nBookSight recommended threshold is [bold]0.79[/bold][/green_yellow]\n\n[bold]Enter the confidence threshold for TorchVision:[/bold] "))
             time.sleep(1.5)
@@ -118,7 +118,7 @@ def main():
     console.print("[bold dark_sea_green2]Checking AI model...[/bold dark_sea_green2]", justify="left")
     time.sleep(0.2)
 
-    valid_models = ['gpt-4o', 'gpt-3.5-turbo', 'gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-1.0-turbo']
+    valid_models = ['gpt-4o', 'gpt-3.5-turbo', 'gemini-1.5-pro', 'gemini-1.5-flash']
     ai_model = ai_model.lower()
     is_ai_valid = False
     while not is_ai_valid:
