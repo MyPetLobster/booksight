@@ -60,8 +60,11 @@ def check_for_match(spine, isbn, color_filter, nada=False):
 
     # Filter out non-English books
     if p_match["language"].lower().strip() not in ["en", "eng", "english"]:
-        log_print(f"Language: {p_match['language']}")
-        log_print("Booksight only supports English books at this time.\n")
+        # TODO - Remove this if ISBNdb fixes. I emailed them on 6/20/24.
+        # ISBNdb has misidentified the language of this version of Anna Karenina as 'es' (Spanish) instead of 'en' (English)
+        if p_match["isbn13"] != "9780143035008":
+            log_print(f"Language: {p_match['language']}")
+            log_print("Booksight only supports English books at this time.\n")
         return confidence, color_filter, nada, isbn
 
     # Handle spines undetected by torchvision
@@ -86,7 +89,7 @@ def check_for_match(spine, isbn, color_filter, nada=False):
         
     # Confirm that the binding is not "Audio Cassette" or "Audio CD"
     if p_match["binding"]:
-        if p_match and p_match["binding"].lower().strip() in ["audio cassette", "audio cd"]:
+        if p_match and p_match["binding"].lower().strip() in ["audio cassette", "audio cd", "kindle edition", "ebook"]:
             log_print(f"Audio binding detected: '{p_match['binding']}'\nSkipping match process for isbn - {isbn}.\n")
             return confidence, color_filter, nada, isbn
 
