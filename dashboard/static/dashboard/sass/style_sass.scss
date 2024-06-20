@@ -497,8 +497,51 @@ a:hover {
 .top-tips-div {
     margin-top: 20px;
 }
-
-
+.example-images-div {
+    @include flex-center;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+.example-img-set {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+.example-img-div {
+    @include border-radius-shadow;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color:rgb(201, 210, 218);
+    height: 300px;
+    width: 300px;
+    img {
+        cursor: pointer;
+        max-height: 100%;
+        max-width: 100%;
+    }
+}
+.hidden-fullsize {
+    display: none;
+}
+.show-fullsize {
+    @include border-radius-shadow();
+    max-height: 90vh !important;
+    max-width: 90vw !important;
+    cursor: pointer;
+    display: block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background-color: rgba(201, 210, 218, 0.921);
+    
+    padding: 20px;
+    border-radius: 12px;
+}
 
 
 /* ABOUT PAGE */

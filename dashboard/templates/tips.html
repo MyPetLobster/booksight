@@ -15,11 +15,12 @@
         <div class="tips-div top-tips-div">
             <h2>Image Tips</h2>
             <ul>
-                <li>Make sure the image you upload is clear and in focus.</li>
-                <li>Try to avoid glare or reflections on the page.</li>
-                <li>Well lit and even lighting will help improve the accuracy of the text extraction.</li>
-                <li>Make sure all book spines are straight. In other words, as close to 90 or 180 degrees as possible. (Leaning books may not be detected)</li>
-                <li>Make sure the image is not blurry or distorted.</li>
+                <li>Make sure the image you upload is <strong>clear and in focus.</strong></li>
+                <li>Try to <strong>avoid glare</strong> or reflections on the page.</li>
+                <li><strong>Well lit and even lighting</strong> will help improve the accuracy of the text extraction.</li>
+                <li>Make sure all book spines are straight. In other words, as close to <strong>90 or 180 degrees</strong> as possible. (Leaning books may not be detected)</li>
+                <li>Make sure the image is <strong>not blurry or distorted</strong>.</li>
+                <li>Frame your image so that <strong>all spines in the image are fully visible</strong> and not obscured by other books or objects or cut off by the edge of the image.</li>
             </ul>  
         </div>
 
@@ -37,7 +38,7 @@
                 </li>
                 <li>
                     The speed of Booksight is currently limited by the rate limiting of one of the APIs we use to match books. To correctly identify any book we must check 
-                    all possible ISBNs for a book. Some books can have A TON of ISBNs, so this can take a while. We are working on several solutions to bypass this bottleneck.
+                    all possible ISBNs for a book. Some books can have a lot of potential ISBNs, so this can take a while. We are working on several solutions to bypass this bottleneck.
                 </li>
                 <li>Booksight is a work in progress and will continue to improve over time. If you have any feedback or suggestions, please feel free to reach out to us.</li>
             </ul>
@@ -45,6 +46,66 @@
 
         </br>
 
+        <div class="tips-div tips-examples-div">
+            <h2>Examples</h2>
+            <div class="example-images-div">
+                <div class="example-img-set">
+                    <div class="example-img-div">
+                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-good-01.jpeg' %}" alt="Example Image 1 - Good">
+                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-good-01.jpeg' %}" alt="Example Image 1 - Good">
+                    </div>
+                    <div class="example-img-div">
+                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-bad-01.jpeg' %}" alt="Example Image 2 - Bad">
+                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-bad-01.jpeg' %}" alt="Example Image 2 - Bad">
+                    </div>
+                </div>
+                <div class="example-img-set">
+                    <div class="example-img-div">
+                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-good-02.jpeg' %}" alt="Example Image 3 - Good">
+                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-good-02.jpeg' %}" alt="Example Image 3 - Good">
+                    </div>
+                    <div class="example-img-div">
+                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-bad-02.jpeg' %}" alt="Example Image 4 - Bad">
+                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-bad-02.jpeg' %}" alt="Example Image 4 - Bad">
+                    </div>
+                </div>
+                <div class="example-img-set">
+                    <div class="example-img-div">
+                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-good-03.jpeg' %}" alt="Example Image 5 - Good">
+                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-good-03.jpeg' %}" alt="Example Image 5 - Good">
+                    </div>
+                    <div class="example-img-div">
+                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-bad-03.jpeg' %}" alt="Example Image 6 - Bad">
+                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-bad-03.jpeg' %}" alt="Example Image 6 - Bad">
+                    </div>
+                </div>
+                <div class="example-img-set">
+                    <div class="example-img-div">
+                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-good-04.jpeg' %}" alt="Example Image 7 - Good">
+                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-good-04.jpeg' %}" alt="Example Image 7 - Good">
+                    </div>
+                    <div class="example-img-div">
+                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-bad-04.jpeg' %}" alt="Example Image 8 - Bad">
+                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-bad-04.jpeg' %}" alt="Example Image 8 - Bad">
+                    </div>
+                </div>
+        </div>
+
     </div>
-    
+    <script>
+        // Add event listener to each example image to show full size image on click
+        document.querySelectorAll('.example-image').forEach(item => {
+            item.addEventListener('click', event => {
+                let fullsize = item.nextElementSibling;
+                fullsize.classList.toggle('show-fullsize');
+            });
+        });
+
+        // Add event listener to each full size image to hide on click
+        document.querySelectorAll('.hidden-fullsize').forEach(item => {
+            item.addEventListener('click', event => {
+                item.classList.toggle('show-fullsize');
+            });
+        });
+    </script>
 {% endblock %} 
