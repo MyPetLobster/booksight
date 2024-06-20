@@ -503,6 +503,7 @@ a:hover {
 .top-tips-div {
     margin-top: 20px;
 }
+
 .example-images-div {
     @include flex-center;
     flex-direction: column;
@@ -514,6 +515,7 @@ a:hover {
     display: flex;
     justify-content: center;
     gap: 20px;
+    transition: 250ms;
 }
 .example-img-div {
     @include border-radius-shadow;
@@ -523,6 +525,7 @@ a:hover {
     background-color:rgb(201, 210, 218);
     height: 300px;
     width: 300px;
+    transition: 250ms;
     img {
         cursor: pointer;
         max-height: 100%;
@@ -534,20 +537,22 @@ a:hover {
 }
 .show-fullsize {
     @include border-radius-shadow();
+    z-index: 9999;
     max-height: 90vh !important;
     max-width: 90vw !important;
     cursor: pointer;
-    display: block;
+    display: block !important;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 9999;
     background-color: rgba(201, 210, 218, 0.921);
-    
     padding: 20px;
     border-radius: 12px;
 }
+
+
+
 
 
 /* ABOUT PAGE */
@@ -663,5 +668,23 @@ a:hover {
     .about-div, .tips-div {
         width: 90%;
     }
+
+    /* Example Images */
+    .example-img-div {
+        max-height: 140px;
+        max-width: 140px;
+        img {
+            max-height: 100%;
+            max-width: 100%;
+        }
+    }
+    .example-images-div {
+        gap: 10px;
+    }
+    .example-img-set {
+        gap: 10px;
+    }
+
+
 }
 

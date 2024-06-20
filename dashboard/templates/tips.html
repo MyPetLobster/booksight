@@ -50,62 +50,47 @@
             <h2>Examples</h2>
             <div class="example-images-div">
                 <div class="example-img-set">
-                    <div class="example-img-div">
-                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-good-01.jpeg' %}" alt="Example Image 1 - Good">
-                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-good-01.jpeg' %}" alt="Example Image 1 - Good">
+                    <div class="example-img-div  good-example">
+                        <img class="example-image good-01" src="{% static 'dashboard/images/example_images/example-good-01.jpeg' %}" alt="Example Image 1 - Good">
                     </div>
-                    <div class="example-img-div">
-                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-bad-01.jpeg' %}" alt="Example Image 2 - Bad">
-                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-bad-01.jpeg' %}" alt="Example Image 2 - Bad">
+                    <div class="example-img-div bad-example">
+                        <img class="example-image bad-01" src="{% static 'dashboard/images/example_images/example-bad-01.jpeg' %}" alt="Example Image 2 - Bad">
                     </div>
                 </div>
                 <div class="example-img-set">
-                    <div class="example-img-div">
-                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-good-02.jpeg' %}" alt="Example Image 3 - Good">
-                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-good-02.jpeg' %}" alt="Example Image 3 - Good">
+                    <div class="example-img-div good-example">
+                        <img class="example-image good-02" src="{% static 'dashboard/images/example_images/example-good-02.jpeg' %}" alt="Example Image 3 - Good">
                     </div>
-                    <div class="example-img-div">
-                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-bad-02.jpeg' %}" alt="Example Image 4 - Bad">
-                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-bad-02.jpeg' %}" alt="Example Image 4 - Bad">
+                    <div class="example-img-div bad-example">
+                        <img class="example-image bad-02" src="{% static 'dashboard/images/example_images/example-bad-02.jpeg' %}" alt="Example Image 4 - Bad">
                     </div>
                 </div>
                 <div class="example-img-set">
-                    <div class="example-img-div">
-                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-good-03.jpeg' %}" alt="Example Image 5 - Good">
-                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-good-03.jpeg' %}" alt="Example Image 5 - Good">
+                    <div class="example-img-div good-example">
+                        <img class="example-image good-03" src="{% static 'dashboard/images/example_images/example-good-03.jpeg' %}" alt="Example Image 5 - Good">
                     </div>
-                    <div class="example-img-div">
-                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-bad-03.jpeg' %}" alt="Example Image 6 - Bad">
-                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-bad-03.jpeg' %}" alt="Example Image 6 - Bad">
+                    <div class="example-img-div bad-example">
+                        <img class="example-image bad-03" src="{% static 'dashboard/images/example_images/example-bad-03.jpeg' %}" alt="Example Image 6 - Bad">
                     </div>
                 </div>
                 <div class="example-img-set">
-                    <div class="example-img-div">
-                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-good-04.jpeg' %}" alt="Example Image 7 - Good">
-                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-good-04.jpeg' %}" alt="Example Image 7 - Good">
+                    <div class="example-img-div good-example">
+                        <img class="example-image good-04" src="{% static 'dashboard/images/example_images/example-good-04.jpeg' %}" alt="Example Image 7 - Good">
                     </div>
-                    <div class="example-img-div">
-                        <img class="example-image" src="{% static 'dashboard/images/example_images/example-bad-04.jpeg' %}" alt="Example Image 8 - Bad">
-                        <img class="hidden-fullsize" src="{% static 'dashboard/images/example_images/example-bad-04.jpeg' %}" alt="Example Image 8 - Bad">
+                    <div class="example-img-div bad-example">
+                        <img class="example-image bad-04" src="{% static 'dashboard/images/example_images/example-bad-04.jpeg' %}" alt="Example Image 8 - Bad">
                     </div>
                 </div>
+            </div>
+            <img class="hidden-fullsize" id="hidden-good-01" src="{% static 'dashboard/images/example_images/example-good-01.jpeg' %}" alt="Example Image 1 - Good">
+            <img class="hidden-fullsize" id="hidden-bad-01" src="{% static 'dashboard/images/example_images/example-bad-01.jpeg' %}" alt="Example Image 2 - Bad">
+            <img class="hidden-fullsize" id="hidden-good-02" src="{% static 'dashboard/images/example_images/example-good-02.jpeg' %}" alt="Example Image 3 - Good">
+            <img class="hidden-fullsize" id="hidden-bad-02" src="{% static 'dashboard/images/example_images/example-bad-02.jpeg' %}" alt="Example Image 4 - Bad">
+            <img class="hidden-fullsize" id="hidden-good-03" src="{% static 'dashboard/images/example_images/example-good-03.jpeg' %}" alt="Example Image 5 - Good">
+            <img class="hidden-fullsize" id="hidden-bad-03" src="{% static 'dashboard/images/example_images/example-bad-03.jpeg' %}" alt="Example Image 6 - Bad">
+            <img class="hidden-fullsize" id="hidden-good-04" src="{% static 'dashboard/images/example_images/example-good-04.jpeg' %}" alt="Example Image 7 - Good">
+            <img class="hidden-fullsize" id="hidden-bad-04" src="{% static 'dashboard/images/example_images/example-bad-04.jpeg' %}" alt="Example Image 8 - Bad">
         </div>
-
     </div>
-    <script>
-        // Add event listener to each example image to show full size image on click
-        document.querySelectorAll('.example-image').forEach(item => {
-            item.addEventListener('click', event => {
-                let fullsize = item.nextElementSibling;
-                fullsize.classList.toggle('show-fullsize');
-            });
-        });
-
-        // Add event listener to each full size image to hide on click
-        document.querySelectorAll('.hidden-fullsize').forEach(item => {
-            item.addEventListener('click', event => {
-                item.classList.toggle('show-fullsize');
-            });
-        });
-    </script>
+    
 {% endblock %} 

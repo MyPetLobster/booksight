@@ -43,7 +43,9 @@ const darkOwlLogo = document.getElementById('owl-logo-img');
 owlLogoNavItem.addEventListener('mouseover', () => {
     if (screen.width > 600) {
         darkOwlLogo.style.opacity = 1;
-        toPageNavItem.style.opacity = 1;
+        if (window.scrollY === 0){
+            toPageNavItem.style.opacity = 1;
+        }
     }
 });
 owlLogoNavItem.addEventListener('mouseout', () => {
@@ -258,4 +260,89 @@ if (pageIdentifier === 'index') {
         advOptionsButton.style.display = 'block';
         window.scrollTo(0, 0);
     })     
+}
+
+// TIPS PAGE SCRIPTS
+
+if (pageIdentifier === 'tips') {
+    // Add event listener to each example image to show full size image on click
+    const exampleImages = document.querySelectorAll('.example-image');
+    exampleImages.forEach(item => {
+        item.addEventListener('click', event => {
+            const hiddenFullsize = document.getElementById(`hidden-${item.classList[1]}`);
+            hiddenFullsize.classList.toggle('show-fullsize');
+        
+            // if user clicks anywhere outside the full size image, hide it
+            document.addEventListener('click', (event) => {
+                if (!hiddenFullsize.contains(event.target) && !item.contains(event.target)) {
+                    hiddenFullsize.classList.remove('show-fullsize');
+                }
+            });
+        });
+    });
+
+    // Add event listener to each full size image to hide on click
+    document.querySelectorAll('.hidden-fullsize').forEach(item => {
+        item.addEventListener('click', event => {
+            item.classList.toggle('show-fullsize');
+        });
+    });
+
+    // Add event listener to each example image to make it a bit bigger on hover
+    const exampleImageDivs = document.querySelectorAll('.example-img-div');
+    exampleImageDivs.forEach(item => {
+        item.addEventListener('mouseover', event => {
+            item.style.transform = 'scale(1.1)';
+            if (item.classList.contains('good-example')) {
+                item.nextElementSibling.style.transform = 'scale(0.9)';
+                item.nextElementSibling.style.opacity = '0.6';
+            } else {
+                item.previousElementSibling.style.transform = 'scale(0.9)';
+                item.previousElementSibling.style.opacity = '0.6';
+            }
+            if (item.parentElement.nextElementSibling) {
+                item.parentElement.nextElementSibling.style.transform = 'scale(0.9)';
+                item.parentElement.nextElementSibling.style.opacity = '0.6';
+                if (item.parentElement.nextElementSibling.nextElementSibling) {
+                    item.parentElement.nextElementSibling.nextElementSibling.style.transform = 'scale(0.9)';
+                    item.parentElement.nextElementSibling.nextElementSibling.style.opacity = '0.6';
+                }
+            }
+            if (item.parentElement.previousElementSibling) {
+                item.parentElement.previousElementSibling.style.transform = 'scale(0.9)';
+                item.parentElement.previousElementSibling.style.opacity = '0.6';
+                if (item.parentElement.previousElementSibling.previousElementSibling) {
+                    item.parentElement.previousElementSibling.previousElementSibling.style.transform = 'scale(0.9)';
+                    item.parentElement.previousElementSibling.previousElementSibling.style.opacity = '0.6';
+                }
+            }
+        });
+        item.addEventListener('mouseout', event => {
+            item.style.transform = 'scale(1)';
+            if (item.classList.contains('good-example')) {
+                item.nextElementSibling.style.transform = 'scale(1)';
+                item.nextElementSibling.style.opacity = '1';
+            } else {
+                item.previousElementSibling.style.transform = 'scale(1)';
+                item.previousElementSibling.style.opacity = '1';
+            }
+            if (item.parentElement.nextElementSibling) {
+                item.parentElement.nextElementSibling.style.transform = 'scale(1)';
+                item.parentElement.nextElementSibling.style.opacity = '1';
+                if (item.parentElement.nextElementSibling.nextElementSibling) {
+                    item.parentElement.nextElementSibling.nextElementSibling.style.transform = 'scale(1)';
+                    item.parentElement.nextElementSibling.nextElementSibling.style.opacity = '1';
+                }
+            }
+            if (item.parentElement.previousElementSibling) {
+                item.parentElement.previousElementSibling.style.transform = 'scale(1)';
+                item.parentElement.previousElementSibling.style.opacity = '1';
+                if (item.parentElement.previousElementSibling.previousElementSibling) {
+                    item.parentElement.previousElementSibling.previousElementSibling.style.transform = 'scale(1)';
+                    item.parentElement.previousElementSibling.previousElementSibling.style.opacity = '1';
+                }
+            }
+        });
+
+    });
 }
