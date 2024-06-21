@@ -91,7 +91,7 @@ function checkStatus() {
                     text_image_element.alt = "Spine Image";
                     spine_image_grid.appendChild(text_image_element);
 
-                    // create full size image hidden until clicked
+                    // create full size image, hidden until clicked
                     const full_size_image = document.createElement("img");
                     document.getElementById("full-size-image-div").appendChild(full_size_image);
                     full_size_image.src = text_images[i];
@@ -106,9 +106,8 @@ function checkStatus() {
                             full_size_images[i].style.display = "none";
                         }
 
-                        // show the full size image that was clicked and scroll to top of page with smooth scroll
+                        // show the full size image that was clicked 
                         full_size_image.style.display = "block";
-                        window.scrollTo({top: 0, behavior: "smooth"});
 
                         // add click event to hide full size image if anywhere on the page is clicked
                         full_size_image.addEventListener("click", function() {

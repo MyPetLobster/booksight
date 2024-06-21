@@ -21,6 +21,12 @@ $accent-color-darker: rgb(36, 69, 94);
     left: 50%;
     transform: translate(-50%, -50%);
 }
+@mixin fixed-center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 @mixin max-80vw {
     max-width: 80vw;
     max-height: 80vh;
@@ -381,7 +387,7 @@ a:hover {
 /* Expanded spine text image container */
 #full-size-image-div {
     @include flex-center;
-    @include absolute-center;
+    @include fixed-center;
     @include max-80vw;
     @include border-radius-shadow;
     background-color: rgba(0, 0, 0, 0.8);
