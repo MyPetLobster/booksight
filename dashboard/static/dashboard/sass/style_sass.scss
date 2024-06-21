@@ -35,6 +35,7 @@ $accent-color-darker: rgb(36, 69, 94);
 
 /* GENERAL STYLES */
 html, body {
+    width: 100%;
     overflow-x: hidden;
 }
 * {
@@ -303,7 +304,7 @@ a:hover {
     font-weight: 800;
 }
 #upload-image-button {
-    width: 60%;
+    width: 40%;
     background-color: $primary-color;
     color: $primary-white;
 }
@@ -347,8 +348,8 @@ a:hover {
 #image-preview {
     @include border-radius-shadow;
     margin-top: 18px;
-    max-width: 150px;
-    max-height: 150px;
+    max-width: 250px;
+    max-height: 250px;
 }
 .alpha-warning {
     color: rgb(167, 46, 46);
@@ -402,7 +403,6 @@ a:hover {
     margin-bottom: 5px;
     padding: 15px;
     width: 100%;
-    overflow-y: scroll;
 }
 #bbox-image {
     @include border-radius-shadow;
@@ -509,6 +509,7 @@ a:hover {
     flex-direction: column;
     gap: 20px;
     width: 100%;
+    padding: 20px;
 }
 .example-img-set {
     width: 100%;

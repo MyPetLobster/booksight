@@ -2,6 +2,7 @@
 /* MIXINS */
 /* GENERAL STYLES */
 html, body {
+  width: 100%;
   overflow-x: hidden;
 }
 
@@ -300,7 +301,7 @@ a:hover {
 }
 
 #upload-image-button {
-  width: 60%;
+  width: 40%;
   background-color: rgb(63, 106, 137);
   color: rgb(255, 255, 255);
 }
@@ -354,8 +355,8 @@ a:hover {
   border-radius: 12px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
   margin-top: 18px;
-  max-width: 150px;
-  max-height: 150px;
+  max-width: 250px;
+  max-height: 250px;
 }
 
 .alpha-warning {
@@ -428,7 +429,6 @@ a:hover {
   margin-bottom: 5px;
   padding: 15px;
   width: 100%;
-  overflow-y: scroll;
 }
 
 #bbox-image {
@@ -556,6 +556,7 @@ a:hover {
   flex-direction: column;
   gap: 20px;
   width: 100%;
+  padding: 20px;
 }
 
 .example-img-set {

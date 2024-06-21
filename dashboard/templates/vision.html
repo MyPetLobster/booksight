@@ -58,6 +58,7 @@ function checkStatus() {
                 bbox_image_element.id = "bbox-image";
                 bbox_image_element.src = data.bbox_image;
                 bbox_image_element.className = "bbox-image";
+                bbox_image_element.alt = "Bounding Box Image";
                 bbox_image_element.style.display = "block";
                 document.getElementById("image-div").appendChild(bbox_image_element);
 
@@ -87,6 +88,7 @@ function checkStatus() {
                     const text_image_element = document.createElement("img");
                     text_image_element.src = text_images[i];
                     text_image_element.className = "spine-grid-element";
+                    text_image_element.alt = "Spine Image";
                     spine_image_grid.appendChild(text_image_element);
 
                     // create full size image hidden until clicked
