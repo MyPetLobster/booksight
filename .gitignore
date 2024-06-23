@@ -163,21 +163,23 @@ cython_debug/
 # DS_Store files
 .DS_Store
 
-# Spine and debug images
+# Spine and process generated images
 spines/
 debug_images/
 test_images/
 new_test_images/
 downloaded_images/
+
+# Exported data
 exports/
 
 # User uploaded images
 media/
+uploaded_images/
 scan_images/
 
-# log dir
+# Logs directory
 logs/
 
-
-# Ignore dev/ that includes test data
+# Testing Suites and saved logs/exports
 dev/
