@@ -1,5 +1,3 @@
-/// LAYOUT -- NavLogo and Footer
-
 // Alert message auto-hide
 const alertDiv = document.querySelector('.alert');
 if (alertDiv) {
@@ -63,9 +61,7 @@ window.onscroll = function(ev) {
 };
 
 
-
-
-/// TIPS/ABOUT - Small logo interactivity
+// TIPS/ABOUT - Small logo interactivity
 const animatedPages = ["tips", "about", "vision-complete", "vision-failed"];
 
 if (animatedPages.includes(pageIdentifier)) {
@@ -97,7 +93,6 @@ if (animatedPages.includes(pageIdentifier)) {
             });
         });
     } else {
-        // If screen less than 600px, wait until user clicks logo or text, then animate and redirect
         smallLogoElements.forEach((element) => {
             element.style.cursor = "pointer";  
             element.addEventListener("click", () => {
@@ -117,10 +112,7 @@ if (animatedPages.includes(pageIdentifier)) {
 }
 
 
-
-
 /// INDEX PAGE SCRIPTS
-
 if (pageIdentifier === 'index') {
     // Checkboxes for export formats - index form
     const selectAll = document.getElementById('all');
@@ -262,8 +254,8 @@ if (pageIdentifier === 'index') {
     })     
 }
 
-// TIPS PAGE SCRIPTS
 
+// TIPS PAGE SCRIPTS
 if (pageIdentifier === 'tips') {
     // Add event listener to each example image to show full size image on click
     const exampleImages = document.querySelectorAll('.example-image');
@@ -272,7 +264,6 @@ if (pageIdentifier === 'tips') {
             const hiddenFullsize = document.getElementById(`hidden-${item.classList[1]}`);
             hiddenFullsize.classList.toggle('show-fullsize');
         
-            // if user clicks anywhere outside the full size image, hide it
             document.addEventListener('click', (event) => {
                 if (!hiddenFullsize.contains(event.target) && !item.contains(event.target)) {
                     hiddenFullsize.classList.remove('show-fullsize');
