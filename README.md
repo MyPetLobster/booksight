@@ -33,6 +33,8 @@
       <a href="#about-the-project">About The Project</a>
       <ul>
         <li><a href="#about-the-project">Background</a></li>
+        <li><a href="#goals">Goals</a></li>
+        <li><a href="#building-process">Building Process</a></li>
         <li><a href="#built-with">Built With</a></li>
         <li><a href="#python-libraries-used-see-requirementstxt-for-full-list">Python Libraries Used</a></li>
       </ul>
@@ -60,6 +62,9 @@
     </li>
     <li>
       <a href="#usage">Usage</a>
+    </li>
+    <li>
+      <a href="#reflections-and-notes">Reflections and Notes</a>
     </li>
     <li>
       <a href="#contact">Contact</a>
@@ -95,6 +100,7 @@ BookSight is a unique web application that leverages computer vision and optical
 
 8. **Custom Logging System:** I built a custom logging system that records the book identification process step-by-step. This detailed logging feature helps users track the progress of the identification process and provides transparency into the backend operations of the application.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 </br>
 
@@ -110,26 +116,10 @@ While I was pleased with the outcome, the initial vision for Bookcase Database�
 
 Fast forward several months, and I've since completed CS50 Python, CS50 SQL, Odin Foundations, and spent all of my free time working on personal coding projects, reading about coding, and tackling coding challenges. With all I've learned, I felt like I was ready to take on the challenge of creating BookSight.
 
-## Building Process
-The process began with a bunch of research and experimentation with various technologies and techniques. I had no prior experience working with any kind of computer vision or OCR technology, so I spent a significant amount of time just reading about how all of that works. Throughout the entire process, I've continued to learn more about Python, Django, and web development in general, while also exploring a whole different side of programming with things like PyTorch and OpenCV. 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Here’s a breakdown of the main steps:
-* **Image Processing:** I learned how to process and edit images with Python using libraries like OpenCV and Pillow. This was crucial for preparing images for OCR and object detection.
-* **Computer Vision for Object Detection:** To identify book spines in images, I delved into computer vision concepts and used PyTorch and Torchvision for object detection. I experimented with different models and settings to optimize spine detection accuracy and speed. In the end I decided to use the faster R-CNN model from Torchvision and the COCO dataset. (the COCO dataset has an awesome website that lets you [explore the labeled images](https://cocodataset.org/#explore)).
-* **OCR:** Understanding how Optical Character Recognition (OCR) works was crucial, so I experimented with EasyOCR to extract text from images.There was a magical moment the first time my own Python code somehow made an image pop up on my screen with red boxes around the spines of (some of) the books. I was hooked. I spent a few weeks just playing around with different images and settings with OpenCV and EasyOCR. I also tried out a few alternatives (Tesseract, Paddle OCR) before settling on EasyOCR.
-  - Tesseract was the first one I tried. Mostly because of the dope name. It was very easy to get up and running, but really seemed to struggle identifying text on the spines. It would catch a letter here or there, but unless I applied a complete threshold filter to the image, losing a bunch of text in the process, it was pretty useless. Apparently Tesseract is great for things like PDF and documents, but not so much for images. This held true in my experience. 
-  - I tried EasyOCR next and got MUCH better results almost immediately. However, it was far from perfect. I think I expected near perfection from the OCR part of the process, but turns out the best I could expect were results like "T H3 sH LTerng SKY P&aul B0wl s" for "The Sheltering Sky by Paul Bowles". I tweaked things to get the best results I could, but this is when I realized I would need to use AI models to clean up the OCR results.
-  - I decided to try using Paddle OCR instead of EasyOCR for a while because it has the ability to detect angled text out of the box. Turns out Paddle OCR was actually slightly more accurate and did indeed detect angled text in most cases. However, it was much slower than EasyOCR unless I really shrank the images which would of course then make the text detection less accurate. I decided to stick with EasyOCR because it was faster and the results were only slightly worse than Paddle OCR.
-* **Integrating Multiple Book Databases:** I integrated several book databases, including Google Books, Open Library, and ISBNdb, to enhance the accuracy of book identification. This required handling API requests and combining data from multiple sources.
-* **Building the Web Application:**I used Django for the web application, setting up both front-end and back-end components. This involved creating models, views, and templates, as well as implementing image upload functionality.
-* **Asynchronous Processing and Logging:** Given the potentially long-running nature of the book identification process, I implemented asynchronous processing using Python's threading module. Custom log files were created to track the identification process step-by-step.
-* **Front-End Enhancements:** To improve user experience, I used AJAX to update the front-end with real-time progress updates. This way, users could see the status of their book identification without refreshing the page.
-* **Multiple Export Formats:** I implemented functionality to export the identified book data in various formats, including CSV, JSON, XML, and TXT. This required careful formatting and data handling to ensure compatibility and usability.
-* **AI Integration:** For initial book identification and cleaning up OCR results, I incorporated AI models from OpenAI and explored other models for comparison. Implementing a token counter for API calls helped manage usage and costs.
-This project has been an incredible learning experience, and I'm excited to see how it continues to evolve.
-
-
-### **Project Goals (04/29/2024):**
+## Goals
+### Project Goals (04/29/2024):
 * Create a terminal application that can identify the ISBNs of all books in a given image.
 * Incorporate the logic of the core functionality of the terminal application into a web application.
 * Create a web application that allows users to upload an image of a bookshelf and receive a list of all the books in the image.
@@ -148,30 +138,30 @@ This project has been an incredible learning experience, and I'm excited to see 
 * Explore and compare other AI models.
 * Implement token counter for AI API calls.
 
-
-### **Reflections (6/19/2024 (GO CELTICS!)):**
-* I actually achieved all of my personal learning goals and project goals. I'm really proud of that. There is, however, a small caveat. The overall accuracy of Booksight is...well. Let's just say if BookSight was into archery, I wouldn't put an apple on my head. I'm still working on improving the accuracy of the book identification process and intend to continue to work on this project after it's been submitted. I had to force myself to stop working on it for now and finish up this README. My next step will be to dive deeper into the math of it all and really try to understand how I can improve my matching algorithms/confidence calculations as well as the image pre-processing and OCR settings. 
-
-* **Some specific areas where the application struggles --**
-    - **Shiny/reflective spines are a nightmare.** Any preprocessing that solves that issue only causes more issues with other spines. I've accepted defeat here for now. I scan all the spine images for OCR, then I also scan the entire original image for OCR. This picks up the text from any missing spines and 9 out of 10 times the AI can suss that out and I'm able to create a spine object for that book. However, since it's missing the color and dimensions of the spine, I can only provide basic/generic data for those books. (I may look into training my own model to detect reflective spines in the future, or maybe doing some preprocessing and running the spine detection twice with different settings. I'm not sure yet.)
-    - **Differentiating between the hardcover and paperback versions of the same book if the covers are identical and the proportions are roughly the same.** I'm not sure where to start solving this issue honestly. Early in the process I was converting pixels to inches if I found a confident match, but to keep things balanced while tracking confidence scores, that meant I had to run the entire matching process again if the px_to_inches multiplier changed. I decided to just use the ratios for dimension matching. But I guess the precise dimensions would allow me to differentiate between the two versions of the book. I'll have to think about this one.
-    - **Reading text if the spines are not at 90 or 180 degrees.** If not close to perfectly upright or flat, the OCR results are often pretty terrible. At one point, I had this solved by rotating the images multiple times and scanning each one, but that was too slow and I had to abandon that idea. One possible solution is to train a model to detect the angle of the spine and rotate the image accordingly before scanning for text....Just thought of that while typing this. Or I can revisit Paddle OCR now that I have a better understanding of how this all works.
-    - **The entire process is bottlenecked by ISBNdb's rate limiting.** One call per second when I have to check 10+ ISBNs per book means the process can take a while. I'm definitely going to figure out an alternative to using ISBNdb. I may be able to use Open Library and Google Books combined to get all the data that I need from the ISBNs.
-
-* **Misc. Notes:**
-  - It's wild how fast AI models are changing. In the two months or so I've been working on the project, I've had to update my OpenAI model options twice and Gemini models once. I made that aspect of the code more modular so that I can easily update the models in the future. It's really so exciting to be working with these tools and to be starting my coding journey at a time when AI is advancing so rapidly. I was pleased with how I incorporated the AI models into the project, and with the token counter I created to keep track of usage for all the different models.
-  - I'm really happy with the web application. I think it looks great and it's very simple/user friendly. I'm especially proud of the AJAX implementation. I had never used AJAX before, and I was able to figure it out and implement it in a way that I think really enhances the user experience by continuously updating a pseudo-terminal with the progress of the book identification process. This includes photos of the bounding boxes around books and individual spine OCR results. 
-  - Like I said, the interface is very simple in design. But I feel like the elements all work together seamlessly and I love how the animations came out across the site. Little things like the navbar icon disappearing when the user scrolls down and the footer only fading into existence when the user hits the bottom of the page, are things that would have been impossible for me to do just a few months ago. I really love the way the site looks and feels. This was by far the quickest and easiest part of the project for me. 
-  - The mobile styling was also a breeze. I remember being overwhelmed trying to setup media queries for my CS50x project. This time around, I was able to do it quickly with no stress at all.
-  - I set up my own logging system for the project. It records all the steps of the process and doubles as what the user sees in the CLI version of the application. It's very detailed, but still clear and easy to read. The log files have been a lifesaver many times throughout the coding process and I think some people would be interested in reading through the process details. The log files are included along with the export files in the email that the user receives when the book identification process is complete.
-  - The CLI version of the application also came out great. I created that after the web app, so it was a good learning process to translate things like the web app submission form and image uploading process into a CLI. The CLI version is a fun way to experience Booksight. It's a little more interactive than the web app, and I think it's a great way to show off the core functionality of the project. I'm really happy with how it came out.
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-### Built With
-Languages, frameworks, and libraries used in the project.
+## Building Process
+The process began with a bunch of research and experimentation with various technologies and techniques. I had no prior experience working with any kind of computer vision or OCR technology, so I spent a significant amount of time just reading about how all of that works. Throughout the entire process, I've continued to learn more about Python, Django, and web development in general, while also exploring a whole different side of programming with things like PyTorch and OpenCV. 
 
+### Here’s a breakdown of the main steps:
+* **Image Processing:** I learned how to process and edit images with Python using libraries like OpenCV and Pillow. This was crucial for preparing images for OCR and object detection.
+* **Computer Vision for Object Detection:** To identify book spines in images, I delved into computer vision concepts and used PyTorch and Torchvision for object detection. I experimented with different models and settings to optimize spine detection accuracy and speed. In the end I decided to use Torchvision and specifically the Faster R-CNN ResNet-50 model, trained on the COCO dataset. (the COCO dataset has an awesome website that lets you [explore the labeled images](https://cocodataset.org/#explore)).
+* **OCR:** Understanding how Optical Character Recognition (OCR) works was crucial, so I experimented with EasyOCR to extract text from images.There was a magical moment the first time my own Python code somehow made an image pop up on my screen with red boxes around the spines of (some of) the books. I was hooked. I spent a few weeks just playing around with different images and settings with OpenCV and EasyOCR. I also tried out a few alternatives (Tesseract, Paddle OCR) before settling on EasyOCR.
+  - Tesseract was the first one I tried. Mostly because of the cool name tbh. It was very easy to get up and running, but really seemed to struggle identifying text on the spines. It would catch a letter here or there, but unless I applied a complete threshold filter to the image, losing a bunch of text in the process, it was pretty useless. Apparently Tesseract is great for things like PDF and documents, but not so much for images. This held true in my experience. 
+  - I tried EasyOCR next and got MUCH better results almost immediately. However, it was far from perfect. I think I expected near perfection from the OCR part of the process, but turns out the best I could expect were results like "T H3 sH LTerng SKY P&aul B0wl s" for "The Sheltering Sky by Paul Bowles". I tweaked things to get the best results I could, but this is when I realized I would need to use AI models to clean up the OCR results.
+  - I decided to try using Paddle OCR instead of EasyOCR for a while because it has the ability to detect angled text out of the box. Turns out Paddle OCR was actually slightly more accurate and did indeed detect angled text in most cases. However, it was much slower than EasyOCR unless I really shrank the images which would of course then make the text detection less accurate. I decided to stick with EasyOCR because it was faster and the results were only slightly worse than Paddle OCR.
+* **Integrating Multiple Book Databases:** I integrated several book databases, including Google Books, Open Library, and ISBNdb, to enhance the accuracy of book identification. This required handling API requests and combining data from multiple sources.
+* **Building the Web Application:** I used Django for the web application, setting up both front-end and back-end components. This involved creating models, views, and templates, as well as implementing image upload functionality.
+* **Asynchronous Processing and Logging:** Given the potentially long-running nature of the book identification process, I implemented asynchronous processing using Python's threading module. Custom log files were created to track the identification process step-by-step.
+* **Front-End Enhancements:** To improve user experience, I used AJAX to update the front-end with real-time progress updates. This way, users could see the status of their book identification without refreshing the page.
+* **Multiple Export Formats:** I implemented functionality to convert the final Book objects into multiple formats (CSV, JSON, TXT, XML) and export the identified book data. This required careful formatting and data handling to ensure compatibility and usability. I also setup the application to send an email to the user with the export files attached when the book identification process is complete.
+* **AI Integration:** For initial book identification and cleaning up OCR results, I incorporated AI models from OpenAI and explored other models for comparison. Implementing a token counter for API calls helped manage usage and costs.
+* **Mobile Styling:** I ensured the web application was responsive and mobile-friendly, providing a seamless experience across different devices. I used media queries and flexbox to create a clean and user-friendly interface for mobile users.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Built With
 * [![Python][Python.shield]][Python.url]
 * [![JavaScript][JavaScript.shield]][JavaScript.url]
 * [![Sass][Sass.shield]][Sass.url]
@@ -303,6 +293,8 @@ Languages, frameworks, and libraries used in the project.
   <img src="https://i.imgur.com/UwMRJGb.png" alt="Desktop About" width="32%">
 </p>
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 </br>
 
 ### Desktop Vision Process:
@@ -316,6 +308,8 @@ Languages, frameworks, and libraries used in the project.
   <img src="https://i.imgur.com/1qpiA5M.png" alt="Desktop Vision 7" width="48%">
 </p>
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 </br>
 
 ## CLI Booksight Application (Vision CLI):
@@ -328,6 +322,8 @@ Languages, frameworks, and libraries used in the project.
 <img src="https://i.imgur.com/oT1jwDB.png" alt="CLI Process 06" width="48%">
 <img src="https://i.imgur.com/wBVWet1.png" alt="CLI Process 07" width="48%">
 <img src="https://i.imgur.com/Qo2jYCy.png" alt="CLI Process 08" width="48%">
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 </br>
 
@@ -345,6 +341,8 @@ Languages, frameworks, and libraries used in the project.
 <img src="https://github.com/MyPetLobster/booksight/assets/6979547/a20e86ff-4757-4aaa-af0f-ac53632e753e" width="32%">
 <img src="https://github.com/MyPetLobster/booksight/assets/6979547/5f38fee9-34e7-48f1-a116-c6aa83eb4e05" width="32%">
 <img src="https://github.com/MyPetLobster/booksight/assets/6979547/8e1bbb7b-fd21-42d5-9533-b100a76b264a" width="32%">
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 </br>
 
@@ -402,7 +400,7 @@ BookSight is built with Django, so you'll need to have Python installed on your 
     python manage.py runserver
     ```
 
-7. If you want to access on mobile device to take advantage of your device's camera, you'll need to run the server with your local IP address. The method I found that works best is to find your local IP address and run the server with the following command:
+7. If you want to access the web app on a mobile device to take advantage of your device's camera, you'll need to run the server with your local IP address. The method I found that works best is to find your local IP address and run the server with the following command:
 
     ```sh
     python manage.py runserver 0.0.0.0:8000
@@ -420,7 +418,7 @@ Then you can access the web application on your mobile device by typing in your 
 ## Web Application
 1. Use the form on the landing page to upload an image of a bookshelf/bookcase, enter your email address, and choose the export format(s).
 2. Submit the form.
-3. Sit back and relax while the application identifies all the books in the image. You will receive an email when the process is complete.
+3. Sit back and relax while the application identifies all the books in the image. If you entered an email address, you will receive an email when the process is complete, otherwise your results will be exported locally to 'vision/exports'.
 
 </br>
 
@@ -443,6 +441,46 @@ Then you can access the web application on your mobile device by typing in your 
  <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 </br>
+
+
+<!-- REFLECTIONS and NOTES -->
+# Reflections and Notes
+## **Reflections (6/19/2024 (GO CELTICS!)):**
+* I actually achieved all of my personal learning goals and project goals. I'm really proud of that. There is, however, a small caveat. The overall accuracy of Booksight is...well. Let's just say if BookSight was into archery, I wouldn't put an apple on my head. I'm still working on improving the accuracy of the book identification process and intend to continue to work on this project after it's been submitted. I had to force myself to stop working on it for now and finish up this README. My next step will be to dive deeper into the math of it all and really try to understand how I can improve my matching algorithms/confidence calculations as well as the image pre-processing and OCR settings. 
+
+* **Some specific areas where the application struggles:**
+    - **Shiny/reflective spines are a nightmare.** Any preprocessing that solves that issue only causes more issues with other spines. I've accepted defeat here for now. I scan all the spine images for OCR, then I also scan the entire original image for OCR. This picks up the text from any missing spines and 9 out of 10 times the AI can suss that out and I'm able to create a spine object for that book. However, since it's missing the color and dimensions of the spine, I can only provide basic/generic data for those books. (I may look into training my own model to detect reflective spines in the future, or maybe doing some preprocessing and running the spine detection twice with different settings. I'm not sure yet.)
+    - **Differentiating between the hardcover and paperback versions of the same book if the covers are identical and the proportions are roughly the same.** I'm not sure where to start solving this issue honestly. Early in the building process I was converting pixels to inches if I found a confident match, but to keep things balanced while tracking confidence scores, that meant I had to run the entire matching process again if the px_to_inches multiplier changed during a run. I decided to just use the ratios for dimension matching. But I guess the precise dimensions would allow me to differentiate between the two versions of the book. I'll have to think about this one.
+    - **Reading text if the spines are not at 90 or 180 degrees.** If not close to perfectly upright or flat, the OCR results are often pretty terrible. At one point, I had this solved by rotating the images multiple times and scanning each one, but that was too slow and I had to abandon that idea. One possible solution is to train a model to detect the angle of the spine and rotate the image accordingly before scanning for text....Just thought of that while typing this. Or I can revisit Paddle OCR now that I have a better understanding of how this all works.
+    - **The entire process is bottlenecked by ISBNdb's rate limiting.** One call per second when I have to check 10+ ISBNs per book means the process can take a while. I'm definitely going to figure out an alternative to using ISBNdb. I may be able to use Open Library and Google Books combined to get all the data that I need from the ISBNs. But the only database I've found that has a field for binding type is ISBNdb. We'll see.
+
+* **Misc. Notes:**
+  - It's wild how fast AI models are changing. In the two months or so I've been working on the project, I've had to update my OpenAI model options three times and Gemini models twice. I made that aspect of the code more modular so that I can easily update the models in the future. It's really so exciting to be working with these tools and to be starting my coding journey at a time when AI is advancing so rapidly. I was pleased with how I incorporated the AI models into the project, and with the token counter I created to keep track of usage for all the different models.
+  - I'm really happy with the web application. I think it looks great and it's very simple/user friendly. I'm especially proud of the AJAX implementation. I had never used AJAX before, and I was able to figure it out and implement it in a way that I think really enhances the user experience by continuously updating a pseudo-terminal with the progress of the book identification process. This includes photos of the bounding boxes around books and individual spine OCR results. 
+  - Like I said, the interface is very simple in design. But I feel like the elements all work together seamlessly and I love how the animations came out across the site. Little things like the navbar icon disappearing when the user scrolls down and the footer only fading into existence when the user hits the bottom of the page, are things that would have been impossible for me to do just a few months ago. I really love the way the site looks and feels. This was by far the quickest and easiest part of the project for me. 
+  - The mobile styling was also a breeze. I remember being overwhelmed trying to setup media queries for my CS50x project. This time around, I was able to do it quickly with no stress at all.
+  - I set up my own logging system for the project. It records all the steps of the process and doubles as what the user sees in the CLI version of the application. It's very detailed, but still clear and easy to read. The log files have been a lifesaver many times throughout the coding process and I think some people would be interested in reading through the process details. The log files are included along with the exported files in the email that the user receives when the process is complete.
+  - The CLI version of the application also came out great. I created that after the web app, so it was a good learning process to translate things like the web app submission form and image uploading process into a CLI. The CLI version is a fun way to experience Booksight. It's a little more interactive than the web app, and I think it's a great way to show off the core functionality of the project.
+
+### Challenges and Learning
+This project has been a significant learning experience for me, pushing me to explore new technologies and concepts. Here are some of the biggest challenges I faced and what I learned from them:
+* **Complexity of Computer Vision:** Understanding computer vision concepts and implementing object detection was challenging but rewarding. I learned about different models, training data, and optimization techniques to improve spine detection accuracy.
+* **OCR Accuracy:** Achieving high OCR accuracy was more difficult than I anticipated. I had to experiment with different libraries and settings to get the best results. I also learned the importance of preprocessing images to improve OCR performance.
+* **API Integration:** Integrating multiple book databases and managing API requests required careful planning and implementation. I learned how to handle API rate limits, error handling, and data parsing to ensure smooth operation. I also had to figure out how to handle APIs with non-standardized data formats without having the entire process break down.
+  - Side note: During testing, I noticed that ISBNdb mislabeled an English edition of Anna Karenina as the Spanish version. Thanks to yours truly, that error is now fixed. :)
+* **Analyzing Colors:** For a while, I was only using two color data points -- Average color and Dominant color. At this point, I think an accurate result was more luck than anything else. I'd say accuracy was hovering around 10%. I took a step back and did some reading about how people analyze color data in general. In other words -- what is the best way to determine a value that describes the difference in color between two images. Another big issue was that book spines are often look a lot different than that book's cover so my average and dominant color values would be way off, leading to erroneous matches. I ended up learning about K-means clustering and how it can be used to group similar colors together. Basically, it separates all the pixels of an image into groups, or clusters, and determines the mean/average color of each of those groups. I used this to get the 5 most dominant colors in each spine image and then compared those to the palette of the cover image. This was a HUGE improvement. It took Booksight's accuracy from about 10% to over 50% in most cases. 
+* **Matching Algorithms:** I was on my own here and let's just say my math is a bit rusty. It took a lot of trial and error to figure out a method of comparing/matching books to spines and calculating the confidence of each match. I'm still not 100% happy with the results, but in a random selection of books (newer books with clear spines) I'm getting about 70-80% accuracy, which is a hell of a lot better than it was a few weeks ago. I will be focusing on my math and algorithm skills in the coming months and intend to revisit this part of the project.
+* **Asynchronous Processing:** Implementing asynchronous processing was a new concept for me, and I had to learn how to manage threads and ensure data integrity. I also had to consider the impact on performance and user experience when running long-running tasks. That ended up being a non-issue in this case, but glad I took the time to understand the basics of threading. Booksight's web interface runs as its own process. Then when the user submits an image, a new thread is created to handle the book identification process. This allows the user to continue using the site or even navigate away from the page entirely without interrupting the process.
+* **AJAX Front-End Updates:** Using AJAX to update the front-end with real-time progress updates in a segmented project like this was a new challenge for me. I had to learn how to structure the JavaScript code and handle asynchronous requests. I needed to figure out a way to allow an event within the Vision process to trigger a change on the front end. The way I accomplished this was by creating a Scan object in the database when the user submits the web form or launches the Vision-CLI app. This object has a status field that is updated throughout the Vision process. I created a function within my views.py file called vision_status() that checks the status of the Scan object. Then with JavaScript, I used setInterval() to call this function every 5 seconds and then update the content of the web pseudo-terminal with the current status of the Vision process. This was a really fun part of the project! Felt awesome to see the terminal updating in real time. This wasn't necessary at all for the function of BookSight, but I think it adds a lot to the user experience. Plus this is a Web Development course, so I wanted to show off a bit.
+* **Other Learning:** 
+  - I learned a lot more about how Django works. I forced myself to avoid looking at my past Django projects which had their basic templates provided by CS50. I used the Django documentation and walked through understanding every part of a Django project. The biggest challenge came when I had to connect the front end 'dashboard' app with the back end 'vision' app. 
+  - I had to figure out how to pass data between the two apps and how to structure the project so that the two apps could work together. I also had to find a way to allow the web app and CLI app to share the same logic. I really struggled to get each separate app to import local modules from the other app. I solved all of this by adding a few lines of code to the top of the vision.py file that append a path for each app to the sys.path list so each app has access to the other's modules. I'm sure there's a better way to do this, but it works for now.
+  - I really dove into using all sorts of Python libraries and different APIs. In the past just getting one library up and running or figuring out how to make calls to one API was a stressful experience. But now I'm able to quickly get up and running with new libraries and APIs. I'm also able to understand the documentation for these tools much better than I could before. I'm really proud of how I was able to incorporate so many different tools into this project. I think it's a great showcase of my ability to learn new technologies and apply them to a project.
+  - Not directly related to this project, but I started learning to use Vim motions/NeoVim. I'm just using the NeoVim extension within VSCode for now and I'm still not great at it, but I'm getting better. If I'm being honest, I just think it looks cool when programmers are really good at using Vim or Emacs. I want to be one of those cool programmers 😎.
+
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 <!-- CONTACT -->
