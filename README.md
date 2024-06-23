@@ -319,7 +319,7 @@ Languages, frameworks, and libraries used in the project.
 </br>
 
 ## CLI Booksight Application (Vision CLI):
-![Booksight_CLI_Process_updated-ezgif com-video-to-gif-converter](https://github.com/MyPetLobster/booksight/assets/6979547/2218da94-c196-4dc8-8107-15bea6ef74eb)
+![cli-full-run-fast-ezgif com-optimize](https://github.com/MyPetLobster/booksight/assets/6979547/b7dcfd9e-e019-4978-a71c-31eb0609b754)
 <img src="https://i.imgur.com/2g14eNb.png" alt="CLI Process 01" width="48%">
 <img src="https://i.imgur.com/ooYlVpF.png" alt="CLI Process 02" width="48%">
 <img src="https://i.imgur.com/vfW1wfk.png" alt="CLI Process 03" width="48%">
