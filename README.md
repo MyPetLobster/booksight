@@ -12,7 +12,7 @@
     <br />
     <br />
     <br />
-    <a href="#">View Youtube Demo</a>
+    <a href="https://www.youtube.com/watch?v=rZXsWTtKWXw#">View Youtube Demo</a>
     ·
     <a href="https://github.com/MyPetLobster/booksight/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
