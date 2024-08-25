@@ -2,6 +2,7 @@
 /* MIXINS */
 /* GENERAL STYLES */
 html, body {
+  width: 100%;
   overflow-x: hidden;
 }
 
@@ -22,6 +23,15 @@ a {
 a:hover {
   color: rgb(0, 0, 0) !important;
   text-decoration: none !important;
+}
+
+.dark-link {
+  color: rgb(151, 159, 164) !important;
+}
+
+.dark-link:hover {
+  color: rgb(36, 69, 94) !important;
+  font-weight: bold;
 }
 
 .hidden {
@@ -291,7 +301,7 @@ a:hover {
 }
 
 #upload-image-button {
-  width: 60%;
+  width: 40%;
   background-color: rgb(63, 106, 137);
   color: rgb(255, 255, 255);
 }
@@ -345,8 +355,16 @@ a:hover {
   border-radius: 12px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
   margin-top: 18px;
-  max-width: 150px;
-  max-height: 150px;
+  max-width: 250px;
+  max-height: 250px;
+}
+
+.alpha-warning {
+  color: rgb(167, 46, 46);
+  font-weight: bold;
+  font-size: 10px;
+  text-align: center;
+  margin-top: 10px;
 }
 
 /* VISION PAGE STYLES */
@@ -378,7 +396,7 @@ a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -411,7 +429,6 @@ a:hover {
   margin-bottom: 5px;
   padding: 15px;
   width: 100%;
-  overflow-y: scroll;
 }
 
 #bbox-image {
@@ -458,6 +475,14 @@ a:hover {
 .vision-para-div * {
   text-align: center;
   margin-bottom: 60px;
+}
+
+.vision-footnote {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  font-size: 8px;
+  font-weight: bold;
 }
 
 .vision-link {
@@ -512,6 +537,7 @@ a:hover {
   align-items: center;
   border-radius: 12px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  max-width: 800px;
   flex-direction: column;
   gap: 20px;
   width: 60%;
@@ -521,6 +547,62 @@ a:hover {
 
 .top-tips-div {
   margin-top: 20px;
+}
+
+.example-images-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  padding: 20px;
+}
+
+.example-img-set {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  transition: 250ms;
+}
+
+.example-img-div {
+  border-radius: 12px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(201, 210, 218);
+  height: 300px;
+  width: 300px;
+  transition: 250ms;
+}
+.example-img-div img {
+  cursor: pointer;
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.hidden-fullsize {
+  display: none;
+}
+
+.show-fullsize {
+  border-radius: 12px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  max-height: 90vh !important;
+  max-width: 90vw !important;
+  cursor: pointer;
+  display: block !important;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(201, 210, 218, 0.921);
+  padding: 20px;
+  border-radius: 12px;
 }
 
 /* ABOUT PAGE */
@@ -541,12 +623,17 @@ a:hover {
   align-items: center;
   border-radius: 12px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  max-width: 800px;
   flex-direction: column;
   margin-top: 20px;
+  margin-bottom: 40px;
   gap: 20px;
   width: 60%;
   padding: 20px 40px;
   background-color: rgb(248, 248, 248);
+}
+.about-div p {
+  text-align: center;
 }
 
 /* VISION COMPLETE PAGE */
@@ -616,7 +703,7 @@ a:hover {
     width: 90%;
   }
   .vision-para-div * {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
   }
   .terminal {
     min-width: 90%;
@@ -634,5 +721,20 @@ a:hover {
   /* About & Tips Mobile */
   .about-div, .tips-div {
     width: 90%;
+  }
+  /* Example Images */
+  .example-img-div {
+    max-height: 140px;
+    max-width: 140px;
+  }
+  .example-img-div img {
+    max-height: 100%;
+    max-width: 100%;
+  }
+  .example-images-div {
+    gap: 10px;
+  }
+  .example-img-set {
+    gap: 10px;
   }
 }/*# sourceMappingURL=style_sass.css.map */
